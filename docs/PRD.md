@@ -154,46 +154,62 @@ A **Markdown-powered static website** using:
 - **Templating:** Mustache.js for client-side rendering
 - **Content:** Markdown files for dynamic content
 - **Styling:** Bootstrap 5 with custom Pokemon-themed CSS
+- **Package Management:** NPM for dependency management
+- **Build Tool:** Parcel (or similar) for bundling and optimization
 - **Hosting:** GitHub Pages with automatic deployment
 - **Version Control:** Git with GitHub repository
 
 ### 7.2 File Structure
 
 ```text
-├── index.html                 # Main entry point
-├── assets/
-│   ├── css/
-│   │   ├── bootstrap.min.css
-│   │   └── custom.css        # Pokemon-themed styles
+├── package.json             # NPM dependencies and scripts
+├── package-lock.json        # Dependency lock file
+├── .gitignore              # Git ignore file
+├── src/                    # Source files
+│   ├── index.html          # Main entry point
 │   ├── js/
-│   │   ├── mustache.min.js
-│   │   ├── marked.min.js     # Markdown parser
-│   │   └── app.js           # Main application logic
-│   └── images/              # Logos, photos, icons
-├── templates/
-│   ├── navbar.mustache
-│   ├── footer.mustache
-│   └── page-layout.mustache
+│   │   └── app.js          # Main application logic
+│   ├── css/
+│   │   └── custom.css      # Pokemon-themed styles
+│   └── templates/
+│       ├── navbar.mustache
+│       ├── footer.mustache
+│       └── page-layout.mustache
 ├── content/
-│   ├── schedule.md          # Meeting schedules
-│   ├── donors.md           # Donation information
-│   └── documents/          # Document repository
-└── docs/                   # Documentation
+│   ├── schedule.md         # Meeting schedules
+│   ├── donors.md          # Donation information
+│   └── documents/         # Document repository
+├── assets/
+│   └── images/            # Logos, photos, icons
+├── dist/                  # Built/compiled files (auto-generated)
+├── docs/                  # Project documentation
+│   └── PRD.md            # Product Requirements Document
+└── node_modules/          # NPM dependencies (auto-generated)
 ```
 
 ### 7.3 Content Management Flow
 
 1. Update Markdown files in `/content/` directory
-2. Commit changes to GitHub repository
-3. GitHub Pages automatically rebuilds and deploys site
-4. Mustache templates render updated content client-side
+2. Run build process (`npm run build`) to compile assets
+3. Commit changes to GitHub repository (including built files in `/dist/`)
+4. GitHub Pages automatically deploys from `/dist/` directory
+5. Mustache templates render updated content client-side
 
-### 7.4 Component Architecture
+### 7.4 Development Workflow
 
+- **Development:** `npm run dev` for local development server
+- **Build:** `npm run build` for production-ready files
+- **Dependencies:** `npm update` to update packages
+- **GitHub Pages:** Deploy from `/dist/` directory
+
+### 7.5 Component Architecture
+
+- **NPM Dependencies:** Bootstrap, Mustache, Marked managed via package.json
 - **Reusable Templates:** Navbar, footer, page layouts
 - **Dynamic Content Areas:** Populated from Markdown files
 - **Responsive Components:** Bootstrap 5 grid system
 - **Accessible Elements:** ARIA labels, semantic HTML
+- **Build Optimization:** Tree shaking, minification, bundling
 
 ---
 
