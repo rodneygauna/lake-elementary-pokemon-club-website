@@ -15,7 +15,6 @@ class Event < ApplicationRecord
   before_validation :set_default_time_zone
 
   # ----- Scopes -----
-
   # Ordering
   scope :ordered,      -> { order(starts_at: :asc) }
   scope :recent_first, -> { order(starts_at: :desc) }
@@ -25,7 +24,7 @@ class Event < ApplicationRecord
   scope :past,            -> { where("ends_at < ?", Time.current) }
   scope :starting_soon,   ->(hours = 24) { where(starts_at: Time.current..(Time.current + hours.hours)) }
   scope :overlapping,     ->(window_start, window_end) { where("starts_at < ? AND ends_at > ?", window_end, window_start) }
-  scope :starting_between,->(window_start, window_end) { where(starts_at: window_start..window_end) }
+  scope :starting_between, ->(window_start, window_end) { where(starts_at: window_start..window_end) }
 
   # ---- Time-based calendar scopes (TZ-aware overlap checks) ----
 
@@ -67,9 +66,9 @@ class Event < ApplicationRecord
   scope :in_zip,   ->(zip)   { where(zipcode: zip.to_s.strip) }
 
   # Simple free-text search across title, description, and venue
-  scope :search, ->(q) do
-    next all if q.blank?
-    pattern = "%#{q.strip.downcase}%"
+  scope :search, ->(term) do
+    next all if term.blank?
+    pattern = "%#{term.strip.downcase}%"
     where("LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(venue) LIKE ?", pattern, pattern, pattern)
   end
 
