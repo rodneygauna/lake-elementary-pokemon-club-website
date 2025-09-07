@@ -30,6 +30,6 @@ class CreateEvents < ActiveRecord::Migration[8.0]
     add_index :events, :status
     add_index :events, :time_zone
     add_index :events, :zipcode
-    add_index :events, [:status, :starts_at]
+    add_index :events, [ :status, :starts_at ]
   end
 end
