@@ -3,8 +3,8 @@
 ## Lake Elementary School Pokemon Club Website
 
 **Project Name:** Lake Elementary Pokemon Club Website
-**Version:** 1.0
-**Date:** September 6, 2025
+**Version:** 2.0
+**Date:** September 7, 2025
 **Author:** Rodney Gauna
 **Status:** Planning Phase
 
@@ -12,7 +12,7 @@
 
 ## 1. Executive Summary
 
-The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. The site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources.
+The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources. The application will feature user authentication, content management capabilities, email notifications, and robust data management through Active Record and Active Storage.
 
 ---
 
@@ -44,21 +44,25 @@ The Pokemon Club at Lake Elementary School currently faces three primary challen
 
 ### 3.1 Approach
 
-A **Markdown-powered static website** using:
+A **Ruby on Rails 8 web application** featuring:
 
-- **Mustache.js** for client-side templating and reusable components
-- **Markdown files** for content management
+- **Rails 8 Authentication** for user management and access control
+- **Active Record** for robust data modeling and relationships
+- **Active Storage** for file uploads and document management
+- **Rails Scaffolding** for rapid CRUD interface development
+- **Action Mailer** for email notifications and subscriptions
 - **Bootstrap 5** for responsive, accessible styling
-- **GitHub Pages** for hosting and automatic deployment
+- **Cloud hosting** (Heroku or similar) for reliable deployment
 
 ### 3.2 Why This Approach?
 
-- **Simplicity:** Easy content updates via Markdown files
-- **Version Control:** Full change history through Git
-- **Cost-Effective:** Free hosting via GitHub Pages
-- **Maintainable:** Clean separation of content and presentation
-- **Accessible:** Bootstrap 5 provides strong accessibility foundation
-- **Scalable:** Can evolve into a full web app if needed
+- **Rapid Development:** Rails scaffolding and conventions for quick feature implementation
+- **User Management:** Built-in authentication with role-based access control
+- **Data Integrity:** Active Record validations and database constraints
+- **File Management:** Active Storage for seamless document handling
+- **Email Integration:** Action Mailer for automated notifications
+- **Scalability:** Full-stack framework supporting future feature expansion
+- **Maintainability:** Convention over configuration reduces complexity
 
 ---
 
@@ -66,83 +70,124 @@ A **Markdown-powered static website** using:
 
 ### 4.1 Primary Users
 
-- **Parents/Guardians:** Need meeting schedules, event information, and club resources
-- **Club Members (Students):** Access to Pokemon-related materials and club information
-- **School Staff:** Information about club activities and schedules
+- **Parents/Guardians:** Need meeting schedules, event information, club resources, and account access
+- **School Staff:** Information about club activities and schedules with potential admin access
+- **Community Members:** Public viewing of club activities and donor recognition
 
 ### 4.2 Secondary Users
 
-- **Potential Donors:** Viewing impact of previous donations
-- **Community Members:** Learning about the club's activities
+- **Potential Donors:** Viewing impact of previous donations and recognition
+- **Students:** Linked to parent accounts for relationship tracking (no direct access)
 
 ### 4.3 Administrative Users
 
-- **Club Leader (Primary):** Content management and site updates
-- **Future Contributors:** Additional staff or volunteers with guided access
+- **Club Leader (Administrator):** Full CRUD access to all content, user management
+- **Assistant Leaders (Administrator):** Content management and site updates
+- **Future Contributors:** Additional staff or volunteers with guided admin access
 
 ---
 
 ## 5. Functional Requirements
 
-### 5.1 Meeting & Event Management
+### 5.1 User Authentication & Authorization
 
-- **REQ-1.1:** Display upcoming meeting dates and times
-- **REQ-1.2:** Show cancelled or rescheduled meetings prominently
-- **REQ-1.3:** Provide event descriptions and any special instructions
-- **REQ-1.4:** Maintain calendar view for easy schedule overview
+- **REQ-1.1:** User registration and login system using Rails 8 authentication
+- **REQ-1.2:** Role-based access control (Administrator vs Normal User)
+- **REQ-1.3:** Administrator users have full CRUD access to all resources
+- **REQ-1.4:** Normal users have read-only access to public content
+- **REQ-1.5:** Password reset functionality via email
+- **REQ-1.6:** User profile management with email subscription preferences
 
-### 5.2 Donor Recognition System
+### 5.2 Student Management
 
-- **REQ-2.1:** Display donor names (individuals and businesses)
-- **REQ-2.2:** Show donation types (monetary amounts or specific items)
-- **REQ-2.3:** Include donor photos/logos where available
-- **REQ-2.4:** Implement carousel for business logo showcase
-- **REQ-2.5:** Maintain donation history and impact metrics
+- **REQ-2.1:** Student model with relationship to parent/guardian users
+- **REQ-2.2:** Parents can view and manage their linked students
+- **REQ-2.3:** Administrators can create and manage all student relationships
+- **REQ-2.4:** Student information includes name, grade, and relevant club details
 
-### 5.3 Document Repository
+### 5.3 Meeting & Event Management
 
-- **REQ-3.1:** Organize documents by category (forms, meeting notes, resources)
-- **REQ-3.2:** Support multiple file types (PDF, images, external links)
-- **REQ-3.3:** Provide search functionality for document discovery
-- **REQ-3.4:** Maintain Pokemon-related educational resources
-- **REQ-3.5:** Include quick access to frequently used documents
+- **REQ-3.1:** CRUD interface for meeting and event management (scaffolded)
+- **REQ-3.2:** Display upcoming meeting dates, times, and descriptions
+- **REQ-3.3:** Show cancelled or rescheduled meetings prominently
+- **REQ-3.4:** Event categorization and status tracking
+- **REQ-3.5:** Calendar view for easy schedule overview
 
-### 5.4 Navigation & User Experience
+### 5.4 Donor Recognition System
 
-- **REQ-4.1:** Consistent navigation via Mustache-templated navbar
-- **REQ-4.2:** Mobile-responsive design using Bootstrap 5
-- **REQ-4.3:** Fast loading times with optimized assets
-- **REQ-4.4:** Clear visual hierarchy and intuitive information architecture
+- **REQ-4.1:** CRUD interface for donor management (scaffolded)
+- **REQ-4.2:** Support for individual and business donors
+- **REQ-4.3:** Donation tracking with amounts and types
+- **REQ-4.4:** Photo/logo upload using Active Storage
+- **REQ-4.5:** Public donor recognition page with carousel display
+- **REQ-4.6:** Privacy settings for donor visibility preferences
+
+### 5.5 Document Repository
+
+- **REQ-5.1:** CRUD interface for document management (scaffolded)
+- **REQ-5.2:** File upload functionality using Active Storage
+- **REQ-5.3:** Document categorization (forms, meeting notes, resources)
+- **REQ-5.4:** Search functionality for document discovery
+- **REQ-5.5:** Access control for sensitive documents
+- **REQ-5.6:** Download tracking and statistics
+
+### 5.6 Email Notification System
+
+- **REQ-6.1:** User subscription management for email notifications
+- **REQ-6.2:** General notifications (new events, cancellations, donations, news)
+- **REQ-6.3:** Granular subscriptions for individual events or content
+- **REQ-6.4:** Unsubscribe functionality for all email types
+- **REQ-6.5:** Email templates for consistent branding
+- **REQ-6.6:** Automated notifications for content changes
+
+### 5.7 Navigation & User Experience
+
+- **REQ-7.1:** Responsive design using Bootstrap 5 and Rails view helpers
+- **REQ-7.2:** Consistent navigation with user authentication status
+- **REQ-7.3:** Dashboard for authenticated users
+- **REQ-7.4:** Admin interface for content management
+- **REQ-7.5:** Fast loading times with Rails optimization techniques
 
 ---
 
 ## 6. Non-Functional Requirements
 
-### 6.1 Accessibility
+### 6.1 Security
 
-- **REQ-5.1:** WCAG 2.2 AA compliance
-- **REQ-5.2:** Keyboard navigation support
-- **REQ-5.3:** Screen reader compatibility
-- **REQ-5.4:** Sufficient color contrast ratios
-- **REQ-5.5:** Alternative text for all images
+- **REQ-8.1:** Secure user authentication with encrypted passwords
+- **REQ-8.2:** Protection against common web vulnerabilities (CSRF, XSS, SQL injection)
+- **REQ-8.3:** Role-based authorization enforcement
+- **REQ-8.4:** Secure file upload validation and storage
+- **REQ-8.5:** HTTPS enforcement in production
 
-### 6.2 Performance
+### 6.2 Accessibility
 
-- **REQ-6.1:** Page load time under 3 seconds
-- **REQ-6.2:** Optimized images and assets
-- **REQ-6.3:** Efficient client-side rendering
+- **REQ-9.1:** WCAG 2.2 AA compliance
+- **REQ-9.2:** Keyboard navigation support
+- **REQ-9.3:** Screen reader compatibility
+- **REQ-9.4:** Sufficient color contrast ratios
+- **REQ-9.5:** Alternative text for all images and documents
 
-### 6.3 Compatibility
+### 6.3 Performance
 
-- **REQ-7.1:** Support modern browsers (Chrome, Firefox, Safari, Edge)
-- **REQ-7.2:** Mobile responsiveness across devices
-- **REQ-7.3:** Graceful degradation for older browsers
+- **REQ-10.1:** Page load time under 3 seconds
+- **REQ-10.2:** Database query optimization
+- **REQ-10.3:** Efficient file serving via Active Storage
+- **REQ-10.4:** Caching implementation for static content
 
-### 6.4 Maintenance
+### 6.4 Compatibility
 
-- **REQ-8.1:** Simple content updates via Markdown files
-- **REQ-8.2:** Clear documentation for future contributors
-- **REQ-8.3:** Version control integration with GitHub
+- **REQ-11.1:** Support modern browsers (Chrome, Firefox, Safari, Edge)
+- **REQ-11.2:** Mobile responsiveness across devices
+- **REQ-11.3:** Progressive enhancement for feature support
+
+### 6.5 Maintenance & Deployment
+
+- **REQ-12.1:** Simple deployment via Git-based hosting (Heroku/similar)
+- **REQ-12.2:** Database migrations for schema management
+- **REQ-12.3:** Environment-based configuration management
+- **REQ-12.4:** Automated testing capabilities
+- **REQ-12.5:** Regular security updates and dependency management
 
 ---
 
@@ -150,66 +195,133 @@ A **Markdown-powered static website** using:
 
 ### 7.1 Technology Stack
 
-- **Frontend:** HTML5, CSS3 (Bootstrap 5), JavaScript (ES6+)
-- **Templating:** Mustache.js for client-side rendering
-- **Content:** Markdown files for dynamic content
-- **Styling:** Bootstrap 5 with custom Pokemon-themed CSS
-- **Package Management:** NPM for dependency management
-- **Build Tool:** Parcel (or similar) for bundling and optimization
-- **Hosting:** GitHub Pages with automatic deployment
+- **Backend Framework:** Ruby on Rails 8
+- **Database:** SQLite3 (development and production)
+- **Authentication:** Rails 8 built-in authentication system
+- **File Storage:** Active Storage with local storage adapter
+- **Frontend:** HTML5, ERB templates, CSS3 (Bootstrap 5), JavaScript (Stimulus)
+- **Email:** Action Mailer with Rails built-in SMTP delivery
+- **Hosting:** Heroku or similar Rails-compatible platform
 - **Version Control:** Git with GitHub repository
+- **Package Management:** Bundler for Ruby gems
+- **Asset Pipeline:** Rails asset pipeline with importmap
 
-### 7.2 File Structure
+### 7.2 Data Models
+
+#### Core Models
+
+- **User:** Authentication, roles (admin/normal), email preferences
+- **Student:** Name, grade, belongs_to user (parent/guardian)
+- **Event:** Title, description, date, status, category, created_by admin
+- **Donor:** Name, type (individual/business), donation details, privacy settings
+- **Document:** Title, description, category, file attachment via Active Storage
+- **EmailSubscription:** User preferences for notification types and individual content
+
+#### Relationships
+
+- User has_many students
+- User has_many email_subscriptions
+- Event belongs_to user (creator)
+- Donor belongs_to user (creator)
+- Document belongs_to user (creator)
+- Document has_one_attached file
+
+### 7.3 Rails Application Structure
 
 ```text
-├── package.json             # NPM dependencies and scripts
-├── package-lock.json        # Dependency lock file
-├── .gitignore              # Git ignore file
-├── src/                    # Source files
-│   ├── index.html          # Main entry point
-│   ├── js/
-│   │   └── app.js          # Main application logic
-│   ├── css/
-│   │   └── custom.css      # Pokemon-themed styles
-│   └── templates/
-│       ├── navbar.mustache
-│       ├── footer.mustache
-│       └── page-layout.mustache
-├── content/
-│   ├── schedule.md         # Meeting schedules
-│   ├── donors.md          # Donation information
-│   └── documents/         # Document repository
-├── assets/
-│   └── images/            # Logos, photos, icons
-├── dist/                  # Built/compiled files (auto-generated)
-├── docs/                  # Project documentation
-│   └── PRD.md            # Product Requirements Document
-└── node_modules/          # NPM dependencies (auto-generated)
+├── Gemfile                     # Ruby gem dependencies
+├── Gemfile.lock               # Gem version lock file
+├── config.ru                 # Rack configuration
+├── Rakefile                   # Rake tasks
+├── README.md                  # Project documentation
+├── app/
+│   ├── controllers/
+│   │   ├── application_controller.rb
+│   │   ├── events_controller.rb      # Generated scaffold
+│   │   ├── donors_controller.rb      # Generated scaffold
+│   │   ├── documents_controller.rb   # Generated scaffold
+│   │   ├── students_controller.rb    # Generated scaffold
+│   │   ├── users_controller.rb       # User management
+│   │   └── dashboard_controller.rb   # User dashboard
+│   ├── models/
+│   │   ├── application_record.rb
+│   │   ├── user.rb
+│   │   ├── student.rb
+│   │   ├── event.rb
+│   │   ├── donor.rb
+│   │   ├── document.rb
+│   │   └── email_subscription.rb
+│   ├── views/
+│   │   ├── layouts/
+│   │   │   └── application.html.erb
+│   │   ├── events/                   # Scaffolded views
+│   │   ├── donors/                   # Scaffolded views
+│   │   ├── documents/                # Scaffolded views
+│   │   ├── students/                 # Scaffolded views
+│   │   ├── users/
+│   │   └── dashboard/
+│   ├── mailers/
+│   │   ├── application_mailer.rb
+│   │   └── notification_mailer.rb
+│   ├── jobs/
+│   │   └── email_notification_job.rb
+│   └── assets/
+│       ├── stylesheets/
+│       │   └── application.css       # Pokemon-themed styles
+│       └── javascripts/
+│           └── application.js
+├── config/
+│   ├── application.rb
+│   ├── database.yml
+│   ├── routes.rb
+│   ├── credentials.yml.enc
+│   └── environments/
+│       ├── development.rb
+│       ├── production.rb
+│       └── test.rb
+├── db/
+│   ├── migrate/                      # Database migrations
+│   ├── schema.rb
+│   └── seeds.rb
+├── test/                            # Rails test suite
+├── storage/                         # Active Storage files (development)
+└── docs/
+    └── PRD.md
 ```
-
-### 7.3 Content Management Flow
-
-1. Update Markdown files in `/content/` directory
-2. Run build process (`npm run build`) to compile assets
-3. Commit changes to GitHub repository (including built files in `/dist/`)
-4. GitHub Pages automatically deploys from `/dist/` directory
-5. Mustache templates render updated content client-side
 
 ### 7.4 Development Workflow
 
-- **Development:** `npm run dev` for local development server
-- **Build:** `npm run build` for production-ready files
-- **Dependencies:** `npm update` to update packages
-- **GitHub Pages:** Deploy from `/dist/` directory
+- **Setup:** `rails new pokemon_club` (uses SQLite3 by default)
+- **Scaffolding:** `rails generate scaffold Event title:string description:text date:datetime status:string`
+- **Development:** `rails server` for local development
+- **Database:** `rails db:migrate` and `rails db:seed` for schema management
+- **Testing:** `rails test` for automated testing
+- **Deployment:** Git-based deployment to Heroku or similar platform (with SQLite3 compatibility)
 
-### 7.5 Component Architecture
+### 7.5 Authentication & Authorization
 
-- **NPM Dependencies:** Bootstrap, Mustache, Marked managed via package.json
-- **Reusable Templates:** Navbar, footer, page layouts
-- **Dynamic Content Areas:** Populated from Markdown files
-- **Responsive Components:** Bootstrap 5 grid system
-- **Accessible Elements:** ARIA labels, semantic HTML
-- **Build Optimization:** Tree shaking, minification, bundling
+- **Authentication:** Rails 8 built-in authentication with encrypted passwords
+- **Sessions:** Rails session management with secure cookies
+- **Authorization:** Role-based access control in controllers and views
+- **Middleware:** Custom middleware for admin-only sections
+- **Password Security:** bcrypt encryption with secure defaults
+
+### 7.6 Email System Architecture
+
+- **Mailer Classes:** Notification mailer for event updates, cancellations using Action Mailer
+- **Background Jobs:** Asynchronous email sending using Active Job with Rails built-in queue adapter
+- **Templates:** ERB email templates with text and HTML versions
+- **Subscription Management:** User preference models for granular control
+- **Delivery:** Rails built-in SMTP delivery method configured in environment settings
+- **Configuration:** SMTP settings in `config/environments/` files for development and production
+
+### 7.7 File Management
+
+- **Active Storage:** Rails built-in file attachment system
+- **Storage Adapters:** Local storage for both development and production
+- **File Types:** PDF documents, images (PNG, JPG), with validation
+- **Security:** Secure file serving with access control
+- **Processing:** Image variants for donor logos and profile pictures
 
 ---
 
@@ -241,23 +353,33 @@ A **Markdown-powered static website** using:
 
 ## 9. Content Strategy
 
-### 9.1 Schedule Content
+### 9.1 Event Management
 
-- **Format:** Structured Markdown with consistent front matter
-- **Update Frequency:** Weekly or as needed
-- **Content Types:** Regular meetings, special events, cancellations
+- **Format:** Database-driven with web forms for CRUD operations
+- **Update Frequency:** Real-time updates through admin interface
+- **Content Types:** Regular meetings, special events, cancellations, announcements
+- **Workflow:** Administrators create/edit events, users receive email notifications
 
-### 9.2 Donor Content
+### 9.2 Donor Management
 
-- **Individual Donors:** Name, donation type, optional photo
-- **Business Donors:** Company name, logo, contribution details
-- **Privacy:** Respect donor privacy preferences
+- **Individual Donors:** Name, donation amount/type, optional photo upload
+- **Business Donors:** Company name, logo upload, contribution details, website link
+- **Privacy Controls:** Donor visibility preferences in admin interface
+- **Recognition:** Automated display on public donor wall with carousel for business logos
 
 ### 9.3 Document Organization
 
-- **Categories:** Forms, Meeting Notes, Pokemon Resources, General Info
-- **Metadata:** Title, description, upload date, file type
-- **Access:** Direct download links or external resource links
+- **Categories:** Forms, Meeting Notes, Pokemon Resources, General Information
+- **Metadata:** Auto-generated (title, upload date, file type) and manual (description, category)
+- **Access Control:** Public documents vs. authenticated user documents
+- **File Management:** Active Storage with local file storage
+
+### 9.4 User Communication
+
+- **Email Templates:** Professional templates for notifications, reminders, updates
+- **Subscription Types:** Event notifications, donor updates, general announcements
+- **Personalization:** Addressed to user's name, relevant student information
+- **Unsubscribe Options:** Granular control over notification types
 
 ---
 
@@ -265,42 +387,58 @@ A **Markdown-powered static website** using:
 
 ### 10.1 User Engagement
 
-- **Target:** 90% of parents accessing schedule information monthly
-- **Measure:** Page views on schedule section
+- **Target:** 90% of parents creating user accounts and accessing schedule information monthly
+- **Measure:** User registration rates and login frequency analytics
 
 ### 10.2 Communication Effectiveness
 
 - **Target:** Reduce meeting attendance confusion by 80%
-- **Measure:** Parent feedback and meeting attendance consistency
+- **Measure:** Parent feedback surveys and meeting attendance consistency
+- **Email Metrics:** Open rates, click-through rates for email notifications
 
 ### 10.3 Resource Utilization
 
-- **Target:** 75% of club families accessing document repository
-- **Measure:** Document download/view statistics
+- **Target:** 75% of club families accessing document repository through authenticated accounts
+- **Measure:** Document download statistics and user engagement metrics
 
-### 10.4 Technical Performance
+### 10.4 Administrative Efficiency
 
-- **Target:** 99% uptime, <3 second load times
-- **Measure:** GitHub Pages analytics and performance monitoring
+- **Target:** Reduce content update time by 60% compared to manual processes
+- **Measure:** Time tracking for content creation and updates through admin interface
+
+### 10.5 Technical Performance
+
+- **Target:** 99% uptime, <3 second load times, secure user data management
+- **Measure:** Application monitoring, database performance metrics, security audit results
 
 ---
 
 ## 11. Risk Assessment
 
-### 12.1 Technical Risks
+### 11.1 Technical Risks
 
-- **Risk:** Client-side Markdown rendering performance issues
-- **Mitigation:** Implement caching and optimize content size
+- **Risk:** Database performance issues with file uploads and user growth
+- **Mitigation:** Implement database indexing, use cloud storage for files, monitor performance metrics
 
-### 12.2 Content Management Risks
+### 11.2 Security Risks
 
-- **Risk:** Complexity of Markdown editing for non-technical users
-- **Mitigation:** Create simple templates and clear documentation
+- **Risk:** User data breaches or unauthorized access to sensitive information
+- **Mitigation:** Follow Rails security best practices, regular security updates, role-based access control
 
-### 12.3 Accessibility Risks
+### 11.3 Content Management Risks
 
-- **Risk:** Bootstrap customization affecting accessibility
-- **Mitigation:** Regular accessibility testing and WCAG 2.2 compliance checks
+- **Risk:** Administrators accidentally deleting important content or breaking functionality
+- **Mitigation:** Implement soft deletes, regular database backups, admin training documentation
+
+### 11.4 Email Delivery Risks
+
+- **Risk:** Email notifications not being delivered due to SMTP configuration issues
+- **Mitigation:** Test email delivery in development environment, configure proper SMTP settings, implement email delivery monitoring
+
+### 11.5 Hosting and Deployment Risks
+
+- **Risk:** Application downtime during deployments or hosting platform issues
+- **Mitigation:** Use zero-downtime deployment strategies, choose reliable hosting provider, implement monitoring alerts
 
 ---
 
@@ -308,17 +446,27 @@ A **Markdown-powered static website** using:
 
 ### 12.1 Potential Enhancements
 
-- **Interactive Features:** Contact forms, RSVP functionality
-- **CMS Integration:** If content management becomes too complex
-- **Multi-language Support:** For diverse school community
-- **Progressive Web App:** For mobile app-like experience
+- **Interactive Features:** RSVP functionality for events, online permission slip submissions
+- **Advanced Communication:** SMS notifications, push notifications, in-app messaging
+- **Enhanced User Experience:** User dashboards, personalized content recommendations
+- **Reporting & Analytics:** Attendance tracking, engagement reports, donation analytics
+- **Mobile App:** Native mobile application using Rails API backend
+- **Integration:** School district systems integration, calendar application sync
 
-### 12.2 Migration Path
+### 12.2 Scalability Considerations
 
-- **Current Architecture:** Supports evolution to full web application
-- **Database Integration:** Can add backend if dynamic features needed
-- **API Development:** Possible future integration with school systems
+- **Database Optimization:** Query optimization, database sharding for larger user bases
+- **Caching Strategy:** Redis integration for session management and content caching
+- **CDN Integration:** Content delivery network for static assets and file downloads
+- **Microservices:** Potential separation of email service into independent microservice
+
+### 12.3 Technical Evolution
+
+- **API Development:** RESTful API for future mobile app or third-party integrations
+- **Real-time Features:** Action Cable implementation for live notifications
+- **Advanced Authentication:** Two-factor authentication, social login integration
+- **Backup & Recovery:** Automated backup systems and disaster recovery procedures
 
 ---
 
-*This PRD serves as the foundation for the Lake Elementary Pokemon Club website development and should be updated as requirements evolve during the implementation process.*
+*This PRD serves as the foundation for the Lake Elementary Pokemon Club Ruby on Rails web application development and should be updated as requirements evolve during the implementation process.*
