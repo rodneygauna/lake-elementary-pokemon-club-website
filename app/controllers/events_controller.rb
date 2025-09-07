@@ -1,4 +1,5 @@
 class EventsController < ApplicationController
+  before_action :require_authentication, except: [ :index, :show ]
   before_action :set_event, only: %i[ show edit update destroy ]
 
   # GET /events or /events.json
