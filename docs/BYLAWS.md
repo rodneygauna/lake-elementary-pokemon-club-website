@@ -1,7 +1,7 @@
 # Lake Elementary School Pokémon Club Bylaws
 
 **Effective Date:** September 7, 2025
-**Version:** 1.0
+**Version:** 1.1
 **Approved by:** Club Leadership
 
 ---
@@ -21,6 +21,10 @@ All members, volunteers, and participants in the Pokémon Club must adhere to th
 - **Vista School District** - All district-wide policies and regulations
 - **Lake Elementary School** - School-specific rules and guidelines
 - **Parent Teacher Association (PTA)** - PTA policies and expectations for school-sponsored activities
+
+### PTA Club Code of Conduct
+
+All club members and participants are expected to adhere to the [PTA's Club Code of Conduct](https://www.lakedolphins.org/pages/lake-pta-clubs-code-of-conduct), which emphasizes respect, responsibility, and safety in all school-related activities.
 
 ### Supplemental Nature of Club Bylaws
 
