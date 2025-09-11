@@ -1,0 +1,21 @@
+<h1>Pokemon Club Students</h1>
+
+<div class="row">
+  <% @students.each do |student| %>
+    <div class="col-md-4 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= student.initials %></h5>
+          <p class="card-text">
+            <strong>Favorite Pokemon:</strong> <%= student.favorite_pokemon %>
+          </p>
+          <%= link_to 'View', student, class: 'btn btn-primary btn-sm' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if current_user&.admin? %>
+  <%= link_to 'New Student', new_student_path, class: 'btn btn-success' %>
+<% end %>

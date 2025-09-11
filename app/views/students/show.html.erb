@@ -1,0 +1,81 @@
+<div class="row">
+  <div class="col-md-8">
+    <% if @can_view_details %>
+      <!-- Full information for linked parents and admins -->
+      <h1><%= @student.full_name %></h1>
+      <div class="card">
+        <div class="card-body">
+          <p><strong>Grade:</strong> <%= @student.grade %></p>
+          <p><strong>Class Number:</strong> <%= @student.class_number %></p>
+          <p><strong>Teacher:</strong> <%= @student.teacher_name %></p>
+          <p><strong>Favorite Pokemon:</strong> <%= @student.favorite_pokemon %></p>
+          <% if @student.notes.present? %>
+            <p><strong>Notes:</strong> <%= simple_format(@student.notes) %></p>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <%= link_to 'Edit', edit_student_path(@student), class: 'btn btn-primary' %>
+      </div>
+    <% else %>
+      <!-- Limited information for public -->
+      <h1><%= @student.initials %></h1>
+      <div class="card">
+        <div class="card-body">
+          <p><strong>Favorite Pokemon:</strong> <%= @student.favorite_pokemon %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if current_user&.admin? %>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5>Admin: Linked Parents</h5>
+        </div>
+        <div class="card-body">
+          <% if @linked_parents.any? %>
+            <% @linked_parents.each do |parent| %>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><%= parent.full_name %> (<%= parent.email_address %>)</span>
+                <%= link_to 'Unlink',
+                    user_student_path(parent.user_students.find_by(student: @student)),
+                    method: :delete,
+                    confirm: "Are you sure?",
+                    class: 'btn btn-sm btn-outline-danger' %>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="text-muted">No linked parents</p>
+          <% end %>
+
+          <hr>
+
+          <%= form_with model: UserStudent.new, local: true do |form| %>
+            <%= form.hidden_field :student_id, value: @student.id %>
+            <div class="mb-3">
+              <%= form.label :user_id, "Link Parent:", class: 'form-label' %>
+              <%= form.select :user_id,
+                  User.users.active.order(:last_name, :first_name).pluck(:email_address, :id),
+                  { prompt: "Select parent to link" },
+                  { class: 'form-select' } %>
+            </div>
+            <%= form.submit "Link Parent", class: 'btn btn-success btn-sm' %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <%= link_to 'Delete Student', @student, method: :delete,
+            confirm: "Are you sure?",
+            class: 'btn btn-danger' %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-3">
+  <%= link_to 'Back to Students', students_path, class: 'btn btn-secondary' %>
+</div>

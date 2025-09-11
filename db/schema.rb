@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_07_185041) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_07_195108) do
   create_table "events", force: :cascade do |t|
     t.string "title", null: false
     t.text "description"
@@ -43,6 +43,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_185041) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "students", force: :cascade do |t|
+    t.string "first_name"
+    t.string "middle_name"
+    t.string "last_name"
+    t.string "suffix_name"
+    t.string "grade"
+    t.string "class_number"
+    t.string "teacher_name"
+    t.string "favorite_pokemon"
+    t.text "notes"
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["grade"], name: "index_students_on_grade"
+    t.index ["last_name", "grade"], name: "index_students_on_last_name_and_grade"
+    t.index ["last_name"], name: "index_students_on_last_name"
+    t.index ["status", "grade"], name: "index_students_on_status_and_grade"
+    t.index ["status"], name: "index_students_on_status"
+  end
+
+  create_table "user_students", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_user_students_on_student_id"
+    t.index ["user_id", "student_id"], name: "index_user_students_on_user_id_and_student_id", unique: true
+    t.index ["user_id"], name: "index_user_students_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -60,4 +90,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_07_185041) do
   end
 
   add_foreign_key "sessions", "users"
+  add_foreign_key "user_students", "students"
+  add_foreign_key "user_students", "users"
 end

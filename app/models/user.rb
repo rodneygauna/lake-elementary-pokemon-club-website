@@ -11,10 +11,11 @@ class User < ApplicationRecord
   # ----- Associations -----
   has_secure_password
   has_many :sessions, dependent: :destroy
+  has_many :user_students, dependent: :destroy
+  has_many :students, through: :user_students
 
   # ---- Normalizations -----
   # Normalize email before validation
-  # (using the `normalizes` gem)
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   # ----- Callbacks -----

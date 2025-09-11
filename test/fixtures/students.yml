@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_name: MyString
+  middle_name: MyString
+  last_name: MyString
+  suffix_name: MyString
+  grade: MyString
+  class_number: MyString
+  teacher_name: MyString
+  favorite_pokemon: MyString
+  notes: MyText
+
+two:
+  first_name: MyString
+  middle_name: MyString
+  last_name: MyString
+  suffix_name: MyString
+  grade: MyString
+  class_number: MyString
+  teacher_name: MyString
+  favorite_pokemon: MyString
+  notes: MyText
