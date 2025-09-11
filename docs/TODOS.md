@@ -343,4 +343,3 @@ Based on the Product Requirements Document (PRD) v2.0
 - [ ] README with setup instructions
 - [ ] Admin user guide
 - [ ] Deployment documentation
-
