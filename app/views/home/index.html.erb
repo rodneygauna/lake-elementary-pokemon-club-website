@@ -1,0 +1,75 @@
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white py-5 mb-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="display-4 fw-bold mb-3">Welcome to Lake Elementary Pokemon Club!</h1>
+        <p class="lead mb-4">Join us for exciting Pokemon adventures, trading card tournaments, and fun activities for all Pokemon trainers!</p>
+        <div class="d-flex gap-3">
+          <%= link_to "View Events", events_path, class: "btn btn-light btn-lg" %>
+          <%= link_to "Meet Our Members", students_path, class: "btn btn-outline-light btn-lg" %>
+        </div>
+      </div>
+      <div class="col-lg-4 text-center">
+        <!-- Placeholder for Pokemon image/logo -->
+        <div class="placeholder-image bg-light rounded p-5" style="height: 200px;">
+          <i class="fas fa-star fs-1 text-warning"></i>
+          <p class="text-dark mt-3">Pokemon Logo Here</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Info Cards -->
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <i class="fas fa-calendar-alt fs-1 text-primary mb-3"></i>
+        <h5 class="card-title">Upcoming Events</h5>
+        <p class="card-text">Check out our latest meetings, tournaments, and special events.</p>
+        <%= link_to "View Events", events_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <i class="fas fa-users fs-1 text-success mb-3"></i>
+        <h5 class="card-title">Our Members</h5>
+        <p class="card-text">Meet the amazing Pokemon trainers in our club community.</p>
+        <%= link_to "Meet Members", students_path, class: "btn btn-success" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <i class="fas fa-gift fs-1 text-warning mb-3"></i>
+        <h5 class="card-title">Support Us</h5>
+        <p class="card-text">Learn about our generous donors and how to support the club.</p>
+        <a href="#" class="btn btn-warning">Coming Soon</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- About Section -->
+<div class="row">
+  <div class="col-lg-8 mx-auto text-center">
+    <h2 class="mb-4">About Our Pokemon Club</h2>
+    <p class="lead">
+      The Lake Elementary Pokemon Club is a community of young Pokemon trainers who come together
+      to share their love of Pokemon, participate in trading card games, and build lasting friendships.
+      Our club welcomes trainers of all skill levels!
+    </p>
+    <p>
+      We meet regularly for tournaments, trading sessions, and special events.
+      Whether you're just starting your Pokemon journey or you're a seasoned trainer,
+      you'll find a welcoming community here.
+    </p>
+  </div>
+</div>

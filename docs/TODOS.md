@@ -304,14 +304,14 @@ Based on the Product Requirements Document (PRD) v2.0
 
 ### Root Route and Basic Navigation
 
-- [ ] Set root route (probably to events or dashboard)
-- [ ] Basic navigation layout
+- [x] Set root route (home#index)
+- [x] Basic navigation layout
 - [ ] Footer with club information
 
 ### Home Page Implementation
 
-- [ ] Welcome message and club information
-- [ ] Quick links to main sections
+- [x] Welcome message and club information
+- [x] Quick links to main sections
 - [ ] Upcoming events display
 
 ---
