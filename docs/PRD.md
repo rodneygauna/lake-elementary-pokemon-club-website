@@ -3,16 +3,16 @@
 ## Lake Elementary School Pokemon Club Website
 
 **Project Name:** Lake Elementary Pokemon Club Website
-**Version:** 2.0
-**Date:** September 7, 2025
+**Version:** 2.1
+**Date:** September 12, 2025
 **Author:** Rodney Gauna
-**Status:** Planning Phase
+**Status:** Development Phase - Secure User Management Implemented
 
 ---
 
 ## 1. Executive Summary
 
-The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources. The application will feature user authentication, content management capabilities, email notifications, and robust data management through Active Record and Active Storage.
+The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources. The application features a secure user authentication system with admin-managed accounts, comprehensive content management capabilities, email notifications, and robust data management through Active Record and Active Storage. Enhanced security measures ensure that only authorized administrators can create user accounts, providing better control and safety for the school environment.
 
 ---
 
@@ -81,9 +81,16 @@ A **Ruby on Rails 8 web application** featuring:
 
 ### 4.3 Administrative Users
 
-- **Club Leader (Administrator):** Full CRUD access to all content, user management
-- **Assistant Leaders (Administrator):** Content management and site updates
-- **Future Contributors:** Additional staff or volunteers with guided admin access
+- **Club Leader (Administrator):** Full CRUD access to all content, exclusive user management and account creation
+- **Assistant Leaders (Administrator):** Content management, site updates, and user management capabilities
+- **Future Contributors:** Additional staff or volunteers with guided admin access and user management permissions
+
+### 4.4 User Account Management
+
+- **Security Model:** Admin-only user account creation for enhanced security
+- **Account Creation:** Administrators create accounts for parents/guardians with temporary passwords
+- **User Onboarding:** New users receive secure temporary credentials and must update their profile
+- **Profile Management:** Users can self-manage names, email, and password (role changes admin-only)
 
 ---
 
@@ -91,12 +98,13 @@ A **Ruby on Rails 8 web application** featuring:
 
 ### 5.1 User Authentication & Authorization
 
-- **REQ-1.1:** User registration and login system using Rails 8 authentication
+- **REQ-1.1:** Secure user authentication system using Rails 8 authentication (admin-managed accounts only)
 - **REQ-1.2:** Role-based access control (Administrator vs Normal User)
-- **REQ-1.3:** Administrator users have full CRUD access to all resources
+- **REQ-1.3:** Administrator users have full CRUD access to all resources including user management
 - **REQ-1.4:** Normal users have read-only access to public content
 - **REQ-1.5:** Password reset functionality via email
 - **REQ-1.6:** User profile management with email subscription preferences
+- **REQ-1.7:** Enhanced security model with admin-only user creation and temporary password assignment
 
 ### 5.2 Student Management
 
@@ -360,6 +368,15 @@ A **Ruby on Rails 8 web application** featuring:
 - **Content Types:** Regular meetings, special events, cancellations, announcements
 - **Workflow:** Administrators create/edit events, users receive email notifications
 
+### 9.2 User Account Management Workflow
+
+- **Account Creation:** Administrators create user accounts via secure admin interface (`/admin/users`)
+- **Credential Distribution:** System generates temporary passwords, administrators share securely with parents
+- **User Onboarding:** Parents log in with temporary credentials and update their profile information
+- **Profile Management:** Users access self-service profile management at `/user` for name, email, and password updates
+- **Security:** Role changes and account deletions restricted to administrators only
+- **Administrative Controls:** Comprehensive user management with safety features (admins cannot delete themselves)
+
 ### 9.2 Donor Management
 
 - **Individual Donors:** Name, donation amount/type, optional photo upload
@@ -387,8 +404,8 @@ A **Ruby on Rails 8 web application** featuring:
 
 ### 10.1 User Engagement
 
-- **Target:** 90% of parents creating user accounts and accessing schedule information monthly
-- **Measure:** User registration rates and login frequency analytics
+- **Target:** 90% of admin-created parent accounts actively accessing schedule information monthly
+- **Measure:** User login frequency analytics and profile completion rates
 
 ### 10.2 Communication Effectiveness
 
