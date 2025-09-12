@@ -1,10 +1,50 @@
 class EventsController < ApplicationController
-  before_action :require_authentication, except: [ :index, :show ]
+  allow_unauthenticated_access only: [ :index, :show ]
   before_action :set_event, only: %i[ show edit update destroy ]
 
   # GET /events or /events.json
   def index
-    @events = Event.all
+    # Filter events based on user role
+    base_events = current_user&.admin? ? Event.visible_to_admin : Event.visible_to_public
+
+    # Apply filters
+    @events = base_events.ordered
+
+    # Hide cancelled events by default unless explicitly requested
+    unless params[:show_cancelled] == "true"
+      @events = @events.where.not(status: "canceled")
+    end
+
+    # Filter by status if specified (but not cancelled, handled above)
+    if params[:status].present? && params[:status] != "canceled"
+      @events = @events.where(status: params[:status])
+    end
+
+    # Filter by type (special/regular) if specified
+    if params[:type] == "special"
+      @events = @events.special
+    elsif params[:type] == "regular"
+      @events = @events.regular
+    end
+
+    # Default view mode (calendar or list)
+    @view_mode = params[:view] || "calendar"
+
+    # For calendar view, prepare data for FullCalendar
+    if @view_mode == "calendar"
+      @calendar_events = @events.map do |event|
+        {
+          id: event.id,
+          title: event.title,
+          starts_at: event.starts_at.iso8601,
+          ends_at: event.ends_at.iso8601,
+          status: event.status,
+          special: event.special?,
+          description: event.description,
+          venue: event.venue
+        }
+      end
+    end
   end
 
   # GET /events/1 or /events/1.json
@@ -14,6 +54,12 @@ class EventsController < ApplicationController
   # GET /events/new
   def new
     @event = Event.new
+    # Pre-populate with default school address
+    @event.venue = "Lake Elementary School"
+    @event.address1 = "4950 Lake Blvd"
+    @event.city = "Oceanside"
+    @event.state = "CA"
+    @event.zipcode = "92056"
   end
 
   # GET /events/1/edit
@@ -66,6 +112,6 @@ class EventsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def event_params
-      params.expect(event: [ :title, :description, :starts_at, :ends_at, :time_zone, :venue, :address1, :address2, :city, :state, :zipcode, :status ])
+      params.expect(event: [ :title, :description, :starts_at, :ends_at, :time_zone, :venue, :address1, :address2, :city, :state, :zipcode, :status, :special ])
     end
 end

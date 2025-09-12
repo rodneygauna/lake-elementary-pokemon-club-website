@@ -223,56 +223,140 @@ events_data = [
     description: "Join us for our regular weekly meeting! We'll have trading card battles, discussions about the latest Pokemon episodes, and fun activities for all trainers.",
     starts_at: 1.day.from_now.change(hour: 15, min: 30),
     ends_at: 1.day.from_now.change(hour: 17, min: 0),
-    venue: "Lake Elementary School - Room 205"
+    venue: "Lake Elementary School - Room 205",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: false
   },
   {
     title: "Pokemon Trading Card Tournament",
     description: "Monthly tournament for all skill levels! Bring your best deck and compete for amazing prizes. Beginners welcome - we'll help you learn!",
     starts_at: 1.week.from_now.change(hour: 10, min: 0),
     ends_at: 1.week.from_now.change(hour: 14, min: 0),
-    venue: "Lake Elementary School - Gymnasium"
+    venue: "Lake Elementary School - Gymnasium",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: true
   },
   {
     title: "Pokemon Movie Night",
     description: "Come watch Pokemon: The Rise of Darkrai with fellow trainers! Popcorn and drinks provided. Don't forget to bring your favorite Pokemon plushie!",
     starts_at: 2.weeks.from_now.change(hour: 18, min: 0),
     ends_at: 2.weeks.from_now.change(hour: 20, min: 30),
-    venue: "Lake Elementary School - Auditorium"
+    venue: "Lake Elementary School - Auditorium",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: true
   },
   {
     title: "Pokemon Art & Craft Workshop",
     description: "Create your own Pokemon artwork! We'll be making Pokeball crafts, drawing our favorite Pokemon, and creating custom trainer badges.",
     starts_at: 3.weeks.from_now.change(hour: 14, min: 0),
     ends_at: 3.weeks.from_now.change(hour: 16, min: 0),
-    venue: "Lake Elementary School - Art Room"
+    venue: "Lake Elementary School - Art Room",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: false
   },
   {
     title: "Beginner's Pokemon Card Workshop",
     description: "New to Pokemon cards? This workshop is perfect for you! Learn the basics of the game, deck building, and get a free starter deck to take home.",
     starts_at: 1.month.from_now.change(hour: 15, min: 0),
     ends_at: 1.month.from_now.change(hour: 17, min: 0),
-    venue: "Lake Elementary School - Library"
+    venue: "Lake Elementary School - Library",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: false
   },
   {
     title: "Pokemon Trivia Challenge",
     description: "Test your Pokemon knowledge in our ultimate trivia challenge! Teams of 3-4 trainers will compete across multiple categories. Prizes for top teams!",
     starts_at: 5.weeks.from_now.change(hour: 16, min: 0),
     ends_at: 5.weeks.from_now.change(hour: 18, min: 0),
-    venue: "Lake Elementary School - Cafeteria"
+    venue: "Lake Elementary School - Cafeteria",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: true
   },
   {
     title: "Show and Tell: My Favorite Pokemon",
     description: "Bring your favorite Pokemon card, toy, or drawing to share with the club! Everyone gets a participation sticker and we'll vote on some fun categories.",
     starts_at: 6.weeks.from_now.change(hour: 15, min: 30),
     ends_at: 6.weeks.from_now.change(hour: 16, min: 30),
-    venue: "Lake Elementary School - Room 205"
+    venue: "Lake Elementary School - Room 205",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: false
   },
   {
     title: "End of Semester Pokemon Party",
     description: "Celebrate the end of our semester with games, prizes, snacks, and a special surprise guest! All club members and their families are invited.",
     starts_at: 2.months.from_now.change(hour: 17, min: 0),
     ends_at: 2.months.from_now.change(hour: 19, min: 0),
-    venue: "Lake Elementary School - Gymnasium"
+    venue: "Lake Elementary School - Gymnasium",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "published",
+    special: true
+  },
+  {
+    title: "DRAFT: Planning Next Month's Activities",
+    description: "Internal planning meeting for club coordinators to discuss upcoming activities and events. This is a draft event to test admin visibility.",
+    starts_at: 3.days.from_now.change(hour: 19, min: 0),
+    ends_at: 3.days.from_now.change(hour: 20, min: 0),
+    venue: "Staff Room",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "draft",
+    special: false
+  },
+  {
+    title: "CANCELLED: Outdoor Pokemon Hunt",
+    description: "Unfortunately cancelled due to weather concerns. We'll reschedule for a better day!",
+    starts_at: 4.days.from_now.change(hour: 14, min: 0),
+    ends_at: 4.days.from_now.change(hour: 16, min: 0),
+    venue: "School Playground",
+    address1: "123 Elementary Lane",
+    city: "Lakewood",
+    state: "CA",
+    zipcode: "90210",
+    time_zone: "America/Los_Angeles",
+    status: "canceled",
+    special: true
   }
 ]
 
@@ -282,7 +366,13 @@ events = events_data.map do |event_data|
     event.starts_at = event_data[:starts_at]
     event.ends_at = event_data[:ends_at]
     event.venue = event_data[:venue]
-    event.status = "published"
+    event.address1 = event_data[:address1]
+    event.city = event_data[:city]
+    event.state = event_data[:state]
+    event.zipcode = event_data[:zipcode]
+    event.time_zone = event_data[:time_zone]
+    event.status = event_data[:status]
+    event.special = event_data[:special]
   end
 end
 

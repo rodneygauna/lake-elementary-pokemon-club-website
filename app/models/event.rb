@@ -12,7 +12,7 @@ class Event < ApplicationRecord
   validate  :ends_after_starts
 
   # ----- Callbacks -----
-  before_validation :set_default_time_zone
+  before_validation :set_default_time_zone, :set_default_address
 
   # ----- Scopes -----
   # Ordering
@@ -25,6 +25,19 @@ class Event < ApplicationRecord
   scope :starting_soon,   ->(hours = 24) { where(starts_at: Time.current..(Time.current + hours.hours)) }
   scope :overlapping,     ->(window_start, window_end) { where("starts_at < ? AND ends_at > ?", window_end, window_start) }
   scope :starting_between, ->(window_start, window_end) { where(starts_at: window_start..window_end) }
+
+  # Status-based
+  scope :draft,     -> { where(status: "draft") }
+  scope :published, -> { where(status: "published") }
+  scope :canceled,  -> { where(status: "canceled") }
+
+  # Special event filtering
+  scope :special,   -> { where(special: true) }
+  scope :regular,   -> { where(special: false) }
+
+  # Combined scopes for public viewing
+  scope :visible_to_public, -> { where(status: [ "published", "canceled" ]) }
+  scope :visible_to_admin,  -> { all }
 
   # ---- Time-based calendar scopes (TZ-aware overlap checks) ----
 
@@ -86,5 +99,14 @@ class Event < ApplicationRecord
 
   def set_default_time_zone
     self.time_zone ||= "America/Los_Angeles"
+  end
+
+  def set_default_address
+    # Set default venue and address for Lake Elementary School in Oceanside, CA
+    self.venue ||= "Lake Elementary School"
+    self.address1 ||= "4950 Lake Blvd"
+    self.city ||= "Oceanside"
+    self.state ||= "CA"
+    self.zipcode ||= "92056"
   end
 end
