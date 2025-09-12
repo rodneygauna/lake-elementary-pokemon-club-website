@@ -298,8 +298,10 @@ Based on the Product Requirements Document (PRD) v2.0
 ### Database Seeds
 
 - [x] Admin user seed data
-- [ ] Sample events seed data
-- [ ] Sample students seed data
+- [x] Sample events seed data (8 events with varied activities)
+- [x] Sample students seed data (11 students with Pokemon-themed data)
+- [x] Sample parent users seed data (8 users linked to students)
+- [x] User-student relationships seed data (12 relationships)
 - [ ] Sample donors seed data
 
 ### Root Route and Basic Navigation
