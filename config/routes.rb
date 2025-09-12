@@ -7,6 +7,14 @@ Rails.application.routes.draw do
     resources :user_students, only: [ :create ]
   end
   resources :user_students, only: [ :destroy ]
+
+  # User profile management (users can edit their own profile)
+  resource :user, only: [ :show, :edit, :update ]
+
+  # Admin user management
+  namespace :admin do
+    resources :users
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

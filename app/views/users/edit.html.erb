@@ -1,0 +1,69 @@
+<div class="row">
+  <div class="col-md-8 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        <h2>Edit My Profile</h2>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @user, url: user_path, local: true do |form| %>
+          <% if @user.errors.any? %>
+            <div class="alert alert-danger">
+              <h4><%= pluralize(@user.errors.count, "error") %> prohibited your profile from being saved:</h4>
+              <ul class="mb-0">
+                <% @user.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= form.label :first_name, class: "form-label" %>
+              <%= form.text_field :first_name, class: "form-control" %>
+            </div>
+            <div class="col-md-6 mb-3">
+              <%= form.label :last_name, class: "form-label" %>
+              <%= form.text_field :last_name, class: "form-control" %>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :email_address, "Email Address", class: "form-label" %>
+            <%= form.email_field :email_address, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Current Role</label>
+            <div class="form-control-plaintext">
+              <span class="badge bg-<%= @user.admin? ? 'warning' : 'secondary' %>">
+                <%= @user.role.humanize %>
+              </span>
+              <small class="text-muted ms-2">Contact an administrator to change your role</small>
+            </div>
+          </div>
+
+          <hr>
+
+          <h5>Change Password</h5>
+          <p class="text-muted">Leave blank to keep current password</p>
+
+          <div class="mb-3">
+            <%= form.label :password, "New Password", class: "form-label" %>
+            <%= form.password_field :password, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :password_confirmation, "Confirm New Password", class: "form-label" %>
+            <%= form.password_field :password_confirmation, class: "form-control" %>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <%= link_to "Cancel", user_path, class: "btn btn-secondary" %>
+            <%= form.submit "Update Profile", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

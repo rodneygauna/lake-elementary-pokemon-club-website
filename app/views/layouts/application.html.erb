@@ -62,9 +62,11 @@
                   Welcome, <%= current_user&.email_address || "User" %>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Profile</a></li>
+                  <li><%= link_to "Profile", user_path, class: "dropdown-item" %></li>
                   <% if current_user.respond_to?(:admin?) && current_user.admin? %>
-                    <li><a class="dropdown-item" href="#">Admin Panel</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><%= link_to "User Management", admin_users_path, class: "dropdown-item" %></li>
+                    <li><%= link_to "Admin Panel", "#", class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
                   <% end %>
                   <li>
@@ -76,9 +78,6 @@
               <!-- User is not logged in -->
               <li class="nav-item">
                 <%= link_to "Login", new_session_path, class: "nav-link" %>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Sign Up</a>
               </li>
             <% end %>
           </ul>
