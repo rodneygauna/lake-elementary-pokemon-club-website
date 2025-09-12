@@ -123,6 +123,23 @@ Events are timezone-aware:
 - CSRF protection and secure password handling
 - Modern browser security headers
 
+## Donor Management System
+
+### Donor Types & Features
+
+- **Individual Donors**: Name, donation amount/type, optional photo upload
+- **Business Donors**: Company name, logo upload, contribution details, website link
+- **Privacy Controls**: Donor visibility preferences in admin interface
+- **Recognition**: Automated display on public donor wall with carousel for business logos
+
+### Donor Model Requirements
+
+- Support for both individual and business donors
+- Donation tracking with amounts and types
+- Photo/logo upload using Active Storage
+- Privacy settings for donor visibility preferences
+- Public donor recognition page with carousel display
+
 ## Future Models & Features (Per PRD)
 
 Planned models to implement using Rails scaffolding:
