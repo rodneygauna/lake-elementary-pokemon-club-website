@@ -1,0 +1,75 @@
+<%#
+  Generic confirmation modal that works with JavaScript data attributes
+
+  Usage with data attributes on buttons:
+  data: {
+    "bs-toggle": "modal",
+    "bs-target": "#confirmationModal",
+    "confirm-title": "Delete Student",
+    "confirm-message": "Are you sure you want to delete John Doe?",
+    "confirm-action": "Delete Student"
+  }
+%>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="confirmationModalLabel">
+          <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+          <span id="modal-title-text">Confirm Action</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-0" id="modal-message-text">Are you sure you want to perform this action?</p>
+      </div>
+
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x me-1"></i>Cancel
+        </button>
+        <button type="button" id="modal-confirm-btn" class="btn btn-danger">
+          <i class="bi bi-trash me-1"></i>
+          <span id="modal-action-text">Confirm</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const confirmationModal = document.getElementById('confirmationModal');
+  const modalTitleText = document.getElementById('modal-title-text');
+  const modalMessageText = document.getElementById('modal-message-text');
+  const modalActionText = document.getElementById('modal-action-text');
+  const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+
+  let triggerElement = null;
+
+  // Listen for modal show event
+  confirmationModal.addEventListener('show.bs.modal', function(event) {
+    triggerElement = event.relatedTarget; // Button that triggered the modal
+
+    // Extract data attributes
+    const title = triggerElement.dataset.confirmTitle || 'Confirm Action';
+    const message = triggerElement.dataset.confirmMessage || 'Are you sure you want to perform this action?';
+    const action = triggerElement.dataset.confirmAction || 'Confirm';
+
+    // Update modal content
+    modalTitleText.textContent = title;
+    modalMessageText.textContent = message;
+    modalActionText.textContent = action;
+  });
+
+  // Handle confirm button click
+  modalConfirmBtn.addEventListener('click', function() {
+    if (triggerElement) {
+      // Submit the form that contains the trigger element
+      triggerElement.closest('form').submit();
+    }
+  });
+});
+</script>

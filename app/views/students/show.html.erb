@@ -1,81 +1,236 @@
-<div class="row">
-  <div class="col-md-8">
-    <% if @can_view_details %>
-      <!-- Full information for linked parents and admins -->
-      <h1><%= @student.full_name %></h1>
-      <div class="card">
+<% content_for :title, @can_view_details ? @student.full_name : @student.initials %>
+
+<div class="container py-4">
+  <!-- Back Navigation -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <%= link_to students_path, class: "btn btn-link ps-0 text-decoration-none d-flex align-items-center gap-2" do %>
+        <i class="bi bi-arrow-left"></i> Back to Students
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Student Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <p><strong>Grade:</strong> <%= @student.grade %></p>
-          <p><strong>Class Number:</strong> <%= @student.class_number %></p>
-          <p><strong>Teacher:</strong> <%= @student.teacher_name %></p>
-          <p><strong>Favorite Pokemon:</strong> <%= @student.favorite_pokemon %></p>
-          <% if @student.notes.present? %>
-            <p><strong>Notes:</strong> <%= simple_format(@student.notes) %></p>
-          <% end %>
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+            <div class="flex-grow-1">
+              <!-- Name and Status Badges -->
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                <h1 class="mb-0 text-primary">
+                  <i class="bi bi-mortarboard-fill me-2"></i>
+                  <%= @can_view_details ? @student.full_name : @student.initials %>
+                </h1>
+
+                <!-- Status Badge -->
+                <% if @student.status == "active" %>
+                  <span class="badge bg-success fs-6">
+                    <i class="bi bi-check-circle me-1"></i>Active Member
+                  </span>
+                <% else %>
+                  <span class="badge bg-warning fs-6">
+                    <i class="bi bi-pause-circle me-1"></i><%= @student.status.titleize %>
+                  </span>
+                <% end %>
+
+                <!-- Grade Badge -->
+                <span class="badge fs-6" style="background-color: #FFD700; color: #000;">
+                  <i class="bi bi-trophy me-1"></i>Grade <%= @student.grade.titleize %>
+                </span>
+              </div>
+
+              <!-- Privacy Notice for Limited View -->
+              <% unless @can_view_details %>
+                <div class="alert alert-info d-flex align-items-center">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <span>Limited information shown for privacy protection</span>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Actions -->
+            <% if @can_view_details %>
+              <div class="d-flex flex-column flex-sm-row gap-2">
+                <% if admin? || (current_user && @student.users.include?(current_user)) %>
+                  <%= link_to edit_student_path(@student), class: "btn btn-outline-primary d-flex align-items-center gap-2" do %>
+                    <i class="bi bi-pencil"></i> Edit Student
+                  <% end %>
+                <% end %>
+
+                <% if admin? %>
+                  <%= form_with model: @student, method: :delete, local: true, class: "d-inline" do |form| %>
+                    <button type="button"
+                            class="btn btn-outline-danger d-flex align-items-center gap-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmationModal"
+                            data-confirm-title="Delete Student"
+                            data-confirm-message="Are you sure you want to delete <%= @student.display_name_for(current_user) %>? This action cannot be undone."
+                            data-confirm-action="Delete Student">
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="mt-3">
-        <%= link_to 'Edit', edit_student_path(@student), class: 'btn btn-primary' %>
-      </div>
-    <% else %>
-      <!-- Limited information for public -->
-      <h1><%= @student.initials %></h1>
-      <div class="card">
+  <!-- Student Details -->
+  <div class="row g-4">
+    <!-- Left Column - Student Information -->
+    <div class="col-12 col-lg-8">
+      <div class="card border-0 shadow-sm h-100">
         <div class="card-body">
-          <p><strong>Favorite Pokemon:</strong> <%= @student.favorite_pokemon %></p>
+          <h5 class="card-title d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-person-badge text-primary"></i>
+            Student Information
+          </h5>
+
+          <div class="row g-3">
+            <!-- Favorite Pokémon - Always Visible -->
+            <div class="col-12">
+              <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                <h6 class="text-muted mb-1">
+                  <i class="bi bi-star me-1"></i>Favorite Pokémon
+                </h6>
+                <div class="fw-bold text-primary fs-5">
+                  <%= @student.favorite_pokemon %>
+                </div>
+              </div>
+            </div>
+
+            <% if @can_view_details %>
+              <!-- Grade Information -->
+              <div class="col-12 col-md-6">
+                <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                  <h6 class="text-muted mb-1">
+                    <i class="bi bi-trophy me-1"></i>Grade Level
+                  </h6>
+                  <div class="fw-bold text-primary">
+                    <%= @student.grade.titleize %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Class Information -->
+              <% if @student.class_number.present? %>
+                <div class="col-12 col-md-6">
+                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                    <h6 class="text-muted mb-1">
+                      <i class="bi bi-door-open me-1"></i>Class Number
+                    </h6>
+                    <div class="fw-bold text-primary">
+                      <%= @student.class_number %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Teacher Information -->
+              <% if @student.teacher_name.present? %>
+                <div class="col-12">
+                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                    <h6 class="text-muted mb-1">
+                      <i class="bi bi-person-check me-1"></i>Teacher
+                    </h6>
+                    <div class="fw-bold text-primary">
+                      <%= @student.teacher_name %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- Notes -->
+              <% if @student.notes.present? %>
+                <div class="col-12">
+                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                    <h6 class="text-muted mb-1">
+                      <i class="bi bi-journal-text me-1"></i>Notes
+                    </h6>
+                    <div class="text-dark">
+                      <%= simple_format(@student.notes) %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Admin Panel -->
+    <% if admin? %>
+      <div class="col-12 col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="card-title mb-0 d-flex align-items-center gap-2">
+              <i class="bi bi-shield-check"></i>
+              Admin Controls
+            </h5>
+          </div>
+          <div class="card-body">
+            <!-- Linked Parents Section -->
+            <h6 class="mb-3 d-flex align-items-center gap-2">
+              <i class="bi bi-people text-primary"></i>
+              Linked Parents
+            </h6>
+
+            <% if @linked_parents.any? %>
+              <div class="mb-3">
+                <% @linked_parents.each do |parent| %>
+                  <div class="d-flex justify-content-between align-items-start p-2 border rounded mb-2">
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold"><%= parent.full_name %></div>
+                      <small class="text-muted"><%= parent.email_address %></small>
+                    </div>
+                    <%= form_with model: parent.user_students.find_by(student: @student), method: :delete, local: true, class: "d-inline ms-2" do |form| %>
+                      <button type="button"
+                              class="btn btn-sm btn-outline-danger"
+                              data-bs-toggle="modal"
+                              data-bs-target="#confirmationModal"
+                              data-confirm-title="Unlink Parent"
+                              data-confirm-message="Are you sure you want to unlink <%= parent.full_name %> from this student?"
+                              data-confirm-action="Unlink">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <p class="text-muted fst-italic mb-3">No linked parents</p>
+            <% end %>
+
+            <hr>
+
+            <!-- Link New Parent Form -->
+            <h6 class="mb-3 d-flex align-items-center gap-2">
+              <i class="bi bi-person-plus text-success"></i>
+              Link New Parent
+            </h6>
+
+            <%= form_with model: [@student, UserStudent.new], local: true do |form| %>
+              <%= form.hidden_field :student_id, value: @student.id %>
+              <div class="mb-3">
+                <%= form.label :user_id, "Select Parent:", class: 'form-label' %>
+                <%= form.select :user_id,
+                    User.users.active.order(:last_name, :first_name).pluck(:email_address, :id),
+                    { prompt: "Choose a parent to link..." },
+                    { class: 'form-select' } %>
+              </div>
+              <%= form.submit "Link Parent", class: 'btn btn-success btn-sm w-100' %>
+            <% end %>
+          </div>
         </div>
       </div>
     <% end %>
   </div>
-
-  <% if current_user&.admin? %>
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5>Admin: Linked Parents</h5>
-        </div>
-        <div class="card-body">
-          <% if @linked_parents.any? %>
-            <% @linked_parents.each do |parent| %>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span><%= parent.full_name %> (<%= parent.email_address %>)</span>
-                <%= link_to 'Unlink',
-                    user_student_path(parent.user_students.find_by(student: @student)),
-                    method: :delete,
-                    confirm: "Are you sure?",
-                    class: 'btn btn-sm btn-outline-danger' %>
-              </div>
-            <% end %>
-          <% else %>
-            <p class="text-muted">No linked parents</p>
-          <% end %>
-
-          <hr>
-
-          <%= form_with model: UserStudent.new, local: true do |form| %>
-            <%= form.hidden_field :student_id, value: @student.id %>
-            <div class="mb-3">
-              <%= form.label :user_id, "Link Parent:", class: 'form-label' %>
-              <%= form.select :user_id,
-                  User.users.active.order(:last_name, :first_name).pluck(:email_address, :id),
-                  { prompt: "Select parent to link" },
-                  { class: 'form-select' } %>
-            </div>
-            <%= form.submit "Link Parent", class: 'btn btn-success btn-sm' %>
-          <% end %>
-        </div>
-      </div>
-
-      <div class="mt-3">
-        <%= link_to 'Delete Student', @student, method: :delete,
-            confirm: "Are you sure?",
-            class: 'btn btn-danger' %>
-      </div>
-    </div>
-  <% end %>
 </div>
 
-<div class="mt-3">
-  <%= link_to 'Back to Students', students_path, class: 'btn btn-secondary' %>
-</div>
+<%= render "shared/generic_confirmation_modal" %>

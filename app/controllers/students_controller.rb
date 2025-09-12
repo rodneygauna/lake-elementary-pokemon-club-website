@@ -88,9 +88,4 @@ class StudentsController < ApplicationController
         redirect_to students_path, alert: "You do not have permission to perform this action."
       end
     end
-
-    # Check if the current user is an admin
-    def admin?
-      current_user&.admin?
-    end
 end
