@@ -1,58 +1,167 @@
-<div class="row">
-  <div class="col-md-8 mx-auto">
-    <div class="card">
-      <div class="card-header">
-        <h2>Create New User</h2>
+<% content_for :title, "Create New User" %>
+
+<!-- Breadcrumb Navigation -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Home", root_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item">
+            <%= link_to "User Management", admin_users_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Create New User</li>
+        </ol>
+      </nav>
+
+      <!-- Action Buttons (Before Header) -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <%= link_to admin_users_path, class: "btn btn-outline-secondary me-2" do %>
+            <i class="fas fa-arrow-left me-1"></i>Back to User Management
+          <% end %>
+        </div>
       </div>
-      <div class="card-body">
-        <%= form_with model: [:admin, @user], local: true do |form| %>
-          <% if @user.errors.any? %>
-            <div class="alert alert-danger">
-              <h4><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h4>
-              <ul class="mb-0">
-                <% @user.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
+
+      <!-- Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-user-plus me-2"></i>
+              <h1 class="h4 mb-0">Create New User</h1>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            Create a new user account with access to the Pokémon Club website.
+          </p>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <%= form_with model: [:admin, @user], local: true do |form| %>
+            <% if @user.errors.any? %>
+              <div class="alert alert-danger" role="alert">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  <h5 class="alert-heading mb-0">Please correct the following errors:</h5>
+                </div>
+                <hr>
+                <ul class="mb-0">
+                  <% @user.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <!-- Personal Information Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h5 class="text-dark border-bottom pb-2 mb-3">
+                  <i class="fas fa-user me-2"></i>Personal Information
+                </h5>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <%= form.label :first_name, class: "form-label required" do %>
+                  <i class="fas fa-user me-1"></i>First Name
                 <% end %>
-              </ul>
+                <%= form.text_field :first_name,
+                    class: "form-control #{'is-invalid' if @user.errors[:first_name].any?}",
+                    placeholder: "Enter first name",
+                    required: true %>
+                <% if @user.errors[:first_name].any? %>
+                  <div class="invalid-feedback">
+                    <%= @user.errors[:first_name].first %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="col-md-6 mb-3">
+                <%= form.label :last_name, class: "form-label required" do %>
+                  <i class="fas fa-user me-1"></i>Last Name
+                <% end %>
+                <%= form.text_field :last_name,
+                    class: "form-control #{'is-invalid' if @user.errors[:last_name].any?}",
+                    placeholder: "Enter last name",
+                    required: true %>
+                <% if @user.errors[:last_name].any? %>
+                  <div class="invalid-feedback">
+                    <%= @user.errors[:last_name].first %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Account Information Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h5 class="text-dark border-bottom pb-2 mb-3">
+                  <i class="fas fa-cog me-2"></i>Account Information
+                </h5>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <%= form.label :email_address, class: "form-label required" do %>
+                  <i class="fas fa-envelope me-1"></i>Email Address
+                <% end %>
+                <%= form.email_field :email_address,
+                    class: "form-control #{'is-invalid' if @user.errors[:email_address].any?}",
+                    placeholder: "Enter email address",
+                    required: true %>
+                <% if @user.errors[:email_address].any? %>
+                  <div class="invalid-feedback">
+                    <%= @user.errors[:email_address].first %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="col-md-6 mb-3">
+                <%= form.label :role, class: "form-label required" do %>
+                  <i class="fas fa-shield-alt me-1"></i>User Role
+                <% end %>
+                <%= form.select :role,
+                                options_for_select([['User', 'user'], ['Administrator', 'admin']], @user.role),
+                                { prompt: 'Select a role' },
+                                { class: "form-select #{'is-invalid' if @user.errors[:role].any?}",
+                                  required: true } %>
+                <% if @user.errors[:role].any? %>
+                  <div class="invalid-feedback">
+                    <%= @user.errors[:role].first %>
+                  </div>
+                <% end %>
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Administrators have full access to manage the website.
+                </div>
+              </div>
+            </div>
+
+            <!-- Important Notice -->
+            <div class="alert alert-info" role="alert">
+              <div class="d-flex align-items-start">
+                <i class="fas fa-info-circle me-2 mt-1"></i>
+                <div>
+                  <h6 class="alert-heading">Password Information</h6>
+                  <p class="mb-0">A temporary password will be automatically generated for this user. They will need to change it on their first login for security purposes.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-between pt-3 border-top">
+              <%= link_to admin_users_path, class: "btn btn-outline-secondary" do %>
+                <i class="fas fa-times me-2"></i>Cancel
+              <% end %>
+              <%= form.submit "Create User", class: "btn btn-success" %>
             </div>
           <% end %>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <%= form.label :first_name, class: "form-label" %>
-              <%= form.text_field :first_name, class: "form-control" %>
-            </div>
-            <div class="col-md-6 mb-3">
-              <%= form.label :last_name, class: "form-label" %>
-              <%= form.text_field :last_name, class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <%= form.label :email_address, class: "form-label" %>
-            <%= form.email_field :email_address, class: "form-control" %>
-          </div>
-
-          <div class="mb-3">
-            <%= form.label :role, class: "form-label" %>
-            <%= form.select :role,
-                            options_for_select([['User', 'user'], ['Admin', 'admin']], @user.role),
-                            { prompt: 'Select a role' },
-                            { class: "form-select" } %>
-          </div>
-
-          <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i>
-            <strong>Note:</strong> A temporary password will be automatically generated for this user.
-            They will need to change it on their first login.
-          </div>
-
-          <div class="d-flex justify-content-between">
-            <%= link_to "Cancel", admin_users_path, class: "btn btn-secondary" %>
-            <%= form.submit "Create User", class: "btn btn-primary" %>
-          </div>
-        <% end %>
+        </div>
       </div>
-    </div>
-  </div>
-</div>

@@ -1,57 +1,169 @@
-<div class="row">
-  <div class="col-12">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>User Management</h1>
-      <%= link_to "Create New User", new_admin_user_path, class: "btn btn-primary" %>
-    </div>
+<% content_for :title, "User Management" %>
 
-    <div class="card">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @users.each do |user| %>
-                <tr>
-                  <td>
-                    <%= user.full_name %>
-                    <% if user == current_user %>
-                      <span class="badge bg-info ms-2">You</span>
-                    <% end %>
-                  </td>
-                  <td><%= user.email_address %></td>
-                  <td>
-                    <span class="badge bg-<%= user.admin? ? 'warning' : 'secondary' %>">
-                      <%= user.role.humanize %>
-                    </span>
-                  </td>
-                  <td><%= user.created_at.strftime("%B %d, %Y") %></td>
-                  <td>
-                    <%= link_to "View", admin_user_path(user), class: "btn btn-sm btn-outline-primary" %>
-                    <%= link_to "Edit", edit_admin_user_path(user), class: "btn btn-sm btn-outline-warning" %>
-                    <% unless user == current_user %>
-                      <%= link_to "Delete", admin_user_path(user),
-                                  method: :delete,
-                                  data: {
-                                    confirm: "Are you sure you want to delete #{user.email_address}?"
-                                  },
-                                  class: "btn btn-sm btn-outline-danger" %>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
+<!-- Breadcrumb Navigation -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Home", root_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">User Management</li>
+        </ol>
+      </nav>
+
+      <!-- Action Buttons (Before Header) -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <%= link_to root_path, class: "btn btn-outline-secondary me-2" do %>
+            <i class="fas fa-arrow-left me-1"></i>Back to Home
+          <% end %>
+        </div>
+        <div>
+          <%= link_to new_admin_user_path, class: "btn btn-success" do %>
+            <i class="fas fa-plus me-2"></i>Create New User
+          <% end %>
         </div>
       </div>
+
+      <!-- Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-users-cog me-2"></i>
+              <h1 class="h4 mb-0">User Management</h1>
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-user me-1"></i>
+                <%= pluralize(@users.count, 'User') %>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            Manage user accounts and permissions for the Pokémon Club website.
+          </p>
+        </div>
+      </div>
+
+      <!-- Statistics Dashboard -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h6 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-chart-bar me-2"></i>User Statistics
+          </h6>
+          <div class="row text-center">
+            <div class="col-md-4 col-6 mb-3">
+              <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+                <i class="fas fa-users fa-2x text-dark mb-2"></i>
+                <div class="fw-bold text-dark fs-4"><%= @users.count %></div>
+                <small class="text-muted">Total Users</small>
+              </div>
+            </div>
+            <div class="col-md-4 col-6 mb-3">
+              <div class="p-3 rounded" style="background-color: var(--pokemon-light-yellow);">
+                <i class="fas fa-shield-alt fa-2x text-dark mb-2"></i>
+                <div class="fw-bold text-dark fs-4"><%= @users.where(role: 'admin').count %></div>
+                <small class="text-muted">Administrators</small>
+              </div>
+            </div>
+            <div class="col-md-4 col-12 mb-3">
+              <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                <i class="fas fa-user fa-2x text-dark mb-2"></i>
+                <div class="fw-bold text-dark fs-4"><%= @users.where(role: 'user').count %></div>
+                <small class="text-muted">Regular Users</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead style="background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%); color: white;">
+                <tr>
+                  <th scope="col" class="border-0">
+                    <i class="fas fa-user me-1"></i>Name
+                  </th>
+                  <th scope="col" class="border-0">
+                    <i class="fas fa-envelope me-1"></i>Email
+                  </th>
+                  <th scope="col" class="border-0">
+                    <i class="fas fa-shield-alt me-1"></i>Role
+                  </th>
+                  <th scope="col" class="border-0">
+                    <i class="fas fa-calendar me-1"></i>Created
+                  </th>
+                  <th scope="col" class="border-0">
+                    <i class="fas fa-cogs me-1"></i>Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @users.each do |user| %>
+                  <tr>
+                    <td class="fw-semibold text-dark">
+                      <i class="fas fa-user me-2 text-muted"></i>
+                      <%= user.full_name %>
+                      <% if user == current_user %>
+                        <span class="badge bg-info ms-2">
+                          <i class="fas fa-user-check me-1"></i>You
+                        </span>
+                      <% end %>
+                    </td>
+                    <td class="text-dark">
+                      <i class="fas fa-envelope me-2 text-muted"></i>
+                      <%= user.email_address %>
+                    </td>
+                    <td>
+                      <% if user.admin? %>
+                        <span class="badge bg-warning text-dark">
+                          <i class="fas fa-shield-alt me-1"></i>Administrator
+                        </span>
+                      <% else %>
+                        <span class="badge bg-secondary">
+                          <i class="fas fa-user me-1"></i>User
+                        </span>
+                      <% end %>
+                    </td>
+                    <td class="text-muted">
+                      <i class="fas fa-calendar me-2"></i>
+                      <%= user.created_at.strftime("%B %d, %Y") %>
+                    </td>
+                    <td>
+                      <%= link_to admin_user_path(user), class: "btn btn-sm btn-outline-primary me-1" do %>
+                        <i class="fas fa-eye me-1"></i>View
+                      <% end %>
+                      <%= link_to edit_admin_user_path(user), class: "btn btn-sm btn-outline-secondary me-1" do %>
+                        <i class="fas fa-edit me-1"></i>Edit
+                      <% end %>
+                      <% unless user == current_user %>
+                        <%= form_with model: [:admin, user], method: :delete, local: true, class: "d-inline", id: "delete-user-#{user.id}-form" do |form| %>
+                          <button type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#confirmationModal"
+                                  data-confirm-title="Delete User"
+                                  data-confirm-message="Are you sure you want to delete <%= user.full_name %> (<%= user.email_address %>)? This action cannot be undone."
+                                  data-confirm-action="Delete User"
+                                  data-form-id="delete-user-<%= user.id %>-form">
+                            <i class="fas fa-trash me-1"></i>Delete
+                          </button>
+                        <% end %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+      </div>
     </div>
-  </div>
-</div>
+
+<!-- Confirmation Modal -->
+<%= render "shared/generic_confirmation_modal" %>
