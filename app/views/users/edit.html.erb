@@ -1,69 +1,244 @@
-<div class="row">
-  <div class="col-md-8 mx-auto">
-    <div class="card">
-      <div class="card-header">
-        <h2>Edit My Profile</h2>
+<% content_for :title, "Edit My Profile - #{current_user.full_name}" %>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "My Profile", user_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to user_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Profile
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-user-edit me-2"></i>
+        <h1 class="h4 mb-0">Edit My Profile</h1>
       </div>
-      <div class="card-body">
-        <%= form_with model: @user, url: user_path, local: true do |form| %>
-          <% if @user.errors.any? %>
-            <div class="alert alert-danger">
-              <h4><%= pluralize(@user.errors.count, "error") %> prohibited your profile from being saved:</h4>
-              <ul class="mb-0">
-                <% @user.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <%= form.label :first_name, class: "form-label" %>
-              <%= form.text_field :first_name, class: "form-control" %>
-            </div>
-            <div class="col-md-6 mb-3">
-              <%= form.label :last_name, class: "form-label" %>
-              <%= form.text_field :last_name, class: "form-control" %>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <%= form.label :email_address, "Email Address", class: "form-label" %>
-            <%= form.email_field :email_address, class: "form-control" %>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Current Role</label>
-            <div class="form-control-plaintext">
-              <span class="badge bg-<%= @user.admin? ? 'warning' : 'secondary' %>">
-                <%= @user.role.humanize %>
-              </span>
-              <small class="text-muted ms-2">Contact an administrator to change your role</small>
-            </div>
-          </div>
-
-          <hr>
-
-          <h5>Change Password</h5>
-          <p class="text-muted">Leave blank to keep current password</p>
-
-          <div class="mb-3">
-            <%= form.label :password, "New Password", class: "form-label" %>
-            <%= form.password_field :password, class: "form-control" %>
-          </div>
-
-          <div class="mb-3">
-            <%= form.label :password_confirmation, "Confirm New Password", class: "form-label" %>
-            <%= form.password_field :password_confirmation, class: "form-control" %>
-          </div>
-
-          <div class="d-flex justify-content-between">
-            <%= link_to "Cancel", user_path, class: "btn btn-secondary" %>
-            <%= form.submit "Update Profile", class: "btn btn-primary" %>
-          </div>
+      <div class="d-flex align-items-center">
+        <span class="badge bg-light text-dark me-2">
+          <i class="fas fa-user-check me-1"></i>Your Account
+        </span>
+        <% if current_user.admin? %>
+          <span class="badge bg-warning text-dark">
+            <i class="fas fa-shield-alt me-1"></i>Administrator
+          </span>
+        <% else %>
+          <span class="badge bg-light text-dark">
+            <i class="fas fa-user me-1"></i>User
+          </span>
         <% end %>
       </div>
     </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Update your personal information and account settings.
+    </p>
+  </div>
+</div>
+
+<!-- Form Card -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= form_with model: @user, url: user_path, local: true do |form| %>
+      <% if @user.errors.any? %>
+        <div class="alert alert-danger" role="alert">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <h5 class="alert-heading mb-0">Please correct the following errors:</h5>
+          </div>
+          <hr>
+          <ul class="mb-0">
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Personal Information Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-user me-2"></i>Personal Information
+          </h5>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= form.label :first_name, class: "form-label required" do %>
+            <i class="fas fa-user me-1"></i>First Name
+          <% end %>
+          <%= form.text_field :first_name,
+              class: "form-control #{'is-invalid' if @user.errors[:first_name].any?}",
+              placeholder: "Enter first name",
+              required: true %>
+          <% if @user.errors[:first_name].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:first_name].first %>
+            </div>
+          <% end %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= form.label :last_name, class: "form-label required" do %>
+            <i class="fas fa-user me-1"></i>Last Name
+          <% end %>
+          <%= form.text_field :last_name,
+              class: "form-control #{'is-invalid' if @user.errors[:last_name].any?}",
+              placeholder: "Enter last name",
+              required: true %>
+          <% if @user.errors[:last_name].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:last_name].first %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Account Information Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-cog me-2"></i>Account Information
+          </h5>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= form.label :email_address, class: "form-label required" do %>
+            <i class="fas fa-envelope me-1"></i>Email Address
+          <% end %>
+          <%= form.email_field :email_address,
+              class: "form-control #{'is-invalid' if @user.errors[:email_address].any?}",
+              placeholder: "Enter email address",
+              required: true %>
+          <% if @user.errors[:email_address].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:email_address].first %>
+            </div>
+          <% end %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= form.label :phone_number, class: "form-label" do %>
+            <i class="fas fa-phone me-1"></i>Phone Number
+          <% end %>
+          <%= form.telephone_field :phone_number,
+              class: "form-control #{'is-invalid' if @user.errors[:phone_number].any?}",
+              placeholder: "Enter phone number (optional)" %>
+          <% if @user.errors[:phone_number].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:phone_number].first %>
+            </div>
+          <% end %>
+          <div class="form-text">
+            <i class="fas fa-info-circle me-1"></i>
+            Optional contact number for club communications.
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Role Display -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">
+            <i class="fas fa-shield-alt me-1"></i>Current Role
+          </label>
+          <div class="p-3 rounded" style="background-color: #f8f9fa;">
+            <% if current_user.admin? %>
+              <span class="badge bg-warning text-dark">
+                <i class="fas fa-shield-alt me-1"></i>Administrator
+              </span>
+            <% else %>
+              <span class="badge bg-secondary">
+                <i class="fas fa-user me-1"></i>User
+              </span>
+            <% end %>
+            <div class="form-text mt-2">
+              <i class="fas fa-info-circle me-1"></i>
+              Contact an administrator to change your account role.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Change Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-lock me-2"></i>Change Password
+          </h5>
+          <p class="text-muted mb-3">
+            <i class="fas fa-info-circle me-1"></i>
+            Leave password fields blank to keep your current password.
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= form.label :password, class: "form-label" do %>
+            <i class="fas fa-key me-1"></i>New Password
+          <% end %>
+          <%= form.password_field :password,
+              class: "form-control #{'is-invalid' if @user.errors[:password].any?}",
+              placeholder: "Enter new password (optional)" %>
+          <% if @user.errors[:password].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:password].first %>
+            </div>
+          <% end %>
+          <div class="form-text">
+            <i class="fas fa-info-circle me-1"></i>
+            Minimum 8 characters required if changing password.
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= form.label :password_confirmation, class: "form-label" do %>
+            <i class="fas fa-key me-1"></i>Confirm New Password
+          <% end %>
+          <%= form.password_field :password_confirmation,
+              class: "form-control #{'is-invalid' if @user.errors[:password_confirmation].any?}",
+              placeholder: "Confirm new password" %>
+          <% if @user.errors[:password_confirmation].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:password_confirmation].first %>
+            </div>
+          <% end %>
+          <div class="form-text">
+            <i class="fas fa-info-circle me-1"></i>
+            Must match the new password above.
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-between pt-3 border-top">
+        <%= link_to user_path, class: "btn btn-outline-secondary" do %>
+          <i class="fas fa-times me-2"></i>Cancel
+        <% end %>
+        <%= form.submit "Update Profile", class: "btn btn-primary" do %>
+          <i class="fas fa-save me-2"></i>Update Profile
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>
