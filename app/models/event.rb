@@ -11,6 +11,10 @@ class Event < ApplicationRecord
   validates :title, :starts_at, :ends_at, :time_zone, :status, presence: true
   validate  :ends_after_starts
 
+  # ----- Associations -----
+  has_many :attendances, dependent: :destroy
+  has_many :attending_students, -> { where(attendances: { present: true }) }, through: :attendances, source: :student
+
   # ----- Callbacks -----
   before_validation :set_default_time_zone, :set_default_address
 

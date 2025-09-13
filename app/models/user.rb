@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :user_students, dependent: :destroy
   has_many :students, through: :user_students
+  has_many :marked_attendances, class_name: "Attendance", foreign_key: "marked_by_id", dependent: :destroy
 
   # ---- Normalizations -----
   # Normalize email before validation

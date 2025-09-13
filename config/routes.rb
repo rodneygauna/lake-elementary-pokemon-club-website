@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   get "home/index"
   resource :session
   resources :passwords, param: :token
-  resources :events
+  resources :events do
+    # Attendance tracking - admin only
+    post "attendances/toggle/:student_id", to: "attendances#toggle", as: :toggle_attendance
+  end
   resources :students do
     resources :user_students, only: [ :create ]
   end

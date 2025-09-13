@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  event: one
+  student: one
+  marked_by: one
+  present: false
+  marked_at: 2025-09-13 14:40:59
+
+two:
+  event: two
+  student: two
+  marked_by: two
+  present: false
+  marked_at: 2025-09-13 14:40:59

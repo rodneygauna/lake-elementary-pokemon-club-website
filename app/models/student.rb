@@ -9,6 +9,8 @@ class Student < ApplicationRecord
   # ----- Associations -----
   has_many :user_students, dependent: :destroy
   has_many :users, through: :user_students
+  has_many :attendances, dependent: :destroy
+  has_many :attended_events, -> { where(attendances: { present: true }) }, through: :attendances, source: :event
 
   # ---- Normalizations -----
   # Normalize names before validation

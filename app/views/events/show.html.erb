@@ -230,6 +230,93 @@
           </div>
         </div>
       </div>
+
+      <!-- Attendance Tracking Section (Admin Only) -->
+      <% if current_user&.admin? %>
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="card shadow-sm" data-controller="attendance">
+              <div class="card-header bg-warning text-dark">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-clipboard-check me-2"></i>
+                  <h5 class="mb-0">Event Attendance</h5>
+                  <span class="badge bg-dark ms-2">Admin Only</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="text-muted mb-4">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Click on a student's name to toggle their attendance for this event.
+                </p>
+
+                <%
+                  active_students = Student.active.by_last_name
+                  if active_students.any?
+                %>
+                  <div class="row g-2" id="attendance-grid">
+                    <% active_students.each do |student| %>
+                      <%
+                        attendance = @event.attendances.find_by(student: student)
+                        is_present = attendance&.present? || false
+                        button_class = is_present ? 'btn-success' : 'btn-outline-secondary'
+                        icon_class = is_present ? 'fas fa-check-circle' : 'far fa-circle'
+                      %>
+                      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <button type="button"
+                                class="btn <%= button_class %> w-100 attendance-toggle"
+                                data-event-id="<%= @event.id %>"
+                                data-student-id="<%= student.id %>"
+                                data-present="<%= is_present %>"
+                                data-student-name="<%= student.full_name %>">
+                          <i class="<%= icon_class %> me-2"></i>
+                          <%= student.full_name %>
+                          <% if is_present %>
+                            <small class="d-block text-white-50 mt-1">
+                              <i class="fas fa-clock me-1"></i>Present
+                            </small>
+                          <% end %>
+                        </button>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <!-- Attendance Summary -->
+                  <div class="mt-4 p-3 rounded" style="background-color: #f8f9fa;">
+                    <div class="row text-center">
+                      <div class="col-4">
+                        <div class="text-success fw-bold fs-4" id="present-count">
+                          <%= @event.attendances.present.count %>
+                        </div>
+                        <small class="text-muted">Present</small>
+                      </div>
+                      <div class="col-4">
+                        <div class="text-secondary fw-bold fs-4" id="absent-count">
+                          <%= active_students.count - @event.attendances.present.count %>
+                        </div>
+                        <small class="text-muted">Absent</small>
+                      </div>
+                      <div class="col-4">
+                        <div class="text-primary fw-bold fs-4" id="total-count">
+                          <%= active_students.count %>
+                        </div>
+                        <small class="text-muted">Total</small>
+                      </div>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="text-center py-4">
+                    <i class="fas fa-user-friends fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No active students found.</p>
+                    <p class="text-muted">
+                      <%= link_to "Manage Students", students_path, class: "text-decoration-none" %>
+                    </p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
