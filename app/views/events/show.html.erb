@@ -37,6 +37,13 @@
             <% end %>
           <% end %>
         </div>
+        <div>
+          <% if current_user&.admin? %>
+            <%= link_to new_event_path, class: "btn btn-success" do %>
+              <i class="fas fa-plus me-2"></i>New Event
+            <% end %>
+          <% end %>
+        </div>
       </div>
 
       <!-- Event Header Card -->
