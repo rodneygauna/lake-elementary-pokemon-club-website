@@ -75,9 +75,9 @@ class Donor < ApplicationRecord
     non_monetary_count = donations.non_monetary.count
 
     if monetary_total > 0 && non_monetary_count > 0
-      "$#{monetary_total.to_f.round(2)} + #{non_monetary_count} non-monetary"
+      "$#{'%.2f' % monetary_total.to_f} + #{non_monetary_count} non-monetary"
     elsif monetary_total > 0
-      "$#{monetary_total.to_f.round(2)}"
+      "$#{'%.2f' % monetary_total.to_f}"
     elsif non_monetary_count > 0
       "#{non_monetary_count} non-monetary donation#{'s' if non_monetary_count != 1}"
     else
