@@ -19,6 +19,7 @@ bin/dev
 ## Development
 
 ### Key Commands
+
 - `bin/dev` - Start development server
 - `bin/rails console` - Rails console
 - `bin/rails db:migrate` - Run database migrations
@@ -27,6 +28,7 @@ bin/dev
 - `bin/brakeman` - Security analysis
 
 ### Technology Stack
+
 - **Framework**: Rails 8 with SQLite
 - **Authentication**: Built-in Rails authentication
 - **Styling**: Bootstrap 5 with Pokémon theme
@@ -43,12 +45,14 @@ bin/dev
 ## Project Structure
 
 ### Key Models
+
 - **User**: Parents/guardians and admin staff
 - **Student**: Club members with grade levels K-6
 - **Event**: Club meetings and activities
 - **UserStudent**: Many-to-many relationship between users and students
 
 ### Authentication & Authorization
+
 - Cookie-based sessions with `has_secure_password`
 - **Admin-only account creation** (school security requirement)
 - Role-based access: `admin` and `user` roles
