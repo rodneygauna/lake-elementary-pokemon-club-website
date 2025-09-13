@@ -238,17 +238,22 @@
                             <i class="fas fa-envelope me-1"></i><%= parent.email_address %>
                           </small>
                         </div>
-                        <%= form_with model: parent.user_students.find_by(student: @student), method: :delete, local: true, class: "d-inline ms-2" do |form| %>
-                          <button type="button"
-                                  class="btn btn-sm btn-outline-danger"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#confirmationModal"
-                                  data-confirm-title="Unlink Parent"
-                                  data-confirm-message="Are you sure you want to unlink <%= parent.full_name %> from this student?"
-                                  data-confirm-action="Unlink">
-                            <i class="fas fa-times"></i>
-                          </button>
-                        <% end %>
+                        <div class="d-flex gap-1">
+                          <%= link_to admin_user_path(parent), class: "btn btn-sm btn-outline-primary" do %>
+                            <i class="fas fa-eye"></i>
+                          <% end %>
+                          <%= form_with model: parent.user_students.find_by(student: @student), method: :delete, local: true, class: "d-inline" do |form| %>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmationModal"
+                                    data-confirm-title="Unlink Parent"
+                                    data-confirm-message="Are you sure you want to unlink <%= parent.full_name %> from this student?"
+                                    data-confirm-action="Unlink">
+                              <i class="fas fa-times"></i>
+                            </button>
+                          <% end %>
+                        </div>
                       </div>
                     <% end %>
                   </div>

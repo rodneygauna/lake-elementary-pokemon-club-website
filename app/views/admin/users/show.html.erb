@@ -152,58 +152,222 @@
         </div>
       </div>
 
-      <!-- Admin Controls Section -->
-      <% if @user != current_user %>
-        <div class="card shadow-sm">
-          <div class="card-header text-white" style="background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);">
-            <h5 class="card-title mb-0 d-flex align-items-center">
-              <i class="fas fa-shield-alt me-2"></i>
-              Admin Controls
-            </h5>
-          </div>
-          <div class="card-body">
-            <p class="text-muted mb-3">
-              <i class="fas fa-exclamation-triangle me-1"></i>
-              Administrative actions for this user account. Use caution when making changes.
-            </p>
+      <!-- Linked Students Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="text-dark border-bottom pb-2 mb-4">
+            <i class="fas fa-users me-2"></i>Linked Students
+          </h5>
 
-            <div class="d-flex gap-2">
-              <%= link_to edit_admin_user_path(@user), class: "btn btn-outline-primary" do %>
-                <i class="fas fa-edit me-2"></i>Edit User Details
-              <% end %>
-
-              <%= form_with model: [:admin, @user], method: :delete, local: true, class: "d-inline", id: "admin-delete-user-form" do |form| %>
-                <button type="button"
-                        class="btn btn-outline-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#confirmationModal"
-                        data-confirm-title="Delete User Account"
-                        data-confirm-message="Are you sure you want to permanently delete <%= @user.full_name %>'s account? This will remove all associated data and cannot be undone."
-                        data-confirm-action="Delete User Account"
-                        data-form-id="admin-delete-user-form">
-                  <i class="fas fa-trash me-2"></i>Delete User Account
-                </button>
+          <% if @user.students.any? %>
+            <div class="row g-3">
+              <% @user.students.each do |student| %>
+                <div class="col-12 col-md-6">
+                  <div class="p-3 rounded border" style="background-color: var(--pokemon-light-blue);">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <h6 class="text-dark mb-1">
+                          <i class="fas fa-user-circle me-1"></i>
+                          <%= student.display_name_for(current_user) %>
+                        </h6>
+                        <div class="text-muted small mb-2">
+                          <i class="fas fa-graduation-cap me-1"></i>
+                          <% case student.grade %>
+                          <% when "kindergarten_grade" %>
+                            Kindergarten
+                          <% when "first_grade" %>
+                            1st Grade
+                          <% when "second_grade" %>
+                            2nd Grade
+                          <% when "third_grade" %>
+                            3rd Grade
+                          <% when "fourth_grade" %>
+                            4th Grade
+                          <% when "fifth_grade" %>
+                            5th Grade
+                          <% when "sixth_grade" %>
+                            6th Grade
+                          <% else %>
+                            Grade <%= student.grade %>
+                          <% end %>
+                        </div>
+                        <% if student.favorite_pokemon.present? %>
+                          <div class="text-dark small">
+                            <i class="fas fa-heart text-warning me-1"></i>
+                            Favorite: <%= student.favorite_pokemon %>
+                          </div>
+                        <% end %>
+                        <div class="mt-2">
+                          <% if student.status == "active" %>
+                            <span class="text-success fw-medium small">
+                              <i class="fas fa-check-circle me-1"></i>Active Member
+                            </span>
+                          <% else %>
+                            <span class="text-warning fw-medium small">
+                              <i class="fas fa-pause-circle me-1"></i><%= student.status.titleize %>
+                            </span>
+                          <% end %>
+                        </div>
+                      </div>
+                      <div class="text-end">
+                        <%= link_to student_path(student), class: "btn btn-sm btn-outline-primary me-1" do %>
+                          <i class="fas fa-eye"></i>
+                        <% end %>
+                        <% if admin? %>
+                          <% user_student = @user.user_students.find_by(student: student) %>
+                          <% if user_student %>
+                            <%= form_with model: user_student, url: user_student_path(user_student), method: :delete, local: true, class: "d-inline", id: "remove-student-#{student.id}-form" do |form| %>
+                              <%= form.hidden_field :redirect_to, value: request.path %>
+                              <button type="button"
+                                      class="btn btn-sm btn-outline-danger"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#confirmationModal"
+                                      data-confirm-title="Remove Student Link"
+                                      data-confirm-message="Are you sure you want to remove the link between <%= @user.full_name %> and <%= student.display_name_for(current_user) %>? This will not delete the student, only remove the parent-child relationship."
+                                      data-confirm-action="Remove Link"
+                                      data-form-id="remove-student-<%= student.id %>-form">
+                                <i class="fas fa-unlink"></i>
+                              </button>
+                            <% end %>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <% end %>
             </div>
-          </div>
-        </div>
-      <% else %>
-        <div class="card shadow-sm">
-          <div class="card-body text-center">
-            <div class="text-muted">
-              <i class="fas fa-info-circle fa-2x mb-3"></i>
-              <h5 class="text-muted">Your Account</h5>
-              <p class="text-muted">
-                This is your own user account. You cannot delete your own account from here.
-                Use the Edit button above to modify your account details.
+
+            <div class="mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                  <i class="fas fa-info-circle me-1"></i>
+                  This user is linked to <%= pluralize(@user.students.count, 'student') %> as a parent or guardian.
+                </div>
+                <div>
+                  <% if admin? %>
+                    <!-- Add Student Modal Trigger -->
+                    <button type="button" class="btn btn-sm btn-success me-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                      <i class="fas fa-plus me-1"></i>Add Student
+                    </button>
+                  <% end %>
+                  <%= link_to students_path, class: "btn btn-sm btn-outline-secondary" do %>
+                    <i class="fas fa-users me-1"></i>View All Students
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <div class="text-center py-4">
+              <i class="fas fa-users fa-3x text-muted mb-3"></i>
+              <h6 class="text-muted">No Linked Students</h6>
+              <p class="text-muted mb-3">
+                This user is not currently linked to any students as a parent or guardian.
               </p>
+              <div>
+                <% if admin? %>
+                  <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i class="fas fa-plus me-1"></i>Add Student
+                  </button>
+                <% end %>
+                <%= link_to students_path, class: "btn btn-outline-primary btn-sm" do %>
+                  <i class="fas fa-users me-1"></i>View Students
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+<!-- Add Student Modal -->
+<% if admin? %>
+  <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addStudentModalLabel">
+            <i class="fas fa-plus me-2"></i>Add Student to <%= @user.full_name %>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted mb-3">
+            <i class="fas fa-info-circle me-1"></i>
+            Select a student to link as a child of <%= @user.full_name %>.
+          </p>
+
+          <div class="mb-3">
+            <label class="form-label required">Select Student</label>
+            <select class="form-select" id="studentSelect" required>
+              <option value="">Choose a student...</option>
+              <% Student.where.not(id: @user.student_ids).order(:first_name, :last_name).each do |student| %>
+                <option value="<%= student.id %>"><%= student.full_name %></option>
+              <% end %>
+            </select>
+            <div class="form-text">
+              <i class="fas fa-info-circle me-1"></i>
+              Only students not already linked to this user are shown.
             </div>
           </div>
         </div>
-  <% end %>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i>Cancel
+          </button>
+          <button type="button" class="btn btn-success" id="addStudentBtn">
+            <i class="fas fa-plus me-1"></i>Add Student Link
+          </button>
+        </div>
+
+        <script>
+          document.getElementById('addStudentBtn').addEventListener('click', function() {
+            const studentId = document.getElementById('studentSelect').value;
+            if (studentId) {
+              const button = this;
+              const originalText = button.innerHTML;
+
+              // Disable button and show loading state
+              button.disabled = true;
+              button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding...';
+
+              // Create a form and submit it to the correct route
+              const form = document.createElement('form');
+              form.method = 'POST';
+              form.action = `/students/${studentId}/user_students`;
+
+              // Add CSRF token
+              const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+              const csrfInput = document.createElement('input');
+              csrfInput.type = 'hidden';
+              csrfInput.name = 'authenticity_token';
+              csrfInput.value = csrfToken;
+              form.appendChild(csrfInput);
+
+              // Add user_id
+              const userInput = document.createElement('input');
+              userInput.type = 'hidden';
+              userInput.name = 'user_student[user_id]';
+              userInput.value = '<%= @user.id %>';
+              form.appendChild(userInput);
+
+              // Add redirect parameter to stay on this page
+              const redirectInput = document.createElement('input');
+              redirectInput.type = 'hidden';
+              redirectInput.name = 'redirect_to';
+              redirectInput.value = window.location.pathname;
+              form.appendChild(redirectInput);
+
+              document.body.appendChild(form);
+              form.submit();
+            } else {
+              alert('Please select a student first.');
+            }
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <!-- Confirmation Modal -->
 <%= render "shared/generic_confirmation_modal" %>
-    </div>
-  </div>
-</div>

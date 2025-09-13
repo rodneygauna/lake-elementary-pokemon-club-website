@@ -3,13 +3,21 @@ class UserStudentsController < ApplicationController
   before_action :require_admin
 
   def create
-    @user_student = UserStudent.new(user_student_params)
     @student = Student.find(params[:student_id])
+    @user_student = UserStudent.new(user_student_params.merge(student_id: @student.id))
 
     if @user_student.save
-      redirect_to @student, notice: "Parent was successfully linked to student."
+      if params[:redirect_to].present?
+        redirect_to params[:redirect_to], notice: "Student was successfully linked to parent."
+      else
+        redirect_to @student, notice: "Parent was successfully linked to student."
+      end
     else
-      redirect_to @student, alert: "Failed to link parent to student: #{@user_student.errors.full_messages.to_sentence}"
+      if params[:redirect_to].present?
+        redirect_to params[:redirect_to], alert: "Failed to link student to parent: #{@user_student.errors.full_messages.to_sentence}"
+      else
+        redirect_to @student, alert: "Failed to link parent to student: #{@user_student.errors.full_messages.to_sentence}"
+      end
     end
   end
 
@@ -18,7 +26,11 @@ class UserStudentsController < ApplicationController
     @student = @user_student.student
     @user_student.destroy!
 
-    redirect_to @student, notice: "Parent was successfully unlinked from student."
+    if params[:redirect_to].present?
+      redirect_to params[:redirect_to], notice: "Student was successfully unlinked from parent."
+    else
+      redirect_to @student, notice: "Parent was successfully unlinked from student."
+    end
   end
 
   private
