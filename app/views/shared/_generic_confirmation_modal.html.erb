@@ -16,7 +16,7 @@
     <div class="modal-content">
       <div class="modal-header border-0">
         <h5 class="modal-title" id="confirmationModalLabel">
-          <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+          <i class="fas fa-exclamation-triangle text-warning me-2"></i>
           <span id="modal-title-text">Confirm Action</span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -28,10 +28,10 @@
 
       <div class="modal-footer border-0">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          <i class="bi bi-x me-1"></i>Cancel
+          <i class="fas fa-times me-1"></i>Cancel
         </button>
         <button type="button" id="modal-confirm-btn" class="btn btn-danger">
-          <i class="bi bi-trash me-1"></i>
+          <i class="fas fa-trash me-1"></i>
           <span id="modal-action-text">Confirm</span>
         </button>
       </div>
@@ -67,8 +67,22 @@ document.addEventListener('DOMContentLoaded', function() {
   // Handle confirm button click
   modalConfirmBtn.addEventListener('click', function() {
     if (triggerElement) {
-      // Submit the form that contains the trigger element
-      triggerElement.closest('form').submit();
+      // First try to get form by ID if specified
+      const formId = triggerElement.dataset.formId;
+      let form;
+
+      if (formId) {
+        form = document.getElementById(formId);
+      } else {
+        // Fallback to finding the closest form
+        form = triggerElement.closest('form');
+      }
+
+      if (form) {
+        form.submit();
+      } else {
+        console.error('Could not find form to submit');
+      }
     }
   });
 });

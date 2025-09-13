@@ -7,7 +7,14 @@ class StudentsController < ApplicationController
   # GET /students or /students.json
   def index
     # Public can see limited info (initials + favorite pokemon)
-    @students = Student.ordered
+    # By default, show only active students unless explicitly requested to show all
+    if params[:show_inactive] == "true"
+      @students = Student.by_last_name
+      @show_inactive = true
+    else
+      @students = Student.active.by_last_name
+      @show_inactive = false
+    end
   end
 
   # GET /students/1 or /students/1.json
@@ -72,7 +79,7 @@ class StudentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def student_params
-      params.expect(student: [ :first_name, :middle_name, :last_name, :suffix_name, :grade, :class_number, :teacher_name, :favorite_pokemon, :notes ])
+      params.expect(student: [ :first_name, :middle_name, :last_name, :suffix_name, :grade, :class_number, :teacher_name, :favorite_pokemon, :notes, :status ])
     end
 
     # Ensure the current user is an admin or a parent linked to this student

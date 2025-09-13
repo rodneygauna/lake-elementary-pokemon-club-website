@@ -1,235 +1,300 @@
 <% content_for :title, @can_view_details ? @student.full_name : @student.initials %>
 
-<div class="container py-4">
-  <!-- Back Navigation -->
-  <div class="row mb-3">
+<div class="container mt-4">
+  <div class="row justify-content-center">
     <div class="col-12">
-      <%= link_to students_path, class: "btn btn-link ps-0 text-decoration-none d-flex align-items-center gap-2" do %>
-        <i class="bi bi-arrow-left"></i> Back to Students
-      <% end %>
-    </div>
-  </div>
+      <!-- Navigation Controls -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Students", students_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= @can_view_details ? @student.full_name : @student.initials %>
+          </li>
+        </ol>
+      </nav>
 
-  <!-- Student Header -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
-            <div class="flex-grow-1">
-              <!-- Name and Status Badges -->
-              <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                <h1 class="mb-0 text-primary">
-                  <i class="bi bi-mortarboard-fill me-2"></i>
-                  <%= @can_view_details ? @student.full_name : @student.initials %>
-                </h1>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <%= link_to students_path, class: "btn btn-outline-secondary me-2" do %>
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Students
+          <% end %>
+          <% if @can_view_details && (admin? || (current_user && @student.users.include?(current_user))) %>
+            <%= link_to edit_student_path(@student), class: "btn btn-outline-primary" do %>
+              <i class="fas fa-edit me-1"></i>
+              Edit Student
+            <% end %>
+          <% end %>
+        </div>
+      </div>
 
-                <!-- Status Badge -->
-                <% if @student.status == "active" %>
-                  <span class="badge bg-success fs-6">
-                    <i class="bi bi-check-circle me-1"></i>Active Member
-                  </span>
-                <% else %>
-                  <span class="badge bg-warning fs-6">
-                    <i class="bi bi-pause-circle me-1"></i><%= @student.status.titleize %>
-                  </span>
-                <% end %>
-
-                <!-- Grade Badge -->
-                <span class="badge fs-6" style="background-color: #FFD700; color: #000;">
-                  <i class="bi bi-trophy me-1"></i>Grade <%= @student.grade.titleize %>
+      <!-- Student Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-user me-2"></i>
+              <h1 class="h4 mb-0">
+                <%= @can_view_details ? @student.full_name : @student.initials %>
+              </h1>
+            </div>
+            <div class="d-flex gap-2">
+              <!-- Status Badge -->
+              <% if @student.status == "active" %>
+                <span class="badge bg-success">
+                  <i class="fas fa-check-circle me-1"></i>Active Member
                 </span>
-              </div>
-
-              <!-- Privacy Notice for Limited View -->
-              <% unless @can_view_details %>
-                <div class="alert alert-info d-flex align-items-center">
-                  <i class="bi bi-info-circle me-2"></i>
-                  <span>Limited information shown for privacy protection</span>
-                </div>
+              <% else %>
+                <span class="badge bg-warning text-dark">
+                  <i class="fas fa-pause-circle me-1"></i><%= @student.status.titleize %>
+                </span>
               <% end %>
             </div>
-
-            <!-- Actions -->
-            <% if @can_view_details %>
-              <div class="d-flex flex-column flex-sm-row gap-2">
-                <% if admin? || (current_user && @student.users.include?(current_user)) %>
-                  <%= link_to edit_student_path(@student), class: "btn btn-outline-primary d-flex align-items-center gap-2" do %>
-                    <i class="bi bi-pencil"></i> Edit Student
-                  <% end %>
-                <% end %>
-
-                <% if admin? %>
-                  <%= form_with model: @student, method: :delete, local: true, class: "d-inline" do |form| %>
-                    <button type="button"
-                            class="btn btn-outline-danger d-flex align-items-center gap-2"
-                            data-bs-toggle="modal"
-                            data-bs-target="#confirmationModal"
-                            data-confirm-title="Delete Student"
-                            data-confirm-message="Are you sure you want to delete <%= @student.display_name_for(current_user) %>? This action cannot be undone."
-                            data-confirm-action="Delete Student">
-                      <i class="bi bi-trash"></i> Delete
-                    </button>
-                  <% end %>
-                <% end %>
-              </div>
-            <% end %>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Student Details -->
-  <div class="row g-4">
-    <!-- Left Column - Student Information -->
-    <div class="col-12 col-lg-8">
-      <div class="card border-0 shadow-sm h-100">
         <div class="card-body">
-          <h5 class="card-title d-flex align-items-center gap-2 mb-4">
-            <i class="bi bi-person-badge text-primary"></i>
-            Student Information
-          </h5>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p class="text-muted mb-0">
+                <i class="fas fa-info-circle me-1"></i>
+                <% if @can_view_details %>
+                  View and manage student information and club details.
+                <% else %>
+                  Limited information available for privacy protection.
+                <% end %>
+              </p>
+            </div>
+            <div>
+              <% if admin? %>
+                <%= form_with model: @student, method: :delete, local: true, class: "d-inline", id: "delete-student-form" do |form| %>
+                  <button type="button"
+                          class="btn btn-outline-danger btn-sm"
+                          data-bs-toggle="modal"
+                          data-bs-target="#confirmationModal"
+                          data-confirm-title="Delete Student"
+                          data-confirm-message="Are you sure you want to delete <%= @student.display_name_for(current_user) %>? This action cannot be undone."
+                          data-confirm-action="Delete Student"
+                          data-form-id="delete-student-form">
+                    <i class="fas fa-trash me-1"></i> Delete
+                  </button>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>      <!-- Student Details -->
+      <div class="row g-4">
+        <!-- Left Column - Student Information -->
+        <div class="col-12 col-lg-8">
+          <% if @can_view_details %>
+            <!-- Detailed Information Card -->
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="text-dark border-bottom pb-2 mb-4">
+                  <i class="fas fa-info-circle me-2"></i>Detailed Information
+                </h5>
 
-          <div class="row g-3">
-            <!-- Favorite Pokémon - Always Visible -->
-            <div class="col-12">
-              <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                <h6 class="text-muted mb-1">
-                  <i class="bi bi-star me-1"></i>Favorite Pokémon
-                </h6>
-                <div class="fw-bold text-primary fs-5">
-                  <%= @student.favorite_pokemon %>
+                <div class="row g-3">
+                  <% if @student.notes.present? %>
+                    <!-- Notes Section -->
+                    <div class="col-12">
+                      <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+                        <h6 class="text-muted mb-2">
+                          <i class="fas fa-sticky-note me-1"></i>Additional Notes
+                        </h6>
+                        <div class="text-dark">
+                          <%= simple_format(@student.notes) %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+
+                  <!-- Grade Information -->
+                  <div class="col-12 col-md-6">
+                    <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                      <h6 class="text-muted mb-1">
+                        <i class="fas fa-graduation-cap me-1"></i>Grade Level
+                      </h6>
+                      <div class="fw-bold text-dark">
+                        <% case @student.grade %>
+                        <% when "kindergarten_grade" %>
+                          Kindergarten
+                        <% when "first_grade" %>
+                          1st Grade
+                        <% when "second_grade" %>
+                          2nd Grade
+                        <% when "third_grade" %>
+                          3rd Grade
+                        <% when "fourth_grade" %>
+                          4th Grade
+                        <% when "fifth_grade" %>
+                          5th Grade
+                        <% when "sixth_grade" %>
+                          6th Grade
+                        <% else %>
+                          Grade <%= @student.grade %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Favorite Pokemon -->
+                  <div class="col-12 col-md-6">
+                    <div class="p-3 rounded" style="background-color: var(--pokemon-light-yellow);">
+                      <h6 class="text-muted mb-1">
+                        <i class="fas fa-star me-1"></i>Favorite Pokémon
+                      </h6>
+                      <div class="fw-bold text-dark">
+                        <%= @student.favorite_pokemon.present? ? @student.favorite_pokemon : "Not specified" %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Teacher Information -->
+                  <% if @student.teacher_name.present? %>
+                    <div class="col-12 col-md-6">
+                      <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                        <h6 class="text-muted mb-1">
+                          <i class="fas fa-chalkboard-teacher me-1"></i>Teacher
+                        </h6>
+                        <div class="fw-bold text-dark">
+                          <%= @student.teacher_name %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+
+                  <!-- Class/Room Number -->
+                  <% if @student.class_number.present? %>
+                    <div class="col-12 col-md-6">
+                      <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                        <h6 class="text-muted mb-1">
+                          <i class="fas fa-door-open me-1"></i>Class/Room
+                        </h6>
+                        <div class="fw-bold text-dark">
+                          <%= @student.class_number %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+
+                  <!-- Registration Information -->
+                  <div class="col-12 col-md-6">
+                    <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                      <h6 class="text-muted mb-1">
+                        <i class="fas fa-calendar-plus me-1"></i>Member Since
+                      </h6>
+                      <div class="fw-bold text-dark">
+                        <%= @student.created_at.strftime("%B %d, %Y") %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Last Updated -->
+                  <div class="col-12 col-md-6">
+                    <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                      <h6 class="text-muted mb-1">
+                        <i class="fas fa-clock me-1"></i>Last Updated
+                      </h6>
+                      <div class="fw-bold text-dark">
+                        <%= @student.updated_at.strftime("%B %d, %Y") %>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <% if @can_view_details %>
-              <!-- Grade Information -->
-              <div class="col-12 col-md-6">
-                <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                  <h6 class="text-muted mb-1">
-                    <i class="bi bi-trophy me-1"></i>Grade Level
-                  </h6>
-                  <div class="fw-bold text-primary">
-                    <%= @student.grade.titleize %>
-                  </div>
-                </div>
+          <% else %>
+            <!-- Limited Information Card -->
+            <div class="card shadow-sm h-100">
+              <div class="card-body text-center py-5">
+                <i class="fas fa-lock fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Limited Access</h5>
+                <p class="text-muted">
+                  Full details are only available to parents/guardians and administrators.
+                </p>
               </div>
-
-              <!-- Class Information -->
-              <% if @student.class_number.present? %>
-                <div class="col-12 col-md-6">
-                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                    <h6 class="text-muted mb-1">
-                      <i class="bi bi-door-open me-1"></i>Class Number
-                    </h6>
-                    <div class="fw-bold text-primary">
-                      <%= @student.class_number %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-
-              <!-- Teacher Information -->
-              <% if @student.teacher_name.present? %>
-                <div class="col-12">
-                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                    <h6 class="text-muted mb-1">
-                      <i class="bi bi-person-check me-1"></i>Teacher
-                    </h6>
-                    <div class="fw-bold text-primary">
-                      <%= @student.teacher_name %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-
-              <!-- Notes -->
-              <% if @student.notes.present? %>
-                <div class="col-12">
-                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                    <h6 class="text-muted mb-1">
-                      <i class="bi bi-journal-text me-1"></i>Notes
-                    </h6>
-                    <div class="text-dark">
-                      <%= simple_format(@student.notes) %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
-      </div>
-    </div>
 
-    <!-- Right Column - Admin Panel -->
-    <% if admin? %>
-      <div class="col-12 col-lg-4">
-        <div class="card border-0 shadow-sm">
-          <div class="card-header bg-warning text-dark">
-            <h5 class="card-title mb-0 d-flex align-items-center gap-2">
-              <i class="bi bi-shield-check"></i>
-              Admin Controls
-            </h5>
-          </div>
-          <div class="card-body">
-            <!-- Linked Parents Section -->
-            <h6 class="mb-3 d-flex align-items-center gap-2">
-              <i class="bi bi-people text-primary"></i>
-              Linked Parents
-            </h6>
+        <!-- Right Column - Admin Panel -->
+        <% if admin? %>
+          <div class="col-12 col-lg-4">
+            <div class="card shadow-sm">
+              <div class="card-header text-white" style="background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);">
+                <h5 class="card-title mb-0 d-flex align-items-center">
+                  <i class="fas fa-shield-alt me-2"></i>
+                  Admin Controls
+                </h5>
+              </div>
+              <div class="card-body">
+                <!-- Linked Parents Section -->
+                <h6 class="text-dark border-bottom pb-2 mb-3">
+                  <i class="fas fa-users me-1"></i>
+                  Linked Parents
+                </h6>
 
-            <% if @linked_parents.any? %>
-              <div class="mb-3">
-                <% @linked_parents.each do |parent| %>
-                  <div class="d-flex justify-content-between align-items-start p-2 border rounded mb-2">
-                    <div class="flex-grow-1">
-                      <div class="fw-semibold"><%= parent.full_name %></div>
-                      <small class="text-muted"><%= parent.email_address %></small>
-                    </div>
-                    <%= form_with model: parent.user_students.find_by(student: @student), method: :delete, local: true, class: "d-inline ms-2" do |form| %>
-                      <button type="button"
-                              class="btn btn-sm btn-outline-danger"
-                              data-bs-toggle="modal"
-                              data-bs-target="#confirmationModal"
-                              data-confirm-title="Unlink Parent"
-                              data-confirm-message="Are you sure you want to unlink <%= parent.full_name %> from this student?"
-                              data-confirm-action="Unlink">
-                        <i class="bi bi-x-lg"></i>
-                      </button>
+                <% if @linked_parents.any? %>
+                  <div class="mb-3">
+                    <% @linked_parents.each do |parent| %>
+                      <div class="d-flex justify-content-between align-items-start p-3 border rounded mb-2" style="background-color: var(--pokemon-light-blue);">
+                        <div class="flex-grow-1">
+                          <div class="fw-semibold text-dark"><%= parent.full_name %></div>
+                          <small class="text-muted">
+                            <i class="fas fa-envelope me-1"></i><%= parent.email_address %>
+                          </small>
+                        </div>
+                        <%= form_with model: parent.user_students.find_by(student: @student), method: :delete, local: true, class: "d-inline ms-2" do |form| %>
+                          <button type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#confirmationModal"
+                                  data-confirm-title="Unlink Parent"
+                                  data-confirm-message="Are you sure you want to unlink <%= parent.full_name %> from this student?"
+                                  data-confirm-action="Unlink">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        <% end %>
+                      </div>
                     <% end %>
                   </div>
+                <% else %>
+                  <div class="text-center py-3 mb-3" style="background-color: #f8f9fa; border-radius: 8px;">
+                    <i class="fas fa-user-slash fa-2x text-muted mb-2"></i>
+                    <p class="text-muted mb-0">No linked parents</p>
+                  </div>
+                <% end %>
+
+                <hr>
+
+                <!-- Link New Parent Form -->
+                <h6 class="text-success border-bottom pb-2 mb-3">
+                  <i class="fas fa-user-plus me-1"></i>
+                  Link New Parent
+                </h6>
+
+                <%= form_with model: [@student, UserStudent.new], local: true do |form| %>
+                  <%= form.hidden_field :student_id, value: @student.id %>
+                  <div class="mb-3">
+                    <%= form.label :user_id, class: 'form-label' do %>
+                      <i class="fas fa-user me-1"></i>Select Parent:
+                    <% end %>
+                    <%= form.select :user_id,
+                        User.users.active.order(:last_name, :first_name).pluck(:email_address, :id),
+                        { prompt: "Choose a parent to link..." },
+                        { class: 'form-select' } %>
+                  </div>
+                  <%= form.submit "Link Parent", class: 'btn btn-success btn-sm w-100' %>
                 <% end %>
               </div>
-            <% else %>
-              <p class="text-muted fst-italic mb-3">No linked parents</p>
-            <% end %>
-
-            <hr>
-
-            <!-- Link New Parent Form -->
-            <h6 class="mb-3 d-flex align-items-center gap-2">
-              <i class="bi bi-person-plus text-success"></i>
-              Link New Parent
-            </h6>
-
-            <%= form_with model: [@student, UserStudent.new], local: true do |form| %>
-              <%= form.hidden_field :student_id, value: @student.id %>
-              <div class="mb-3">
-                <%= form.label :user_id, "Select Parent:", class: 'form-label' %>
-                <%= form.select :user_id,
-                    User.users.active.order(:last_name, :first_name).pluck(:email_address, :id),
-                    { prompt: "Choose a parent to link..." },
-                    { class: 'form-select' } %>
-              </div>
-              <%= form.submit "Link Parent", class: 'btn btn-success btn-sm w-100' %>
-            <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
       </div>
-    <% end %>
+    </div>
   </div>
 </div>
 

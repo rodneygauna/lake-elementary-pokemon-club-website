@@ -1,105 +1,259 @@
 <% content_for :title, "Students" %>
 
-<div class="container-fluid">
+<div class="container mt-4">
   <div class="row">
-    <div class="col-md-12">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-primary fw-bold">
-          <i class="bi bi-mortarboard-fill me-2"></i>Club Students
-        </h1>
-        <% if admin? %>
-          <%= link_to new_student_path, class: "btn btn-primary" do %>
-            <i class="bi bi-plus-circle me-1"></i>Add New Student
-          <% end %>
-        <% end %>
-      </div>
+    <div class="col-12">
+      <!-- Navigation Controls -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Home", root_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Students</li>
+        </ol>
+      </nav>
 
-      <% if @students.any? %>
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead class="table-primary">
-              <tr>
-                <th scope="col">
-                  <i class="bi bi-person me-1"></i>Name
-                </th>
-                <th scope="col">
-                  <i class="bi bi-trophy me-1"></i>Grade
-                </th>
-                <th scope="col">
-                  <i class="bi bi-star me-1"></i>Favorite Pokémon
-                </th>
-                <th scope="col">
-                  <i class="bi bi-activity me-1"></i>Status
-                </th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @students.each do |student| %>
-                <tr>
-                  <td class="fw-semibold">
-                    <%= student.display_name_for(current_user) %>
-                  </td>
-                  <td>
-                    <span class="badge bg-secondary">
-                      <%= student.grade.titleize %>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="text-primary fw-medium">
-                      <%= student.favorite_pokemon %>
-                    </span>
-                  </td>
-                  <td>
-                    <% if student.status == "active" %>
-                      <span class="badge bg-success">
-                        <i class="bi bi-check-circle me-1"></i>Active
-                      </span>
-                    <% else %>
-                      <span class="badge bg-warning">
-                        <i class="bi bi-pause-circle me-1"></i><%= student.status.titleize %>
-                      </span>
-                    <% end %>
-                  </td>
-                  <td>
-                    <div class="btn-group btn-group-sm" role="group">
-                      <%= link_to student, class: "btn btn-outline-primary btn-sm" do %>
-                        <i class="bi bi-eye me-1"></i>View
-                      <% end %>
-
-                      <% if admin? || (current_user && student.users.include?(current_user)) %>
-                        <%= link_to edit_student_path(student), class: "btn btn-outline-secondary btn-sm" do %>
-                          <i class="bi bi-pencil me-1"></i>Edit
-                        <% end %>
-                      <% end %>
-
-                      <% if admin? %>
-                        <%= form_with model: student, method: :delete, local: true, class: "d-inline" do |form| %>
-                          <button type="button"
-                                  class="btn btn-outline-danger btn-sm"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#confirmationModal"
-                                  data-confirm-title="Delete Student"
-                                  data-confirm-message="Are you sure you want to delete <%= student.display_name_for(current_user) %>? This action cannot be undone."
-                                  data-confirm-action="Delete Student">
-                            <i class="bi bi-trash me-1"></i>Delete
-                          </button>
-                        <% end %>
-                      <% end %>
-                    </div>
-                  </td>
-                </tr>
+      <!-- Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-users me-2"></i>
+              <h1 class="h4 mb-0">Pokémon Club Students</h1>
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="badge bg-light text-dark me-3">
+                <%= pluralize(@students.count, 'member') %>
+              </span>
+              <% if admin? %>
+                <%= link_to new_student_path, class: "btn btn-light btn-sm" do %>
+                  <i class="fas fa-plus me-1"></i>Add New Student
+                <% end %>
               <% end %>
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
-      <% else %>
-        <div class="text-center py-5">
-          <i class="bi bi-mortarboard text-muted" style="font-size: 4rem;"></i>
-          <h4 class="text-muted mt-3">No students found</h4>
-          <p class="text-muted">Check back later for club members!</p>
+        <div class="card-body">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start">
+            <p class="text-muted mb-0">
+              <i class="fas fa-info-circle me-1"></i>
+              Manage club members and their information.
+              <% unless admin? %>
+                You can only view students you're linked to as a parent/guardian.
+              <% end %>
+            </p>
+            <div class="mt-2 mt-md-0">
+              <div class="form-check form-switch">
+                <%= form_with url: students_path, method: :get, local: true, class: "d-inline" do |form| %>
+                  <%= form.check_box :show_inactive,
+                      {
+                        checked: @show_inactive,
+                        class: "form-check-input",
+                        onchange: "this.form.submit();"
+                      },
+                      "true", "false" %>
+                  <%= form.label :show_inactive, "Show inactive students", class: "form-check-label" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>      <!-- Club Statistics -->
+      <% if @students.any? %>
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h6 class="text-dark border-bottom pb-2 mb-3">
+              <i class="fas fa-chart-bar me-2"></i>Club Statistics
+            </h6>
+            <div class="row text-center">
+              <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+                  <i class="fas fa-users fa-2x text-dark mb-2"></i>
+                  <div class="fw-bold text-dark fs-4"><%= @students.count %></div>
+                  <small class="text-muted">
+                    <%= @show_inactive ? 'Total Members' : 'Active Members' %>
+                  </small>
+                </div>
+              </div>
+              <% if @show_inactive %>
+                <div class="col-md-3 col-6 mb-3">
+                  <div class="p-3 rounded" style="background-color: #d4edda;">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <div class="fw-bold text-success fs-4"><%= @students.where(status: 'active').count %></div>
+                    <small class="text-muted">Active</small>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                  <div class="p-3 rounded" style="background-color: #f8d7da;">
+                    <i class="fas fa-pause-circle fa-2x text-danger mb-2"></i>
+                    <div class="fw-bold text-danger fs-4"><%= @students.where(status: 'inactive').count %></div>
+                    <small class="text-muted">Inactive</small>
+                  </div>
+                </div>
+              <% else %>
+                <div class="col-md-3 col-6 mb-3">
+                  <div class="p-3 rounded" style="background-color: #d4edda;">
+                    <i class="fas fa-graduation-cap fa-2x" style="color: #FFA500;" class="mb-2"></i>
+                    <div class="fw-bold fs-4" style="color: #FFA500;"><%= @students.distinct.count(:grade) %></div>
+                    <small class="text-muted">Grade Levels</small>
+                  </div>
+                </div>
+              <% end %>
+              <div class="col-md-3 col-6 mb-3">
+                <div class="p-3 rounded" style="background-color: #fff3cd;">
+                  <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                  <div class="fw-bold text-warning fs-4"><%= @students.where.not(favorite_pokemon: [nil, '']).count %></div>
+                  <small class="text-muted">Have Favorites</small>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       <% end %>
+
+      <!-- Students List -->
+      <% if @students.any? %>
+        <div class="card shadow-sm">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead style="background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%); color: white;">
+                  <tr>
+                    <th scope="col" class="border-0">
+                      <i class="fas fa-user me-1"></i>Student Name
+                      <% unless @show_inactive %>
+                        <small class="badge bg-light text-dark ms-2">Active Only</small>
+                      <% end %>
+                    </th>
+                    <th scope="col" class="border-0">
+                      <i class="fas fa-graduation-cap me-1"></i>Grade
+                    </th>
+                    <th scope="col" class="border-0">
+                      <i class="fas fa-star me-1"></i>Favorite Pokémon
+                    </th>
+                    <th scope="col" class="border-0">
+                      <i class="fas fa-circle-check me-1"></i>Status
+                    </th>
+                    <th scope="col" class="border-0 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @students.each_with_index do |student, index| %>
+                    <tr class="<%= 'table-light' if index.even? %>">
+                      <td class="fw-semibold text-dark">
+                        <i class="fas fa-user-circle me-2 text-muted"></i>
+                        <%= student.display_name_for(current_user) %>
+                      </td>
+                      <td>
+                        <span class="text-dark fw-medium">
+                          <% case student.grade %>
+                          <% when "kindergarten_grade" %>
+                            Kindergarten
+                          <% when "first_grade" %>
+                            1st Grade
+                          <% when "second_grade" %>
+                            2nd Grade
+                          <% when "third_grade" %>
+                            3rd Grade
+                          <% when "fourth_grade" %>
+                            4th Grade
+                          <% when "fifth_grade" %>
+                            5th Grade
+                          <% when "sixth_grade" %>
+                            6th Grade
+                          <% else %>
+                            Grade <%= student.grade %>
+                          <% end %>
+                        </span>
+                      </td>
+                      <td>
+                        <% if student.favorite_pokemon.present? %>
+                          <span class="text-dark fw-medium">
+                            <i class="fas fa-heart me-1 text-warning"></i><%= student.favorite_pokemon %>
+                          </span>
+                        <% else %>
+                          <span class="text-muted fst-italic">Not specified</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% if student.status == "active" %>
+                          <span class="badge bg-success">
+                            <i class="fas fa-check-circle me-1"></i>Active
+                          </span>
+                        <% else %>
+                          <span class="badge bg-warning text-dark">
+                            <i class="fas fa-pause-circle me-1"></i><%= student.status.titleize %>
+                          </span>
+                        <% end %>
+                      </td>
+                      <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                          <%= link_to student, class: "btn btn-outline-primary btn-sm", title: "View Details" do %>
+                            <i class="fas fa-eye"></i>
+                          <% end %>
+
+                          <% if admin? || (current_user && student.users.include?(current_user)) %>
+                            <%= link_to edit_student_path(student), class: "btn btn-outline-secondary btn-sm", title: "Edit Student" do %>
+                              <i class="fas fa-edit"></i>
+                            <% end %>
+                          <% end %>
+
+                          <% if admin? %>
+                            <%= form_with model: student, method: :delete, local: true, class: "d-inline" do |form| %>
+                              <button type="button"
+                                      class="btn btn-outline-danger btn-sm"
+                                      title="Delete Student"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#confirmationModal"
+                                      data-confirm-title="Delete Student"
+                                      data-confirm-message="Are you sure you want to delete <%= student.display_name_for(current_user) %>? This action cannot be undone."
+                                      data-confirm-action="Delete Student">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <!-- Empty State -->
+        <div class="card shadow-sm">
+          <div class="card-body text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-users fa-4x text-muted mb-3"></i>
+              <h4 class="text-muted">No Students Found</h4>
+              <p class="text-muted mb-4">
+                <% if admin? %>
+                  <% if @show_inactive %>
+                    The club doesn't have any registered students yet. Start by adding your first member!
+                  <% else %>
+                    No active students found. Try toggling "Show inactive students" or add your first active member!
+                  <% end %>
+                <% else %>
+                  <% if @show_inactive %>
+                    You don't have access to view any students, or none are currently registered.
+                  <% else %>
+                    You don't have access to view any active students. Try toggling "Show inactive students" to see if there are any inactive students you can access.
+                  <% end %>
+                <% end %>
+              </p>
+              <% if admin? %>
+                <%= link_to new_student_path, class: "btn btn-primary" do %>
+                  <i class="fas fa-plus me-2"></i>Add First Student
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+
 
     </div>
   </div>

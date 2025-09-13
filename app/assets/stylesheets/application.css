@@ -76,3 +76,129 @@
     margin: 0 !important;
   }
 }
+
+/* Pokemon Theme Colors */
+:root {
+  --pokemon-electric-blue: #0084FF;
+  --pokemon-pikachu-yellow: #FFD700;
+  --pokemon-light-blue: rgba(0, 132, 255, 0.1);
+  --pokemon-light-yellow: rgba(255, 215, 0, 0.1);
+}
+
+/* Custom Pokemon-themed form styling */
+.form-label.required::after {
+  content: " *";
+  color: #dc3545;
+}
+
+.text-warning {
+  color: var(--pokemon-pikachu-yellow) !important;
+}
+
+.border-bottom {
+  border-bottom: 2px solid !important;
+}
+
+/* Enhanced card styling */
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.card-header.bg-primary {
+  background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%) !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Form section headers */
+.text-primary.border-bottom {
+  color: var(--pokemon-electric-blue) !important;
+  border-bottom-color: var(--pokemon-electric-blue) !important;
+}
+
+.text-warning.border-bottom {
+  color: #FFA500 !important;
+  border-bottom-color: #FFA500 !important;
+}
+
+/* Form controls enhancements */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--pokemon-electric-blue);
+  box-shadow: 0 0 0 0.2rem rgba(0, 132, 255, 0.25);
+}
+
+/* Button enhancements */
+.btn-primary {
+  background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%);
+  border-color: var(--pokemon-electric-blue);
+  font-weight: 500;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: linear-gradient(135deg, #0066CC 0%, #0056B3 100%);
+  border-color: #0066CC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 132, 255, 0.3);
+}
+
+.btn-outline-primary {
+  color: var(--pokemon-electric-blue);
+  border-color: var(--pokemon-electric-blue);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--pokemon-electric-blue);
+  border-color: var(--pokemon-electric-blue);
+}
+
+/* Alert styling */
+.alert-danger {
+  background-color: #fff5f5;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+/* Icon styling */
+.fas {
+  color: var(--pokemon-electric-blue);
+}
+
+.text-warning .fas {
+  color: #FFA500;
+}
+
+/* Card styling - no hover effects */
+
+/* Form validation styling */
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Small text enhancements */
+.form-text.text-muted {
+  color: #6c757d !important;
+  font-size: 0.875rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  h5 {
+    font-size: 1.1rem;
+  }
+}

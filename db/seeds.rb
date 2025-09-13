@@ -179,6 +179,114 @@ students_data = [
     age: 7,
     favorite_pokemon: "Squirtle",
     parent_emails: [ "mike.smith@email.com", "emily.davis@email.com" ]
+  },
+  {
+    first_name: "Zoe",
+    last_name: "Thompson",
+    grade: "kindergarten_grade",
+    age: 5,
+    favorite_pokemon: "Togepi",
+    parent_emails: [ "sarah.johnson@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Caleb",
+    last_name: "Rodriguez",
+    grade: "sixth_grade",
+    age: 12,
+    favorite_pokemon: "Blaziken",
+    parent_emails: [ "mike.smith@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Maya",
+    last_name: "Chen",
+    grade: "third_grade",
+    age: 8,
+    favorite_pokemon: "Vulpix",
+    parent_emails: [ "emily.davis@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Jake",
+    last_name: "Williams",
+    grade: "fourth_grade",
+    age: 9,
+    favorite_pokemon: "Machamp",
+    parent_emails: [ "robert.wilson@email.com" ],
+    status: "inactive"
+  },
+  {
+    first_name: "Grace",
+    last_name: "Taylor",
+    grade: "first_grade",
+    age: 6,
+    favorite_pokemon: "Clefairy",
+    parent_emails: [ "jennifer.brown@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Aiden",
+    last_name: "Lee",
+    grade: "fifth_grade",
+    age: 11,
+    favorite_pokemon: "Dragonite",
+    parent_emails: [ "david.garcia@email.com" ],
+    status: "inactive"
+  },
+  {
+    first_name: "Chloe",
+    last_name: "Walker",
+    grade: "second_grade",
+    age: 7,
+    favorite_pokemon: "Skitty",
+    parent_emails: [ "lisa.martinez@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Tyler",
+    last_name: "Hall",
+    grade: "sixth_grade",
+    age: 12,
+    favorite_pokemon: "Scyther",
+    parent_emails: [ "james.anderson@email.com" ],
+    status: "inactive"
+  },
+  {
+    first_name: "Lily",
+    last_name: "White",
+    grade: "kindergarten_grade",
+    age: 5,
+    favorite_pokemon: "Ditto",
+    parent_emails: [ "sarah.johnson@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Connor",
+    last_name: "Green",
+    grade: "third_grade",
+    age: 8,
+    favorite_pokemon: "Alakazam",
+    parent_emails: [ "mike.smith@email.com" ],
+    status: "active"
+  },
+  {
+    first_name: "Mia",
+    last_name: "Adams",
+    grade: "fourth_grade",
+    age: 9,
+    favorite_pokemon: "Rapidash",
+    parent_emails: [ "emily.davis@email.com" ],
+    status: "inactive"
+  },
+  {
+    first_name: "Ryan",
+    last_name: "Clark",
+    grade: "first_grade",
+    age: 6,
+    favorite_pokemon: "Magikarp",
+    parent_emails: [ "robert.wilson@email.com" ],
+    status: "active"
   }
 ]
 
@@ -189,8 +297,14 @@ students = students_data.map do |student_data|
   ) do |student|
     student.grade = student_data[:grade]
     student.favorite_pokemon = student_data[:favorite_pokemon]
-    student.notes = "Active member of the Pokemon Club. Age: #{student_data[:age]} years old."
-    student.status = "active"
+    student_status = student_data[:status] || "active"
+    student.status = student_status
+
+    if student_status == "active"
+      student.notes = "Active member of the Pokemon Club. Age: #{student_data[:age]} years old."
+    else
+      student.notes = "Former member of the Pokemon Club. Age: #{student_data[:age]} years old. Status changed to inactive."
+    end
   end
 end
 

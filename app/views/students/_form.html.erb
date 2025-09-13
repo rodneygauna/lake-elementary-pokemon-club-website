@@ -1,62 +1,184 @@
-<%= form_with(model: student) do |form| %>
+<%= form_with(model: student, local: true, class: "needs-validation", novalidate: true) do |form| %>
   <% if student.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(student.errors.count, "error") %> prohibited this student from being saved:</h2>
-
-      <ul>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <div class="d-flex align-items-center mb-2">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <strong><%= pluralize(student.errors.count, "error") %> prohibited this student from being saved:</strong>
+      </div>
+      <ul class="mb-0 ps-3">
         <% student.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :first_name, style: "display: block" %>
-    <%= form.text_field :first_name %>
+  <!-- Basic Information Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-user me-2"></i>Basic Information
+      </h5>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :middle_name, style: "display: block" %>
-    <%= form.text_field :middle_name %>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :first_name, class: "form-label required" do %>
+        <i class="fas fa-user me-1"></i>First Name
+      <% end %>
+      <%= form.text_field :first_name,
+          class: "form-control #{'is-invalid' if student.errors[:first_name].any?}",
+          placeholder: "Enter first name",
+          required: true %>
+      <% if student.errors[:first_name].any? %>
+        <div class="invalid-feedback">
+          <%= student.errors[:first_name].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :middle_name, class: "form-label" do %>
+        <i class="fas fa-user me-1"></i>Middle Name
+      <% end %>
+      <%= form.text_field :middle_name,
+          class: "form-control",
+          placeholder: "Enter middle name (optional)" %>
+      <small class="form-text text-muted">Optional</small>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :last_name, style: "display: block" %>
-    <%= form.text_field :last_name %>
+  <div class="row">
+    <div class="col-md-8 mb-3">
+      <%= form.label :last_name, class: "form-label required" do %>
+        <i class="fas fa-user me-1"></i>Last Name
+      <% end %>
+      <%= form.text_field :last_name,
+          class: "form-control #{'is-invalid' if student.errors[:last_name].any?}",
+          placeholder: "Enter last name",
+          required: true %>
+      <% if student.errors[:last_name].any? %>
+        <div class="invalid-feedback">
+          <%= student.errors[:last_name].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <%= form.label :suffix_name, class: "form-label" do %>
+        <i class="fas fa-user me-1"></i>Suffix
+      <% end %>
+      <%= form.text_field :suffix_name,
+          class: "form-control",
+          placeholder: "Jr., Sr., III, etc." %>
+      <small class="form-text text-muted">Jr., Sr., III, etc.</small>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :suffix_name, style: "display: block" %>
-    <%= form.text_field :suffix_name %>
+  <!-- School Information Section -->
+  <div class="row mb-4 mt-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-school me-2"></i>School Information
+      </h5>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :grade, style: "display: block" %>
-    <%= form.text_field :grade %>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :grade, class: "form-label" do %>
+        <i class="fas fa-graduation-cap me-1"></i>Grade Level
+      <% end %>
+      <%= form.select :grade,
+          options_for_select([
+            ['Kindergarten', 'kindergarten_grade'],
+            ['1st Grade', 'first_grade'],
+            ['2nd Grade', 'second_grade'],
+            ['3rd Grade', 'third_grade'],
+            ['4th Grade', 'fourth_grade'],
+            ['5th Grade', 'fifth_grade'],
+            ['6th Grade', 'sixth_grade']
+          ], student.grade),
+          { prompt: 'Select grade level' },
+          { class: "form-select" } %>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :class_number, class: "form-label" do %>
+        <i class="fas fa-door-open me-1"></i>Class/Room Number
+      <% end %>
+      <%= form.text_field :class_number,
+          class: "form-control",
+          placeholder: "e.g., Room 101, Class A" %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :class_number, style: "display: block" %>
-    <%= form.text_field :class_number %>
+  <div class="row">
+    <div class="col-md-8 mb-3">
+      <%= form.label :teacher_name, class: "form-label" do %>
+        <i class="fas fa-chalkboard-teacher me-1"></i>Teacher Name
+      <% end %>
+      <%= form.text_field :teacher_name,
+          class: "form-control",
+          placeholder: "Enter teacher's name" %>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <%= form.label :status, class: "form-label" do %>
+        <i class="fas fa-circle-check me-1"></i>Status
+      <% end %>
+      <%= form.select :status,
+          options_for_select([
+            ['Active Member', 'active'],
+            ['Inactive Member', 'inactive']
+          ], student.status),
+          { prompt: 'Select status' },
+          { class: "form-select" } %>
+      <small class="form-text text-muted">Active members participate in club activities</small>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :teacher_name, style: "display: block" %>
-    <%= form.text_field :teacher_name %>
+  <!-- Pokemon Club Information Section -->
+  <div class="row mb-4 mt-4">
+    <div class="col-12">
+      <h5 class="text-warning border-bottom pb-2 mb-3">
+        <i class="fas fa-star me-2"></i>Pokémon Club Information
+      </h5>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :favorite_pokemon, style: "display: block" %>
-    <%= form.text_field :favorite_pokemon %>
+  <div class="row">
+    <div class="col-md-12 mb-3">
+      <%= form.label :favorite_pokemon, class: "form-label" do %>
+        <i class="fas fa-heart me-1"></i>Favorite Pokémon
+      <% end %>
+      <%= form.text_field :favorite_pokemon,
+          class: "form-control",
+          placeholder: "e.g., Pikachu, Charizard, Eevee" %>
+      <small class="form-text text-muted">What's their favorite Pokémon?</small>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :notes, style: "display: block" %>
-    <%= form.textarea :notes %>
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <%= form.label :notes, class: "form-label" do %>
+        <i class="fas fa-sticky-note me-1"></i>Additional Notes
+      <% end %>
+      <%= form.text_area :notes,
+          class: "form-control",
+          rows: 4,
+          placeholder: "Any additional information, special considerations, or notes..." %>
+      <small class="form-text text-muted">Optional notes for teachers and club leaders</small>
+    </div>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <!-- Submit Button -->
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= form.submit "Update Student",
+        class: "btn btn-primary btn-lg px-4" do %>
+      <i class="fas fa-save me-2"></i>Update Student
+    <% end %>
   </div>
 <% end %>
