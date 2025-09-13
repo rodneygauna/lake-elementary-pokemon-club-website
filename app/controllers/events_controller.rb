@@ -30,6 +30,11 @@ class EventsController < ApplicationController
     # Default view mode (calendar or list)
     @view_mode = params[:view] || "calendar"
 
+    # For agenda view, only show current and upcoming events
+    if @view_mode == "list"
+      @events = @events.upcoming
+    end
+
     # For calendar view, prepare data for FullCalendar
     if @view_mode == "calendar"
       @calendar_events = @events.map do |event|
@@ -68,7 +73,7 @@ class EventsController < ApplicationController
 
   # POST /events or /events.json
   def create
-    @event = Event.new(event_params)
+    @event = Event.new(event_params_with_timezone_conversion)
 
     respond_to do |format|
       if @event.save
@@ -84,7 +89,7 @@ class EventsController < ApplicationController
   # PATCH/PUT /events/1 or /events/1.json
   def update
     respond_to do |format|
-      if @event.update(event_params)
+      if @event.update(event_params_with_timezone_conversion)
         format.html { redirect_to @event, notice: "Event was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @event }
       else
@@ -113,5 +118,33 @@ class EventsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def event_params
       params.expect(event: [ :title, :description, :starts_at, :ends_at, :time_zone, :venue, :address1, :address2, :city, :state, :zipcode, :status, :special ])
+    end
+
+    # Convert datetime parameters from form timezone to UTC
+    def event_params_with_timezone_conversion
+      permitted_params = event_params
+
+      # Get timezone from params
+      timezone_name = permitted_params[:time_zone]
+      return permitted_params unless timezone_name.present?
+
+      timezone = ActiveSupport::TimeZone[timezone_name]
+      return permitted_params unless timezone
+
+      # Convert starts_at if present
+      if permitted_params[:starts_at].present?
+        # Convert datetime-local format (2025-09-13T20:30) to timezone-aware UTC
+        local_time_str = permitted_params[:starts_at].to_s.gsub("T", " ")
+        permitted_params[:starts_at] = timezone.parse(local_time_str).utc
+      end
+
+      # Convert ends_at if present
+      if permitted_params[:ends_at].present?
+        # Convert datetime-local format (2025-09-13T20:30) to timezone-aware UTC
+        local_time_str = permitted_params[:ends_at].to_s.gsub("T", " ")
+        permitted_params[:ends_at] = timezone.parse(local_time_str).utc
+      end
+
+      permitted_params
     end
 end

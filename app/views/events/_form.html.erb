@@ -4,7 +4,7 @@
       <% if event.errors.any? %>
         <div class="alert alert-danger mb-4">
           <h5 class="alert-heading">
-            <i class="bi bi-exclamation-triangle me-2"></i>
+            <i class="fas fa-exclamation-triangle me-2"></i>
             <%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:
           </h5>
           <ul class="mb-0">
@@ -18,13 +18,15 @@
   </div>
 
   <!-- Basic Event Information -->
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header" style="background-color: #f8f9fa;">
-      <h5 class="mb-0">
-        <i class="bi bi-info-circle me-2" style="color: #0084FF;"></i>
-        Basic Information
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-info-circle me-2"></i>Basic Information
       </h5>
     </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3">
         <!-- Title -->
@@ -64,7 +66,7 @@
           <div class="form-check form-switch">
             <%= form.check_box :special, class: "form-check-input", style: "transform: scale(1.2);" %>
             <%= form.label :special, class: "form-check-label fw-bold ms-2" do %>
-              <i class="bi bi-star me-1" style="color: #FFD700;"></i>
+              <i class="fas fa-star me-1 text-warning"></i>
               Special Event
             <% end %>
             <div class="form-text mt-1">Mark this as a special event (not a regular meeting)</div>
@@ -75,13 +77,15 @@
   </div>
 
   <!-- Date & Time -->
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header" style="background-color: #f8f9fa;">
-      <h5 class="mb-0">
-        <i class="bi bi-calendar3 me-2" style="color: #0084FF;"></i>
-        Date & Time
+  <div class="row mb-4 mt-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-clock me-2"></i>Date & Time
       </h5>
     </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3">
         <!-- Start Date/Time -->
@@ -89,7 +93,20 @@
           <%= form.label :starts_at, class: "form-label fw-bold" do %>
             Start Date & Time <span class="text-danger">*</span>
           <% end %>
-          <%= form.datetime_local_field :starts_at, class: "form-control", required: true %>
+          <%
+            # For editing, show the time in the event's timezone
+            starts_at_value = if event.persisted? && event.starts_at.present? && event.time_zone.present?
+              event.starts_at.in_time_zone(event.time_zone).strftime("%Y-%m-%dT%H:%M")
+            elsif event.starts_at.present?
+              event.starts_at.strftime("%Y-%m-%dT%H:%M")
+            else
+              nil
+            end
+          %>
+          <%= form.datetime_local_field :starts_at,
+              class: "form-control",
+              required: true,
+              value: starts_at_value %>
         </div>
 
         <!-- End Date/Time -->
@@ -97,7 +114,20 @@
           <%= form.label :ends_at, class: "form-label fw-bold" do %>
             End Date & Time <span class="text-danger">*</span>
           <% end %>
-          <%= form.datetime_local_field :ends_at, class: "form-control", required: true %>
+          <%
+            # For editing, show the time in the event's timezone
+            ends_at_value = if event.persisted? && event.ends_at.present? && event.time_zone.present?
+              event.ends_at.in_time_zone(event.time_zone).strftime("%Y-%m-%dT%H:%M")
+            elsif event.ends_at.present?
+              event.ends_at.strftime("%Y-%m-%dT%H:%M")
+            else
+              nil
+            end
+          %>
+          <%= form.datetime_local_field :ends_at,
+              class: "form-control",
+              required: true,
+              value: ends_at_value %>
         </div>
 
         <!-- Time Zone -->
@@ -112,20 +142,25 @@
               ], event.time_zone || 'America/Los_Angeles'),
               {},
               { class: "form-select" } %>
-          <div class="form-text">Select the timezone for this event.</div>
+          <div class="form-text">
+            <i class="fas fa-info-circle me-1"></i>
+            Enter the start and end times above in this timezone. The system will automatically convert them for storage and display.
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Location Information -->
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header" style="background-color: #f8f9fa;">
-      <h5 class="mb-0">
-        <i class="bi bi-geo-alt me-2" style="color: #0084FF;"></i>
-        Location <span class="text-muted">(Optional)</span>
+  <div class="row mb-4 mt-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-map-marker-alt me-2"></i>Location <span class="text-muted">(Optional)</span>
       </h5>
     </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3">
         <!-- Venue Name -->
@@ -168,54 +203,10 @@
   </div>
 
   <!-- Form Actions -->
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-end">
-        <%= link_to "Cancel", event.persisted? ? event : events_path,
-            class: "btn btn-outline-secondary order-2 order-sm-1" %>
-        <%= form.submit event.persisted? ? "Update Event" : "Create Event",
-            class: "btn btn-primary order-1 order-sm-2" %>
-      </div>
-    </div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <%= form.submit event.persisted? ? "Update Event" : "Create Event",
+        class: "btn btn-primary btn-lg px-4" %>
   </div>
 <% end %>
 
-<!-- Custom CSS -->
-<style>
-  .btn-primary {
-    background-color: #0084FF;
-    border-color: #0084FF;
-  }
-  .btn-primary:hover {
-    background-color: #0066CC;
-    border-color: #0066CC;
-  }
-  .form-check-input:checked {
-    background-color: #0084FF;
-    border-color: #0084FF;
-  }
-  .form-control:focus, .form-select:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 132, 255, 0.25);
-  }
-</style>
 
-<!-- Form Validation Script -->
-<script>
-  // Bootstrap form validation
-  (function() {
-    'use strict';
-    window.addEventListener('load', function() {
-      var forms = document.getElementsByClassName('needs-validation');
-      var validation = Array.prototype.filter.call(forms, function(form) {
-        form.addEventListener('submit', function(event) {
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
-      });
-    }, false);
-  })();
-</script>

@@ -1,105 +1,100 @@
 <% content_for :title, "Events" %>
 
-<div class="container-fluid py-4">
-  <!-- Header Section -->
-  <div class="row mb-4">
+<div class="container mt-4">
+  <div class="row">
     <div class="col-12">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-        <div>
-          <h1 class="mb-1">
-            <i class="bi bi-calendar-event me-2" style="color: #0084FF;"></i>
-            Club Events
-          </h1>
-          <p class="text-muted mb-0">Stay updated with Pokemon Club meetings and activities</p>
+      <!-- Navigation Controls -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Home", root_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Events</li>
+        </ol>
+      </nav>
+
+      <!-- Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-calendar-alt me-2"></i>
+              <h1 class="h4 mb-0">Pokémon Club Events</h1>
+            </div>
+            <div class="d-flex align-items-center">
+              <% if current_user&.admin? %>
+                <%= link_to new_event_path, class: "btn btn-light btn-sm" do %>
+                  <i class="fas fa-plus me-1"></i>New Event
+                <% end %>
+              <% end %>
+            </div>
+          </div>
         </div>
-
-        <% if current_user&.admin? %>
-          <%= link_to new_event_path, class: "btn btn-primary d-flex align-items-center gap-2" do %>
-            <i class="bi bi-plus-circle"></i>
-            New Event
-          <% end %>
-        <% end %>
+        <div class="card-body">
+          <p class="text-muted mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            Stay updated with Pokémon Club meetings and activities.
+          </p>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- View Toggle and Filters -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body py-3">
+      <!-- View Toggle and Filters -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
           <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
 
             <!-- View Mode Toggle -->
             <div class="btn-group" role="group" aria-label="View mode">
-              <%= link_to events_path(view: 'list', status: params[:status], type: params[:type], show_cancelled: params[:show_cancelled]),
+              <%= link_to events_path(view: 'list', type: params[:type], show_cancelled: params[:show_cancelled]),
                   class: "btn #{'btn-primary' if @view_mode == 'list'} #{'btn-outline-primary' if @view_mode != 'list'}" do %>
-                <i class="bi bi-list-ul me-1"></i> Agenda
+                <i class="fas fa-list me-1"></i> Agenda
               <% end %>
-              <%= link_to events_path(view: 'calendar', status: params[:status], type: params[:type], show_cancelled: params[:show_cancelled]),
+              <%= link_to events_path(view: 'calendar', type: params[:type], show_cancelled: params[:show_cancelled]),
                   class: "btn #{'btn-primary' if @view_mode == 'calendar'} #{'btn-outline-primary' if @view_mode != 'calendar'}" do %>
-                <i class="bi bi-calendar3 me-1"></i> Calendar
+                <i class="fas fa-calendar me-1"></i> Calendar
               <% end %>
             </div>
 
             <!-- Filters -->
             <div class="d-flex flex-wrap gap-2">
-              <!-- Status Filter -->
-              <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-funnel me-1"></i>
-                  Status: <%= params[:status]&.titleize || 'All' %>
-                </button>
-                <ul class="dropdown-menu">
-                  <%= link_to "All Statuses", events_path(view: @view_mode, type: params[:type], show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:status].blank?}" %>
-                  <%= link_to "Published", events_path(view: @view_mode, status: 'published', type: params[:type], show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:status] == 'published'}" %>
-                  <%= link_to "Cancelled", events_path(view: @view_mode, status: 'canceled', type: params[:type], show_cancelled: "true"), class: "dropdown-item #{'active' if params[:status] == 'canceled'}" %>
-                  <% if current_user&.admin? %>
-                    <%= link_to "Draft", events_path(view: @view_mode, status: 'draft', type: params[:type], show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:status] == 'draft'}" %>
-                  <% end %>
-                </ul>
-              </div>
-
               <!-- Type Filter -->
               <div class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-tag me-1"></i>
+                  <i class="fas fa-tag me-1"></i>
                   Type: <%= params[:type]&.titleize || 'All' %>
                 </button>
                 <ul class="dropdown-menu">
-                  <%= link_to "All Types", events_path(view: @view_mode, status: params[:status], show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:type].blank?}" %>
-                  <%= link_to "Regular Meetings", events_path(view: @view_mode, status: params[:status], type: 'regular', show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:type] == 'regular'}" %>
-                  <%= link_to "Special Events", events_path(view: @view_mode, status: params[:status], type: 'special', show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:type] == 'special'}" %>
+                  <%= link_to "All Types", events_path(view: @view_mode, show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:type].blank?}" %>
+                  <%= link_to "Regular Meetings", events_path(view: @view_mode, type: 'regular', show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:type] == 'regular'}" %>
+                  <%= link_to "Special Events", events_path(view: @view_mode, type: 'special', show_cancelled: params[:show_cancelled]), class: "dropdown-item #{'active' if params[:type] == 'special'}" %>
                 </ul>
               </div>
 
               <!-- Cancelled Events Toggle -->
-              <div class="form-check form-switch d-flex align-items-center">
-                <%= link_to events_path(view: @view_mode, status: params[:status], type: params[:type], show_cancelled: params[:show_cancelled] == "true" ? "false" : "true"),
-                    class: "btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" do %>
-                  <% if params[:show_cancelled] == "true" %>
-                    <i class="bi bi-eye-slash"></i>
-                    Hide Cancelled
-                  <% else %>
-                    <i class="bi bi-eye"></i>
-                    Show Cancelled
-                  <% end %>
+              <div class="form-check form-switch">
+                <%= form_with url: events_path, method: :get, local: true, class: "d-inline" do |form| %>
+                  <%= form.hidden_field :view, value: @view_mode %>
+                  <%= form.hidden_field :type, value: params[:type] %>
+                  <%= form.check_box :show_cancelled,
+                      {
+                        checked: params[:show_cancelled] == "true",
+                        class: "form-check-input",
+                        onchange: "this.form.submit();"
+                      },
+                      "true", "false" %>
+                  <%= form.label :show_cancelled, "Show cancelled events", class: "form-check-label" %>
                 <% end %>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Events Display -->
-  <div class="row">
-    <div class="col-12">
+      <!-- Events Display -->
       <% if @events.any? %>
         <% if @view_mode == 'calendar' %>
           <!-- FullCalendar View -->
-          <div class="card border-0 shadow-sm">
+          <div class="card shadow-sm">
             <div class="card-body">
               <div data-controller="events-calendar"
                    data-events-calendar-events-value="<%= @calendar_events.to_json %>"
@@ -120,20 +115,24 @@
         <% end %>
       <% else %>
         <!-- Empty State -->
-        <div class="card border-0 shadow-sm">
+        <div class="card shadow-sm">
           <div class="card-body text-center py-5">
-            <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
-            <h4 class="text-muted mb-2">No Events Found</h4>
-            <p class="text-muted mb-4">
-              <% if params[:status].present? || params[:type].present? %>
-                Try adjusting your filters to see more events.
-              <% else %>
-                There are no events scheduled at this time.
+            <div class="mb-4">
+              <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+              <h4 class="text-muted">No Events Found</h4>
+              <p class="text-muted mb-4">
+                <% if params[:type].present? %>
+                  Try adjusting your filters to see more events.
+                <% else %>
+                  There are no events scheduled at this time.
+                <% end %>
+              </p>
+              <% if current_user&.admin? %>
+                <%= link_to new_event_path, class: "btn btn-primary" do %>
+                  <i class="fas fa-plus me-2"></i>Create First Event
+                <% end %>
               <% end %>
-            </p>
-            <% if current_user&.admin? %>
-              <%= link_to "Create First Event", new_event_path, class: "btn btn-primary" %>
-            <% end %>
+            </div>
           </div>
         </div>
       <% end %>
@@ -141,22 +140,4 @@
   </div>
 </div>
 
-<!-- Custom CSS for Pokemon theme -->
-<style>
-  .btn-primary {
-    background-color: #0084FF;
-    border-color: #0084FF;
-  }
-  .btn-primary:hover {
-    background-color: #0066CC;
-    border-color: #0066CC;
-  }
-  .btn-outline-primary {
-    color: #0084FF;
-    border-color: #0084FF;
-  }
-  .btn-outline-primary:hover {
-    background-color: #0084FF;
-    border-color: #0084FF;
-  }
-</style>
+

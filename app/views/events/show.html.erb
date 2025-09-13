@@ -1,103 +1,129 @@
 <% content_for :title, @event.title %>
 
-<div class="container py-4">
-  <!-- Back Navigation -->
-  <div class="row mb-3">
+<div class="container mt-4">
+  <div class="row justify-content-center">
     <div class="col-12">
-      <%= link_to events_path, class: "btn btn-link ps-0 text-decoration-none d-flex align-items-center gap-2" do %>
-        <i class="bi bi-arrow-left"></i> Back to Events
-      <% end %>
-    </div>
-  </div>
+      <!-- Navigation Controls -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Events", events_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= truncate(@event.title, length: 50) %>
+          </li>
+        </ol>
+      </nav>
 
-  <!-- Event Header -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
-            <div class="flex-grow-1">
-              <!-- Title and Badges -->
-              <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                <h1 class="mb-0" style="color: #0084FF;"><%= @event.title %></h1>
-
-                <!-- Status Badges -->
-                <% if @event.status == 'canceled' %>
-                  <span class="badge bg-danger fs-6">
-                    <i class="bi bi-x-circle me-1"></i>Cancelled
-                  </span>
-                <% elsif @event.status == 'draft' %>
-                  <span class="badge bg-secondary fs-6">
-                    <i class="bi bi-eye-slash me-1"></i>Draft
-                  </span>
-                <% end %>
-
-                <!-- Special Event Badge -->
-                <% if @event.special? %>
-                  <span class="badge fs-6" style="background-color: #FFD700; color: #000;">
-                    <i class="bi bi-star-fill me-1"></i>Special Event
-                  </span>
-                <% end %>
-              </div>
-
-              <!-- Event Description -->
-              <% if @event.description.present? %>
-                <div class="mb-3">
-                  <p class="lead text-muted mb-0"><%= simple_format(@event.description) %></p>
-                </div>
-              <% end %>
-            </div>
-
-            <!-- Admin Actions -->
-            <% if current_user&.admin? %>
-              <div class="d-flex flex-column flex-sm-row gap-2">
-                <%= link_to edit_event_path(@event), class: "btn btn-outline-primary d-flex align-items-center gap-2" do %>
-                  <i class="bi bi-pencil"></i> Edit Event
-                <% end %>
-                <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-2"
-                        data-bs-toggle="modal" data-bs-target="#deleteEventModal">
-                  <i class="bi bi-trash"></i> Delete
-                </button>
-              </div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <%= link_to events_path, class: "btn btn-outline-secondary me-2" do %>
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Events
+          <% end %>
+          <% if current_user&.admin? %>
+            <%= link_to edit_event_path(@event), class: "btn btn-outline-primary me-2" do %>
+              <i class="fas fa-edit me-1"></i>
+              Edit Event
             <% end %>
-          </div>
+            <%= form_with model: @event, method: :delete, local: true, class: "d-inline", id: "delete-event-form" do |form| %>
+              <button type="button"
+                      class="btn btn-outline-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmationModal"
+                      data-confirm-title="Delete Event"
+                      data-confirm-message="Are you sure you want to delete '<%= @event.title %>'? This action cannot be undone."
+                      data-confirm-action="Delete Event"
+                      data-form-id="delete-event-form">
+                <i class="fas fa-trash me-1"></i> Delete
+              </button>
+            <% end %>
+          <% end %>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Event Details -->
-  <div class="row g-4">
-    <!-- Left Column - Date & Time -->
-    <div class="col-12 col-lg-8">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body">
-          <h5 class="card-title d-flex align-items-center gap-2 mb-4">
-            <i class="bi bi-calendar3" style="color: #0084FF;"></i>
-            Date & Time
-          </h5>
-
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
-              <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                <h6 class="text-muted mb-1">Start Date & Time</h6>
-                <div class="fw-bold" style="color: #0084FF;">
-                  <%= @event.starts_at.in_time_zone(@event.time_zone).strftime("%A, %B %d, %Y") %>
-                </div>
-                <div class="text-muted">
-                  <%= @event.starts_at.in_time_zone(@event.time_zone).strftime("%I:%M %p") %>
-                  (<%= @event.time_zone.split('/').last.gsub('_', ' ') %>)
-                </div>
-              </div>
+      <!-- Event Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-calendar-alt me-2"></i>
+              <h1 class="h4 mb-0"><%= @event.title %></h1>
             </div>
+            <div class="d-flex gap-2">
+              <!-- Status Badges -->
+              <% if @event.status == 'canceled' %>
+                <span class="badge bg-danger">
+                  <i class="fas fa-times-circle me-1"></i>Cancelled
+                </span>
+              <% elsif @event.status == 'draft' %>
+                <span class="badge bg-secondary">
+                  <i class="fas fa-eye-slash me-1"></i>Draft
+                </span>
+              <% end %>
 
-            <div class="col-12 col-md-6">
-              <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                <h6 class="text-muted mb-1">End Date & Time</h6>
-                <div class="fw-bold" style="color: #0084FF;">
-                  <%= @event.ends_at.in_time_zone(@event.time_zone).strftime("%A, %B %d, %Y") %>
+              <!-- Special Event Badge -->
+              <% if @event.special? %>
+                <span class="badge bg-warning text-dark">
+                  <i class="fas fa-star me-1"></i>Special Event
+                </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Event Description -->
+          <% if @event.description.present? %>
+            <p class="text-muted mb-0">
+              <i class="fas fa-info-circle me-1"></i>
+              <%= simple_format(@event.description) %>
+            </p>
+          <% else %>
+            <p class="text-muted mb-0">
+              <i class="fas fa-info-circle me-1"></i>
+              Event details and information.
+            </p>
+          <% end %>
+        </div>
+      </div>
+
+
+
+      <!-- Event Details -->
+      <div class="row g-4">
+        <!-- Left Column - Date & Time -->
+        <div class="col-12 col-lg-8">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="text-dark border-bottom pb-2 mb-4">
+                <i class="fas fa-clock me-2"></i>Date & Time
+              </h5>
+
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                    <h6 class="text-muted mb-1">
+                      <i class="fas fa-play me-1"></i>Start Date & Time
+                    </h6>
+                    <div class="fw-bold text-dark">
+                      <%= @event.starts_at.in_time_zone(@event.time_zone).strftime("%A, %B %d, %Y") %>
+                    </div>
+                    <div class="text-muted">
+                      <%= @event.starts_at.in_time_zone(@event.time_zone).strftime("%I:%M %p") %>
+                      (<%= @event.time_zone.split('/').last.gsub('_', ' ') %>)
+                    </div>
+                  </div>
                 </div>
-                <div class="text-muted">
+
+                <div class="col-12 col-md-6">
+                  <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                    <h6 class="text-muted mb-1">
+                      <i class="fas fa-stop me-1"></i>End Date & Time
+                    </h6>
+                    <div class="fw-bold text-dark">
+                      <%= @event.ends_at.in_time_zone(@event.time_zone).strftime("%A, %B %d, %Y") %>
+                    </div>
+                    <div class="text-muted">
                   <%= @event.ends_at.in_time_zone(@event.time_zone).strftime("%I:%M %p") %>
                   (<%= @event.time_zone.split('/').last.gsub('_', ' ') %>)
                 </div>
@@ -164,74 +190,51 @@
       </div>
     </div>
 
-    <!-- Right Column - Location -->
-    <div class="col-12 col-lg-4">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body">
-          <h5 class="card-title d-flex align-items-center gap-2 mb-4">
-            <i class="bi bi-geo-alt" style="color: #0084FF;"></i>
-            Location
-          </h5>
+        <!-- Right Column - Location -->
+        <div class="col-12 col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="text-dark border-bottom pb-2 mb-4">
+                <i class="fas fa-map-marker-alt me-2"></i>Location
+              </h5>
 
-          <% if @event.venue.present? || @event.address1.present? %>
-            <div class="p-3 rounded" style="background-color: #f8f9fa;">
-              <% if @event.venue.present? %>
-                <div class="fw-bold mb-2" style="color: #0084FF;"><%= @event.venue %></div>
-              <% end %>
+              <% if @event.venue.present? || @event.address1.present? %>
+                <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                  <% if @event.venue.present? %>
+                    <h6 class="text-muted mb-1">
+                      <i class="fas fa-building me-1"></i>Venue
+                    </h6>
+                    <div class="fw-bold text-dark mb-2"><%= @event.venue %></div>
+                  <% end %>
 
-              <% if @event.address1.present? %>
-                <div class="text-muted">
-                  <%= @event.address1 %><br>
-                  <% if @event.address2.present? %>
-                    <%= @event.address2 %><br>
+                  <% if @event.address1.present? %>
+                    <h6 class="text-muted mb-1">
+                      <i class="fas fa-map me-1"></i>Address
+                    </h6>
+                    <div class="text-dark">
+                      <%= @event.address1 %><br>
+                      <% if @event.address2.present? %>
+                        <%= @event.address2 %><br>
+                      <% end %>
+                      <% if @event.city.present? && @event.state.present? %>
+                        <%= @event.city %>, <%= @event.state %>
+                        <%= @event.zipcode if @event.zipcode.present? %>
+                      <% end %>
+                    </div>
                   <% end %>
-                  <% if @event.city.present? && @event.state.present? %>
-                    <%= @event.city %>, <%= @event.state %>
-                    <%= @event.zipcode if @event.zipcode.present? %>
-                  <% end %>
+                </div>
+              <% else %>
+                <div class="text-center py-3" style="background-color: #f8f9fa; border-radius: 8px;">
+                  <i class="fas fa-map-marker-alt fa-2x text-muted mb-2"></i>
+                  <p class="text-muted mb-0">Location details will be provided soon.</p>
                 </div>
               <% end %>
             </div>
-          <% else %>
-            <div class="text-muted fst-italic">
-              <i class="bi bi-info-circle me-2"></i>
-              Location details will be provided soon.
-            </div>
-          <% end %>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Custom CSS -->
-<style>
-  .btn-primary {
-    background-color: #0084FF;
-    border-color: #0084FF;
-  }
-  .btn-primary:hover {
-    background-color: #0066CC;
-    border-color: #0066CC;
-  }
-  .btn-outline-primary {
-    color: #0084FF;
-    border-color: #0084FF;
-  }
-  .btn-outline-primary:hover {
-    background-color: #0084FF;
-    border-color: #0084FF;
-  }
-</style>
-
-<!-- Delete Confirmation Modal -->
-<% if current_user&.admin? %>
-  <%= render 'shared/confirmation_modal',
-      modal_id: 'deleteEventModal',
-      title: 'Delete Event',
-      message: "Are you sure you want to delete \"#{@event.title}\"? This action cannot be undone.",
-      confirm_text: 'Delete Event',
-      confirm_class: 'btn-danger',
-      confirm_url: event_path(@event),
-      confirm_method: :delete %>
-<% end %>
+<%= render "shared/generic_confirmation_modal" %>

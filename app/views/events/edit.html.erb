@@ -1,12 +1,52 @@
-<% content_for :title, "Editing event" %>
+<% content_for :title, "Edit Event - #{@event.title}" %>
 
-<h1>Editing event</h1>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Navigation Controls -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <%= link_to "Events", events_path, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item">
+            <%= link_to truncate(@event.title, length: 30), @event, class: "text-decoration-none" %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+      </nav>
 
-<%= render "form", event: @event %>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <%= link_to events_path, class: "btn btn-outline-secondary me-2" do %>
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Events
+          <% end %>
+          <%= link_to @event, class: "btn btn-outline-primary" do %>
+            <i class="fas fa-eye me-1"></i>
+            View Event
+          <% end %>
+        </div>
+      </div>
 
-<br>
+      <!-- Header Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-calendar-edit me-2"></i>
+            <h1 class="h4 mb-0">Edit Event: <%= truncate(@event.title, length: 40) %></h1>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            Update event information below. All changes will be saved when you submit the form.
+          </p>
+        </div>
+      </div>
 
-<div>
-  <%= link_to "Show this event", @event %> |
-  <%= link_to "Back to events", events_path %>
+      <!-- Form -->
+      <%= render "form", event: @event %>
+    </div>
+  </div>
 </div>

@@ -79,9 +79,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (form) {
-        form.submit();
+        // Close the modal first
+        const modalInstance = bootstrap.Modal.getInstance(confirmationModal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+
+        // Submit the form after a small delay to ensure modal closes
+        setTimeout(() => {
+          form.submit();
+        }, 150);
       } else {
-        console.error('Could not find form to submit');
+        console.error('Could not find form to submit for ID:', formId);
       }
     }
   });
