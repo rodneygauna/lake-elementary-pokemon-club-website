@@ -169,6 +169,51 @@ Based on the Product Requirements Document (PRD) v2.1
 
 ---
 
+## 3A. Event Attendance Tracking System
+
+### REQ-5.1: Admin-only attendance tracking interface on event show pages
+
+- [ ] Attendance model generation with proper relationships
+- [ ] Database migration for attendance table (event_id, student_id, marked_by_id, present, marked_at)
+- [ ] Attendance controller with admin-only authorization
+- [ ] Attendance toggle interface on event show page
+
+### REQ-5.2: Toggle-based attendance marking for all active students
+
+- [ ] Display all active students on event show page (admin-only section)
+- [ ] Color-coded toggle buttons for attendance status (present/absent)
+- [ ] AJAX-based attendance updates without page refresh
+- [ ] Visual feedback for toggle state changes
+
+### REQ-5.3: Attendance model with event-student-admin relationships
+
+- [ ] Attendance belongs_to :event, :student, :marked_by (User/admin)
+- [ ] Validation for required relationships and attendance status
+- [ ] Scopes for attendance filtering and reporting
+- [ ] Model methods for attendance status checking
+
+### REQ-5.4: Visual feedback for attendance status (color-coded toggle buttons)
+
+- [ ] Bootstrap-styled toggle buttons with color states
+- [ ] Present state: green/success styling
+- [ ] Absent state: gray/secondary styling
+- [ ] Hover and active states for better UX
+
+### REQ-5.5: Attendance tracking available for all events regardless of status or timing
+
+- [ ] Remove restrictions on event status for attendance tracking
+- [ ] Allow attendance marking for draft, published, and canceled events
+- [ ] Allow attendance marking for past, current, and future events
+
+### REQ-5.6: Attendance audit trail with timestamp and admin tracking
+
+- [ ] Track which admin marked attendance (marked_by relationship)
+- [ ] Automatic timestamp recording (marked_at field)
+- [ ] Attendance history and audit capabilities
+- [ ] Admin attribution display in attendance interface
+
+---
+
 ## 4. Donor Recognition System
 
 ### REQ-4.1: CRUD interface for donor management (scaffolded)

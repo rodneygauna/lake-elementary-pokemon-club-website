@@ -130,31 +130,40 @@ A **Ruby on Rails 8 web application** featuring:
 - **REQ-4.5:** Public donor recognition page with carousel display
 - **REQ-4.6:** Privacy settings for donor visibility preferences
 
-### 5.5 Document Repository
+### 5.5 Event Attendance Tracking System
 
-- **REQ-5.1:** CRUD interface for document management (scaffolded)
-- **REQ-5.2:** File upload functionality using Active Storage
-- **REQ-5.3:** Document categorization (forms, meeting notes, resources)
-- **REQ-5.4:** Search functionality for document discovery
-- **REQ-5.5:** Access control for sensitive documents
-- **REQ-5.6:** Download tracking and statistics
+- **REQ-5.1:** Admin-only attendance tracking interface on event show pages
+- **REQ-5.2:** Toggle-based attendance marking for all active students
+- **REQ-5.3:** Attendance model with event-student-admin relationships
+- **REQ-5.4:** Visual feedback for attendance status (color-coded toggle buttons)
+- **REQ-5.5:** Attendance tracking available for all events regardless of status or timing
+- **REQ-5.6:** Attendance audit trail with timestamp and admin tracking
 
-### 5.6 Email Notification System
+### 5.6 Document Repository
 
-- **REQ-6.1:** User subscription management for email notifications
-- **REQ-6.2:** General notifications (new events, cancellations, donations, news)
-- **REQ-6.3:** Granular subscriptions for individual events or content
-- **REQ-6.4:** Unsubscribe functionality for all email types
-- **REQ-6.5:** Email templates for consistent branding
-- **REQ-6.6:** Automated notifications for content changes
+- **REQ-6.1:** CRUD interface for document management (scaffolded)
+- **REQ-6.2:** File upload functionality using Active Storage
+- **REQ-6.3:** Document categorization (forms, meeting notes, resources)
+- **REQ-6.4:** Search functionality for document discovery
+- **REQ-6.5:** Access control for sensitive documents
+- **REQ-6.6:** Download tracking and statistics
 
-### 5.7 Navigation & User Experience
+### 5.7 Email Notification System
 
-- **REQ-7.1:** Responsive design using Bootstrap 5 and Rails view helpers
-- **REQ-7.2:** Consistent navigation with user authentication status
-- **REQ-7.3:** Dashboard for authenticated users
-- **REQ-7.4:** Admin interface for content management
-- **REQ-7.5:** Fast loading times with Rails optimization techniques
+- **REQ-7.1:** User subscription management for email notifications
+- **REQ-7.2:** General notifications (new events, cancellations, donations, news)
+- **REQ-7.3:** Granular subscriptions for individual events or content
+- **REQ-7.4:** Unsubscribe functionality for all email types
+- **REQ-7.5:** Email templates for consistent branding
+- **REQ-7.6:** Automated notifications for content changes
+
+### 5.8 Navigation & User Experience
+
+- **REQ-8.1:** Responsive design using Bootstrap 5 and Rails view helpers
+- **REQ-8.2:** Consistent navigation with user authentication status
+- **REQ-8.3:** Dashboard for authenticated users
+- **REQ-8.4:** Admin interface for content management
+- **REQ-8.5:** Fast loading times with Rails optimization techniques
 
 ---
 
@@ -162,40 +171,40 @@ A **Ruby on Rails 8 web application** featuring:
 
 ### 6.1 Security
 
-- **REQ-8.1:** Secure user authentication with encrypted passwords
-- **REQ-8.2:** Protection against common web vulnerabilities (CSRF, XSS, SQL injection)
-- **REQ-8.3:** Role-based authorization enforcement
-- **REQ-8.4:** Secure file upload validation and storage
-- **REQ-8.5:** HTTPS enforcement in production
+- **REQ-9.1:** Secure user authentication with encrypted passwords
+- **REQ-9.2:** Protection against common web vulnerabilities (CSRF, XSS, SQL injection)
+- **REQ-9.3:** Role-based authorization enforcement
+- **REQ-9.4:** Secure file upload validation and storage
+- **REQ-9.5:** HTTPS enforcement in production
 
 ### 6.2 Accessibility
 
-- **REQ-9.1:** WCAG 2.2 AA compliance
-- **REQ-9.2:** Keyboard navigation support
-- **REQ-9.3:** Screen reader compatibility
-- **REQ-9.4:** Sufficient color contrast ratios
-- **REQ-9.5:** Alternative text for all images and documents
+- **REQ-10.1:** WCAG 2.2 AA compliance
+- **REQ-10.2:** Keyboard navigation support
+- **REQ-10.3:** Screen reader compatibility
+- **REQ-10.4:** Sufficient color contrast ratios
+- **REQ-10.5:** Alternative text for all images and documents
 
 ### 6.3 Performance
 
-- **REQ-10.1:** Page load time under 3 seconds
-- **REQ-10.2:** Database query optimization
-- **REQ-10.3:** Efficient file serving via Active Storage
-- **REQ-10.4:** Caching implementation for static content
+- **REQ-11.1:** Page load time under 3 seconds
+- **REQ-11.2:** Database query optimization
+- **REQ-11.3:** Efficient file serving via Active Storage
+- **REQ-11.4:** Caching implementation for static content
 
 ### 6.4 Compatibility
 
-- **REQ-11.1:** Support modern browsers (Chrome, Firefox, Safari, Edge)
-- **REQ-11.2:** Mobile responsiveness across devices
-- **REQ-11.3:** Progressive enhancement for feature support
+- **REQ-12.1:** Support modern browsers (Chrome, Firefox, Safari, Edge)
+- **REQ-12.2:** Mobile responsiveness across devices
+- **REQ-12.3:** Progressive enhancement for feature support
 
 ### 6.5 Maintenance & Deployment
 
-- **REQ-12.1:** Simple deployment via Git-based hosting (Heroku/similar)
-- **REQ-12.2:** Database migrations for schema management
-- **REQ-12.3:** Environment-based configuration management
-- **REQ-12.4:** Automated testing capabilities
-- **REQ-12.5:** Regular security updates and dependency management
+- **REQ-13.1:** Simple deployment via Git-based hosting (Heroku/similar)
+- **REQ-13.2:** Database migrations for schema management
+- **REQ-13.3:** Environment-based configuration management
+- **REQ-13.4:** Automated testing capabilities
+- **REQ-13.5:** Regular security updates and dependency management
 
 ---
 
@@ -221,6 +230,7 @@ A **Ruby on Rails 8 web application** featuring:
 - **User:** Authentication, roles (admin/normal), email preferences
 - **Student:** Name, grade, belongs_to user (parent/guardian)
 - **Event:** Title, description, date, status, category, created_by admin
+- **Attendance:** Event-student attendance tracking with admin audit trail
 - **Donor:** Name, donor_type (individual/business), contact info, privacy settings, photo attachment
 - **Donation:** Normalized donation tracking with value_type (monetary/material/service), amounts, descriptions
 - **Document:** Title, description, category, file attachment via Active Storage
@@ -231,6 +241,9 @@ A **Ruby on Rails 8 web application** featuring:
 - User has_many students through user_students (many-to-many)
 - User has_many email_subscriptions
 - Event belongs_to user (creator)
+- Event has_many attendances (one-to-many)
+- Student has_many attendances (one-to-many)
+- Attendance belongs_to event, student, and marked_by (user/admin)
 - Donor has_many donations (one-to-many)
 - Donation belongs_to donor
 - Donor has_one_attached photo (Active Storage)
@@ -264,6 +277,7 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   ├── student.rb
 │   │   ├── user_student.rb           # Join table for many-to-many
 │   │   ├── event.rb
+│   │   ├── attendance.rb             # Event-student attendance tracking
 │   │   ├── donor.rb                  # Individual/business donors
 │   │   ├── donation.rb               # Normalized donation tracking
 │   │   ├── document.rb               # File repository (future)
