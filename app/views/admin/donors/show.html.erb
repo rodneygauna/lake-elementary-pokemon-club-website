@@ -1,11 +1,4 @@
-<!-- Success Notice -->
-<% if notice %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    <%= notice %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<% end %>
+<% content_for :title, "Donor Details - #{@donor.display_name}" %>
 
 <!-- Breadcrumb Navigation -->
 <nav aria-label="breadcrumb" class="mb-3">
@@ -14,120 +7,167 @@
       <%= link_to "Home", root_path, class: "text-decoration-none" %>
     </li>
     <li class="breadcrumb-item">
-      <%= link_to "Donors", admin_donors_path, class: "text-decoration-none" %>
+      <%= link_to "Donor Management", admin_donors_path, class: "text-decoration-none" %>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">
-      <%= @donor.display_name %>
-    </li>
+    <li class="breadcrumb-item active" aria-current="page"><%= @donor.display_name %></li>
   </ol>
 </nav>
 
-<!-- Action Buttons -->
-<div class="d-flex flex-wrap gap-2 mb-3">
-  <%= link_to admin_donors_path, class: "btn btn-outline-secondary" do %>
-    <i class="fas fa-arrow-left me-2"></i>Back to Donors
-  <% end %>
-  <%= link_to edit_admin_donor_path(@donor), class: "btn btn-primary me-2" do %>
-    <i class="fas fa-edit me-2"></i>Edit Donor
-  <% end %>
-  <%= button_to admin_donor_path(@donor),
-                method: :delete,
-                class: "btn btn-danger",
-                data: {
-                  bs_toggle: "modal",
-                  bs_target: "#confirmationModal",
-                  confirm_title: "Delete Donor",
-                  confirm_message: "Are you sure you want to permanently delete this donor? This action cannot be undone.",
-                  confirm_action: "Delete Donor"
-                } do %>
-    <i class="fas fa-trash me-2"></i>Delete Donor
-  <% end %>
-</div>
-
-<!-- Header Card -->
-<div class="card bg-primary text-white shadow-sm mb-4">
-  <div class="card-body">
-    <div class="d-flex align-items-center">
-      <div class="me-3">
-        <i class="fas fa-heart fa-2x"></i>
-      </div>
-      <div>
-        <h2 class="card-title mb-1"><%= @donor.display_name %></h2>
-        <p class="card-text mb-0">
-          <span class="badge bg-light text-dark me-2">
-            <i class="fas fa-<%= @donor.donor_type == 'business' ? 'building' : 'user' %> me-1"></i>
-            <%= @donor.donor_type.humanize %>
-          </span>
-          <span class="badge bg-warning text-dark">
-            <i class="fas fa-dollar-sign me-1"></i>
-            <%= @donor.formatted_donation_amount %>
-          </span>
-        </p>
-      </div>
-    </div>
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_donors_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back
+    <% end %>
+    <%= link_to edit_admin_donor_path(@donor), class: "btn btn-outline-primary me-2" do %>
+      <i class="fas fa-edit me-1"></i>Edit
+    <% end %>
+    <% form_id = "delete-donor-form" %>
+    <%= form_with model: [:admin, @donor], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
+      <button type="button"
+              class="btn btn-outline-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmationModal"
+              data-confirm-title="Delete Donor"
+              data-confirm-message="Are you sure you want to delete <%= @donor.display_name %>? This action cannot be undone and will remove all associated donations."
+              data-confirm-action="Delete Donor"
+              data-form-id="<%= form_id %>">
+        <i class="fas fa-trash me-1"></i>Delete
+      </button>
+    <% end %>
   </div>
 </div>
 
-<!-- Donor Details -->
-<div class="row">
-  <div class="col-md-8">
-    <!-- Basic Information -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">
-          <i class="fas fa-info-circle me-2"></i>Donor Information
-        </h5>
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-heart me-2"></i>
+        <h1 class="h4 mb-0">Donor Details</h1>
       </div>
+      <div class="d-flex align-items-center">
+        <% if @donor.donor_type == 'business' %>
+          <span class="badge bg-light text-dark me-2">
+            <i class="fas fa-building me-1"></i>Business
+          </span>
+        <% else %>
+          <span class="badge bg-light text-dark me-2">
+            <i class="fas fa-user me-1"></i>Individual
+          </span>
+        <% end %>
+        <% if @donor.publicly_visible? %>
+          <span class="badge bg-success">
+            <i class="fas fa-eye me-1"></i>Public
+          </span>
+        <% elsif @donor.privacy_anonymous? %>
+          <span class="badge bg-warning text-dark">
+            <i class="fas fa-user-secret me-1"></i>Anonymous
+          </span>
+        <% else %>
+          <span class="badge bg-secondary">
+            <i class="fas fa-eye-slash me-1"></i>Private
+          </span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Detailed information for this donor and their contributions.
+    </p>
+  </div>
+</div>
+
+
+    <!-- Donor Information Card -->
+    <div class="card shadow-sm mb-4">
       <div class="card-body">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Name:</strong>
-          </div>
-          <div class="col-sm-8">
-            <%= @donor.name %>
+        <h5 class="text-dark border-bottom pb-2 mb-4">
+          <i class="fas fa-heart me-2"></i>Donor Information
+        </h5>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-<%= @donor.donor_type == 'business' ? 'building' : 'user' %> me-1"></i>Donor Name
+          </h6>
+          <div class="fw-bold text-dark">
+            <%= @donor.display_name %>
           </div>
         </div>
-        <hr class="my-2">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Type:</strong>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-tag me-1"></i>Donor Type
+          </h6>
+          <div class="fw-bold text-dark">
+            <% if @donor.donor_type == 'business' %>
+              <span class="text-info fw-medium">
+                <i class="fas fa-building me-1"></i>Business
+              </span>
+            <% else %>
+              <span class="text-primary fw-medium">
+                <i class="fas fa-user me-1"></i>Individual
+              </span>
+            <% end %>
           </div>
-          <div class="col-sm-8">
-            <span class="badge bg-secondary">
-              <i class="fas fa-<%= @donor.donor_type == 'business' ? 'building' : 'user' %> me-1"></i>
-              <%= @donor.donor_type.humanize %>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-dollar-sign me-1"></i>Total Contributed
+          </h6>
+          <div class="fw-bold text-dark">
+            <span class="text-success">
+              <%= @donor.formatted_total_donated %>
             </span>
           </div>
         </div>
-        <hr class="my-2">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Donation Amount:</strong>
-          </div>
-          <div class="col-sm-8">
-            <span class="text-success fw-bold">
-              <i class="fas fa-dollar-sign me-1"></i>
-              <%= @donor.formatted_donation_amount %>
-            </span>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-gift me-1"></i>Donation History
+          </h6>
+          <div class="fw-bold text-dark">
+            <%= pluralize(@donor.donation_count, 'donation') %>
+            <% if @donor.donations.any? %>
+              <div class="small text-muted mt-1">
+                <% monetary_count = @donor.donations.where(value_type: 'monetary').count %>
+                <% material_count = @donor.donations.where(value_type: 'material').count %>
+                <% service_count = @donor.donations.where(value_type: 'service').count %>
+
+                <% if monetary_count > 0 %>
+                  <span class="badge bg-success me-1">💰 <%= monetary_count %></span>
+                <% end %>
+                <% if material_count > 0 %>
+                  <span class="badge bg-warning me-1">📦 <%= material_count %></span>
+                <% end %>
+                <% if service_count > 0 %>
+                  <span class="badge bg-info me-1">🤝 <%= service_count %></span>
+                <% end %>
+              </div>
+            <% end %>
           </div>
         </div>
-        <hr class="my-2">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Donation Type:</strong>
-          </div>
-          <div class="col-sm-8">
-            <%= @donor.donation_type %>
-          </div>
-        </div>
-        <% if @donor.website_link.present? %>
-          <hr class="my-2">
-          <div class="row">
-            <div class="col-sm-4">
-              <strong class="text-muted">Website:</strong>
-            </div>
-            <div class="col-sm-8">
-              <%= link_to @donor.website_link, @donor.website_link,
+      </div>
+
+      <% if @donor.website_link.present? %>
+        <div class="col-12">
+          <div class="p-3 rounded" style="background-color: #f8f9fa;">
+            <h6 class="text-muted mb-1">
+              <i class="fas fa-globe me-1"></i>Website
+            </h6>
+            <div class="fw-bold text-dark">
+              <%= link_to @donor.website_link,
                           target: "_blank",
                           rel: "noopener noreferrer",
                           class: "text-decoration-none" do %>
@@ -136,151 +176,142 @@
               <% end %>
             </div>
           </div>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
+  </div>
+</div>
 
-    <!-- Privacy Settings -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">
-          <i class="fas fa-shield-alt me-2"></i>Privacy Settings
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Privacy Level:</strong>
-          </div>
-          <div class="col-sm-8">
+<!-- Privacy & Display Settings Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h5 class="text-dark border-bottom pb-2 mb-4">
+      <i class="fas fa-shield-alt me-2"></i>Privacy & Display Settings
+    </h5>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-eye me-1"></i>Privacy Level
+          </h6>
+          <div class="fw-bold text-dark">
             <% case @donor.privacy_setting %>
             <% when 'public' %>
-              <span class="badge bg-success">
+              <span class="text-success fw-medium">
                 <i class="fas fa-eye me-1"></i>Public
               </span>
-              <small class="text-muted ms-2">Displayed with name and amount</small>
+              <div class="small text-muted mt-1">Displayed with name and amount</div>
             <% when 'anonymous' %>
-              <span class="badge bg-warning text-dark">
+              <span class="text-warning fw-medium">
                 <i class="fas fa-user-secret me-1"></i>Anonymous
               </span>
-              <small class="text-muted ms-2">Displayed as "Anonymous Donor"</small>
+              <div class="small text-muted mt-1">Displayed as "Anonymous Donor"</div>
             <% when 'private' %>
-              <span class="badge bg-secondary">
+              <span class="text-muted fw-medium">
                 <i class="fas fa-eye-slash me-1"></i>Private
               </span>
-              <small class="text-muted ms-2">Not displayed publicly</small>
+              <div class="small text-muted mt-1">Not displayed publicly</div>
             <% end %>
           </div>
         </div>
-        <hr class="my-2">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Public Display:</strong>
-          </div>
-          <div class="col-sm-8">
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-globe me-1"></i>Public Display Status
+          </h6>
+          <div class="fw-bold text-dark">
             <% if @donor.publicly_visible? %>
-              <span class="text-success">
-                <i class="fas fa-check me-1"></i>
-                Will appear on donor wall as: "<%= @donor.display_name %>"
+              <span class="text-success fw-medium">
+                <i class="fas fa-check-circle me-1"></i>Visible on Donor Wall
               </span>
+              <div class="small text-muted mt-1">
+                Appears as: "<%= @donor.display_name %>"
+              </div>
             <% else %>
-              <span class="text-muted">
-                <i class="fas fa-times me-1"></i>
-                Will not appear on public donor wall
+              <span class="text-muted fw-medium">
+                <i class="fas fa-times-circle me-1"></i>Not Publicly Visible
               </span>
+              <div class="small text-muted mt-1">Will not appear on donor wall</div>
             <% end %>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Tracking Information -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">
-          <i class="fas fa-clock me-2"></i>Record Information
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Created:</strong>
-          </div>
-          <div class="col-sm-8">
+<!-- Record Information Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h5 class="text-dark border-bottom pb-2 mb-4">
+      <i class="fas fa-clock me-2"></i>Record Information
+    </h5>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-calendar-plus me-1"></i>Record Created
+          </h6>
+          <div class="fw-bold text-dark">
             <%= @donor.created_at.strftime("%B %d, %Y at %I:%M %p") %>
             <% if @donor.user.present? %>
-              <br>
-              <small class="text-muted">
-                by <%= @donor.user.name %>
-              </small>
+              <div class="small text-muted mt-1">
+                by <%= @donor.user.full_name %>
+              </div>
             <% end %>
           </div>
         </div>
-        <hr class="my-2">
-        <div class="row">
-          <div class="col-sm-4">
-            <strong class="text-muted">Last Updated:</strong>
-          </div>
-          <div class="col-sm-8">
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <h6 class="text-muted mb-1">
+            <i class="fas fa-clock me-1"></i>Last Updated
+          </h6>
+          <div class="fw-bold text-dark">
             <%= @donor.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="col-md-4">
-    <!-- Photo/Logo Display -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">
-          <i class="fas fa-image me-2"></i>Photo/Logo
-        </h5>
-      </div>
-      <div class="card-body text-center">
-        <% if @donor.has_logo_or_photo? %>
+<!-- Photo/Logo Display Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h5 class="text-dark border-bottom pb-2 mb-4">
+      <i class="fas fa-image me-2"></i>Photo/Logo
+    </h5>
+
+    <div class="text-center">
+      <% if @donor.has_logo_or_photo? %>
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
           <%= image_tag @donor.photo_or_logo,
                         alt: "#{@donor.name} photo/logo",
                         class: "img-fluid rounded shadow-sm",
                         style: "max-height: 200px;" %>
-          <div class="mt-2">
+          <div class="mt-3">
             <small class="text-muted">
+              <i class="fas fa-clock me-1"></i>
               Uploaded <%= time_ago_in_words(@donor.photo_or_logo.created_at) %> ago
             </small>
           </div>
-        <% else %>
-          <div class="text-muted py-4">
-            <i class="fas fa-image fa-3x mb-3"></i>
-            <p class="mb-0">No photo or logo uploaded</p>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="card shadow-sm">
-      <div class="card-header bg-light">
-        <h5 class="card-title mb-0">
-          <i class="fas fa-bolt me-2"></i>Quick Actions
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="d-grid gap-2">
-          <%= link_to edit_admin_donor_path(@donor), class: "btn btn-outline-primary" do %>
-            <i class="fas fa-edit me-2"></i>Edit Details
-          <% end %>
-          <% if @donor.publicly_visible? %>
-            <%= link_to donors_path(anchor: "donor-#{@donor.id}"),
-                        class: "btn btn-outline-success",
-                        target: "_blank" do %>
-              <i class="fas fa-external-link-alt me-2"></i>View on Donor Wall
-            <% end %>
-          <% end %>
-          <%= link_to admin_donors_path, class: "btn btn-outline-secondary" do %>
-            <i class="fas fa-list me-2"></i>All Donors
+        </div>
+      <% else %>
+        <div class="p-4 rounded text-center" style="background-color: #f8f9fa;">
+          <i class="fas fa-image fa-3x text-muted mb-3"></i>
+          <h6 class="text-muted">No Photo or Logo</h6>
+          <p class="text-muted mb-3">No image has been uploaded for this donor.</p>
+          <%= link_to edit_admin_donor_path(@donor), class: "btn btn-outline-primary btn-sm" do %>
+            <i class="fas fa-upload me-1"></i>Upload Image
           <% end %>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </div>
