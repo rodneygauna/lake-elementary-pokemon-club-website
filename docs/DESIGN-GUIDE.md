@@ -28,79 +28,73 @@ This guide documents the design paradigms, patterns, and standards established f
 
 ### Standard Page Layout
 
+**IMPORTANT**: The application layout (`app/views/layouts/application.html.erb`) already provides a `container` wrapper around all page content. Individual pages should NOT add additional container divs or unnecessary row/column wrappers.
+
 ```erb
 <% content_for :title, "Page Title" %>
 
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-8"> <!-- Adjust width as needed -->
+<!-- 1. BREADCRUMB NAVIGATION -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Parent Page", parent_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Current Page</li>
+  </ol>
+</nav>
 
-      <!-- 1. BREADCRUMB NAVIGATION -->
-      <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <%= link_to "Parent Page", parent_path, class: "text-decoration-none" %>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">Current Page</li>
-        </ol>
-      </nav>
+<!-- 2. ACTION BUTTONS (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to back_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back
+    <% end %>
+    <%= link_to edit_path, class: "btn btn-outline-primary me-2" do %>
+      <i class="fas fa-edit me-1"></i>Edit
+    <% end %>
+    <!-- Delete button (admin only) -->
+    <% if admin? %>
+      <%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
+        <button type="button"
+                class="btn btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmationModal"
+                data-confirm-title="Delete Record"
+                data-confirm-message="Are you sure you want to delete this record?"
+                data-confirm-action="Delete Record"
+                data-form-id="delete-record-form">
+          <i class="fas fa-trash me-1"></i>Delete
+        </button>
+      <% end %>
+    <% end %>
+  </div>
+</div>
 
-      <!-- 2. ACTION BUTTONS (Before Header) -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <%= link_to back_path, class: "btn btn-outline-secondary me-2" do %>
-            <i class="fas fa-arrow-left me-1"></i>Back
-          <% end %>
-          <%= link_to edit_path, class: "btn btn-outline-primary me-2" do %>
-            <i class="fas fa-edit me-1"></i>Edit
-          <% end %>
-          <!-- Delete button (admin only) -->
-          <% if admin? %>
-            <%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
-              <button type="button"
-                      class="btn btn-outline-danger"
-                      data-bs-toggle="modal"
-                      data-bs-target="#confirmationModal"
-                      data-confirm-title="Delete Record"
-                      data-confirm-message="Are you sure you want to delete this record?"
-                      data-confirm-action="Delete Record"
-                      data-form-id="delete-record-form">
-                <i class="fas fa-trash me-1"></i>Delete
-              </button>
-            <% end %>
-          <% end %>
-        </div>
+<!-- 3. HEADER CARD -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-icon me-2"></i>
+        <h1 class="h4 mb-0">Page Title</h1>
       </div>
-
-      <!-- 3. HEADER CARD -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-              <i class="fas fa-icon me-2"></i>
-              <h1 class="h4 mb-0">Page Title</h1>
-            </div>
-            <div class="d-flex align-items-center">
-              <!-- Badges, counters, quick actions -->
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <p class="text-muted mb-0">
-            <i class="fas fa-info-circle me-1"></i>
-            Descriptive text about the page functionality.
-          </p>
-        </div>
+      <div class="d-flex align-items-center">
+        <!-- Badges, counters, quick actions -->
       </div>
-
-      <!-- 4. MAIN CONTENT CARDS -->
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <!-- Page content here -->
-        </div>
-      </div>
-
     </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Descriptive text about the page functionality.
+    </p>
+  </div>
+</div>
+
+<!-- 4. MAIN CONTENT CARDS -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <!-- Page content here -->
   </div>
 </div>
 ```
@@ -393,11 +387,13 @@ Use toggle switches for binary filter options like showing/hiding inactive items
 
 ## Responsive Design
 
-### Grid Layout
+### Layout Structure
 
-- **Large screens**: `col-lg-8` for main content
-- **Medium screens**: `col-md-6` for form fields
-- **Small screens**: `col-12` or `col-6` for statistics
+- **Container**: Provided by application layout - do not add additional containers
+- **Natural Width**: Let content flow naturally within the container
+- **Grid Usage**: Use Bootstrap grid (`row`/`col-*`) only for multi-column content layouts, not for artificial width constraints
+- **Form Fields**: Use `col-md-6` for side-by-side form inputs
+- **Statistics**: Use `col-md-3`, `col-6` for dashboard stats
 
 ### Mobile Considerations
 

@@ -171,6 +171,13 @@ rails generate scaffold Document title:string description:text category:string
    - Confirmation modal for delete actions (`<%= render "shared/generic_confirmation_modal" %>`)
    - Proper responsive grid layout
 
+### Layout Best Practices
+
+- **No Nested Containers**: Application layout provides container - don't add more
+- **No Artificial Width Constraints**: Avoid unnecessary row/column wrappers for width control
+- **Natural Flow**: Let content use full container width responsively
+- **Grid Only When Needed**: Use Bootstrap grid for actual multi-column layouts, not artificial constraints
+
 ### Component Checklist
 
 - [ ] Font Awesome icons with proper spacing (`me-1`, `me-2`)
@@ -183,6 +190,7 @@ rails generate scaffold Document title:string description:text category:string
 - [ ] Delete buttons in action area (never in card bodies)
 - [ ] Status badges only for exceptional states (not defaults like "published" or "active")
 - [ ] Action buttons grouped together with consistent spacing (`me-2`)
+- [ ] No nested containers or unnecessary row/column wrappers
 
 ## UI/UX Requirements & Design System
 
@@ -206,6 +214,8 @@ rails generate scaffold Document title:string description:text category:string
 - **Font Awesome Icons**: Consistent iconography throughout application
 
 ### Standard Page Structure (MANDATORY)
+
+**IMPORTANT**: The application layout already provides a `container` wrapper. Individual pages should NOT add additional container divs or row/column wrappers.
 
 1. **Breadcrumb Navigation** - Clear hierarchy with `text-decoration-none` links
 2. **Action Buttons** - Back, Edit, Delete buttons grouped together before header (never isolate delete buttons)
