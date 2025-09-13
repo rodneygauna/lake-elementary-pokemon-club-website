@@ -8,12 +8,16 @@ Rails.application.routes.draw do
   end
   resources :user_students, only: [ :destroy ]
 
+  # Public donor recognition page
+  get "donors", to: "donors#public_index", as: :public_donors
+
   # User profile management (users can edit their own profile)
   resource :user, only: [ :show, :edit, :update ]
 
-  # Admin user management
+  # Admin management
   namespace :admin do
     resources :users
+    resources :donors
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

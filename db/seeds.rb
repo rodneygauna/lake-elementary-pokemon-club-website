@@ -492,11 +492,172 @@ end
 
 puts "Created #{events.count} events"
 
+# Create donors and donations
+puts "Creating donors and donations..."
+
+# First, create donors (without donation details)
+donors_data = [
+  {
+    name: "Smith Family",
+    donor_type: "individual",
+    privacy_setting: "public",
+    website_link: nil,
+    created_by: admin_user
+  },
+  {
+    name: "Johnson & Associates Law Firm",
+    donor_type: "business",
+    privacy_setting: "public",
+    website_link: "https://johnsonlaw.example.com",
+    created_by: admin_user
+  },
+  {
+    name: "Local Pokemon Store",
+    donor_type: "business",
+    privacy_setting: "public",
+    website_link: "https://pokemonstore.example.com",
+    created_by: admin_user
+  },
+  {
+    name: "Garcia Family",
+    donor_type: "individual",
+    privacy_setting: "anonymous",
+    website_link: nil,
+    created_by: admin_user
+  },
+  {
+    name: "Lake Elementary PTA",
+    donor_type: "business",
+    privacy_setting: "public",
+    website_link: nil,
+    created_by: admin_user
+  },
+  {
+    name: "Anderson Family",
+    donor_type: "individual",
+    privacy_setting: "public",
+    website_link: nil,
+    created_by: admin_user
+  },
+  {
+    name: "TechCorp Solutions",
+    donor_type: "business",
+    privacy_setting: "public",
+    website_link: "https://techcorp.example.com",
+    created_by: admin_user
+  },
+  {
+    name: "Wilson Family",
+    donor_type: "individual",
+    privacy_setting: "private",
+    website_link: nil,
+    created_by: admin_user
+  },
+  {
+    name: "Community Bank of Lakewood",
+    donor_type: "business",
+    privacy_setting: "public",
+    website_link: "https://communitybankoflakewood.example.com",
+    created_by: admin_user
+  },
+  {
+    name: "Brown Family",
+    donor_type: "individual",
+    privacy_setting: "anonymous",
+    website_link: nil,
+    created_by: admin_user
+  }
+]
+
+# Create donors
+donors = donors_data.map do |donor_data|
+  Donor.find_or_create_by!(name: donor_data[:name]) do |donor|
+    donor.donor_type = donor_data[:donor_type]
+    donor.privacy_setting = donor_data[:privacy_setting]
+    donor.website_link = donor_data[:website_link]
+    donor.user = donor_data[:created_by]
+  end
+end
+
+puts "Created #{donors.count} donors"
+
+# Now create donations for each donor
+puts "Creating donations..."
+
+donations_data = [
+  # Smith Family donations - mixed types
+  { donor_name: "Smith Family", amount: 100.00, donation_type: "Cash Donation", value_type: "monetary", donation_date: Date.current - 30.days, notes: "Thank you for supporting our club!" },
+  { donor_name: "Smith Family", amount: nil, donation_type: "Homemade Snacks", value_type: "material", donation_date: Date.current - 10.days, notes: "Cookies and juice boxes for meeting" },
+
+  # Johnson & Associates donations - monetary
+  { donor_name: "Johnson & Associates Law Firm", amount: 500.00, donation_type: "Annual Sponsorship", value_type: "monetary", donation_date: Date.current - 45.days, notes: "Annual club sponsorship" },
+
+  # Local Pokemon Store donations - materials
+  { donor_name: "Local Pokemon Store", amount: nil, donation_type: "Pokemon Trading Cards", value_type: "material", donation_date: Date.current - 20.days, notes: "Starter decks and booster packs" },
+  { donor_name: "Local Pokemon Store", amount: nil, donation_type: "Gaming Supplies", value_type: "material", donation_date: Date.current - 5.days, notes: "Deck protectors and play mats" },
+
+  # Garcia Family donations - monetary
+  { donor_name: "Garcia Family", amount: 75.00, donation_type: "Cash Donation", value_type: "monetary", donation_date: Date.current - 25.days, notes: "Anonymous donation" },  # PTA donations
+  { donor_name: "Lake Elementary PTA", amount: 300.00, donation_type: "Tournament Funding", value_type: "monetary", donation_date: Date.current - 60.days, notes: "Funding for Pokemon tournament" },
+  { donor_name: "Lake Elementary PTA", amount: nil, donation_type: "Meeting Refreshments", value_type: "material", donation_date: Date.current - 15.days, notes: "Snacks and beverages for meetings" },
+
+  # Anderson Family donations - materials
+  { donor_name: "Anderson Family", amount: nil, donation_type: "Meeting Snacks", value_type: "material", donation_date: Date.current - 12.days, notes: "Homemade cookies and juice" },
+
+  # TechCorp donations - services and monetary
+  { donor_name: "TechCorp Solutions", amount: nil, donation_type: "IT Support Services", value_type: "service", donation_date: Date.current - 90.days, notes: "Setting up digital gaming stations" },
+  { donor_name: "TechCorp Solutions", amount: 300.00, donation_type: "Software Licenses", value_type: "monetary", donation_date: Date.current - 30.days, notes: "Pokemon game app subscriptions" },
+
+  # Wilson Family donations - materials
+  { donor_name: "Wilson Family", amount: nil, donation_type: "Art & Craft Supplies", value_type: "material", donation_date: Date.current - 8.days, notes: "Colored pencils, markers, and construction paper" },
+
+  # Community Bank donations - monetary
+  { donor_name: "Community Bank of Lakewood", amount: 750.00, donation_type: "Prize Sponsorship", value_type: "monetary", donation_date: Date.current - 40.days, notes: "Gift cards and trophies for tournament winners" },
+
+  # Brown Family donations - materials
+  { donor_name: "Brown Family", amount: nil, donation_type: "Movie Night Treats", value_type: "material", donation_date: Date.current - 18.days, notes: "Popcorn and drinks for Pokemon movie night" }
+]
+
+# Create donations
+created_donations = 0
+donations_data.each do |donation_data|
+  donor = donors.find { |d| d.name == donation_data[:donor_name] }
+  if donor
+    Donation.find_or_create_by!(
+      donor: donor,
+      amount: donation_data[:amount],
+      donation_date: donation_data[:donation_date]
+    ) do |donation|
+      donation.donation_type = donation_data[:donation_type]
+      donation.value_type = donation_data[:value_type]
+      donation.notes = donation_data[:notes]
+    end
+    created_donations += 1
+  end
+end
+
+puts "Created #{created_donations} donations"
+
 puts "\n=== SEED DATA SUMMARY ==="
 puts "👑 Admin User: admin@pokemonclub.test (password: password123)"
 puts "👨‍👩‍👧‍👦 Parent Users: #{User.where(role: 'user').count} (all with password: password123)"
 puts "🎓 Students: #{Student.count}"
 puts "🔗 User-Student Links: #{UserStudent.count}"
 puts "📅 Events: #{Event.count}"
+puts "💝 Donors: #{Donor.count}"
+puts "   - Individual Donors: #{Donor.where(donor_type: 'individual').count}"
+puts "   - Business Donors: #{Donor.where(donor_type: 'business').count}"
+puts "   - Public Donors: #{Donor.where(privacy_setting: 'public').count}"
+puts "   - Anonymous Donors: #{Donor.where(privacy_setting: 'anonymous').count}"
+puts "   - Private Donors: #{Donor.where(privacy_setting: 'private').count}"
+puts "💖 Donations: #{Donation.count}"
+puts "   - Monetary Donations: #{Donation.where(value_type: 'monetary').count}"
+puts "   - Material Donations: #{Donation.where(value_type: 'material').count}"
+puts "   - Service Donations: #{Donation.where(value_type: 'service').count}"
+puts "   - Total Money Amount: $#{Donation.where(value_type: 'monetary').sum(:amount).to_f.round(2)}"
+monetary_donations = Donation.where(value_type: 'monetary')
+if monetary_donations.count > 0
+  puts "   - Average Monetary Donation: $#{(monetary_donations.sum(:amount) / monetary_donations.count).to_f.round(2)}"
+end
 puts "\nAll users can log in with their email and password 'password123'"
 puts "==========================="

@@ -1,0 +1,154 @@
+<%= form_with model: [:admin, donor], local: true do |form| %>
+  <% if donor.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <h5 class="alert-heading mb-0">Please correct the following errors:</h5>
+      </div>
+      <hr>
+      <ul class="mb-0">
+        <% donor.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Donor Information Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-heart me-2"></i>Donor Information
+      </h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :name, class: "form-label required" do %>
+        <i class="fas fa-user me-1"></i>Donor Name
+      <% end %>
+      <%= form.text_field :name,
+          class: "form-control #{'is-invalid' if donor.errors[:name].any?}",
+          placeholder: "Enter donor or organization name",
+          required: true %>
+      <% if donor.errors[:name].any? %>
+        <div class="invalid-feedback">
+          <%= donor.errors[:name].first %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :donor_type, class: "form-label required" do %>
+        <i class="fas fa-tag me-1"></i>Donor Type
+      <% end %>
+      <%= form.select :donor_type,
+                      options_for_select([['Individual', 'individual'], ['Business', 'business']], donor.donor_type),
+                      { prompt: 'Select donor type' },
+                      { class: "form-select #{'is-invalid' if donor.errors[:donor_type].any?}",
+                        required: true } %>
+      <% if donor.errors[:donor_type].any? %>
+        <div class="invalid-feedback">
+          <%= donor.errors[:donor_type].first %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Privacy & Display Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-eye me-2"></i>Privacy & Display Settings
+      </h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :privacy_setting, class: "form-label required" do %>
+        <i class="fas fa-shield-alt me-1"></i>Privacy Setting
+      <% end %>
+      <%= form.select :privacy_setting,
+                      options_for_select([['Public - Show name and amount', 'public'],
+                                         ['Anonymous - Show as "Anonymous Donor"', 'anonymous'],
+                                         ['Private - Not displayed publicly', 'private']], donor.privacy_setting),
+                      { prompt: 'Select privacy level' },
+                      { class: "form-select #{'is-invalid' if donor.errors[:privacy_setting].any?}",
+                        required: true } %>
+      <% if donor.errors[:privacy_setting].any? %>
+        <div class="invalid-feedback">
+          <%= donor.errors[:privacy_setting].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        Controls how this donor appears on the public donor wall
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :website_link, class: "form-label" do %>
+        <i class="fas fa-link me-1"></i>Website Link
+      <% end %>
+      <%= form.url_field :website_link,
+          class: "form-control #{'is-invalid' if donor.errors[:website_link].any?}",
+          placeholder: "https://example.com" %>
+      <% if donor.errors[:website_link].any? %>
+        <div class="invalid-feedback">
+          <%= donor.errors[:website_link].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        Optional website link for business donors
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo/Logo Upload Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-image me-2"></i>Photo/Logo Upload
+      </h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 mb-3">
+      <%= form.label :photo_or_logo, class: "form-label" do %>
+        <i class="fas fa-upload me-1"></i>Photo or Logo
+      <% end %>
+      <%= form.file_field :photo_or_logo,
+          accept: "image/*",
+          class: "form-control #{'is-invalid' if donor.errors[:photo_or_logo].any?}" %>
+      <% if donor.errors[:photo_or_logo].any? %>
+        <div class="invalid-feedback">
+          <%= donor.errors[:photo_or_logo].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        Upload a photo for individuals or logo for businesses (optional)
+      </div>
+
+      <% if donor.has_logo_or_photo? %>
+        <div class="mt-2 p-2 border rounded">
+          <small class="text-muted">Current image:</small><br>
+          <%= image_tag donor.photo_or_logo,
+                        alt: "Current photo/logo",
+                        class: "img-thumbnail mt-1",
+                        style: "max-width: 150px; max-height: 150px;" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="d-flex justify-content-between pt-3 border-top">
+    <%= link_to admin_donors_path, class: "btn btn-outline-secondary" do %>
+      <i class="fas fa-times me-2"></i>Cancel
+    <% end %>
+    <%= form.submit donor.persisted? ? "Update Donor" : "Create Donor", class: "btn btn-success" %>
+  </div>
+<% end %>

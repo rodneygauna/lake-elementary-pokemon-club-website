@@ -1,0 +1,272 @@
+<% content_for :title, "Donor Management" %>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Donor Management</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to root_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Home
+    <% end %>
+  </div>
+  <div>
+    <%= link_to new_admin_donor_path, class: "btn btn-success" do %>
+      <i class="fas fa-plus me-2"></i>Add New Donor
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-hand-holding-heart me-2"></i>
+        <h1 class="h4 mb-0">Donor Management</h1>
+      </div>
+      <div class="d-flex align-items-center">
+        <span class="badge bg-light text-dark">
+          <i class="fas fa-heart me-1"></i>
+          <%= pluralize(@donors.count, 'Donor') %>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Manage donor recognition and contributions for the Pokémon Club.
+    </p>
+  </div>
+</div>
+
+<!-- Filter Controls -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center">
+      <h6 class="text-dark mb-0">
+        <i class="fas fa-filter me-2"></i>Filter Options
+      </h6>
+      <div class="d-flex align-items-center">
+        <%= form_with url: admin_donors_path, method: :get, local: true, class: "d-flex align-items-center" do |form| %>
+          <%= form.select :donor_type,
+                         options_for_select([['All Types', ''], ['Individual', 'individual'], ['Business', 'business']], params[:donor_type]),
+                         {},
+                         { class: "form-select form-select-sm", onchange: "this.form.submit()" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Statistics Dashboard -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h6 class="text-dark border-bottom pb-2 mb-3">
+      <i class="fas fa-chart-bar me-2"></i>Donor Statistics
+    </h6>
+    <div class="row text-center">
+      <div class="col-md-3 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+          <i class="fas fa-heart fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= @donors.count %></div>
+          <small class="text-muted">Total Donors</small>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: var(--pokemon-light-yellow);">
+          <i class="fas fa-user fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= @donors.individual.count %></div>
+          <small class="text-muted">Individual Donors</small>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <i class="fas fa-building fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= @donors.business.count %></div>
+          <small class="text-muted">Business Donors</small>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+          <i class="fas fa-dollar-sign fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4">
+            $<%= Donation.where(value_type: 'monetary').sum(:amount).to_f.round(2) %>
+          </div>
+          <small class="text-muted">Monetary Donations</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row: Donation Type Breakdown -->
+    <div class="row text-center">
+      <div class="col-md-4 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: #e7f3ff;">
+          <i class="fas fa-coins fa-2x text-warning mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= Donation.where(value_type: 'monetary').count %></div>
+          <small class="text-muted">Money Donations</small>
+        </div>
+      </div>
+      <div class="col-md-4 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: #fff2e7;">
+          <i class="fas fa-box fa-2x text-warning mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= Donation.where(value_type: 'material').count %></div>
+          <small class="text-muted">Material Donations</small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12 mb-3">
+        <div class="p-3 rounded" style="background-color: #f0fff0;">
+          <i class="fas fa-hands-helping fa-2x text-warning mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= Donation.where(value_type: 'service').count %></div>
+          <small class="text-muted">Service Donations</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Donors Table -->
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <% if @donors.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead style="background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%); color: white;">
+            <tr>
+              <th scope="col" class="border-0">
+                <i class="fas fa-user me-1"></i>Name
+              </th>
+              <th scope="col" class="border-0">
+                <i class="fas fa-tag me-1"></i>Type
+              </th>
+              <th scope="col" class="border-0">
+                <i class="fas fa-dollar-sign me-1"></i>Total Donated
+              </th>
+              <th scope="col" class="border-0">
+                <i class="fas fa-gift me-1"></i>Donations Count
+              </th>
+              <th scope="col" class="border-0">
+                <i class="fas fa-eye me-1"></i>Privacy
+              </th>
+              <th scope="col" class="border-0">
+                <i class="fas fa-cogs me-1"></i>Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @donors.each do |donor| %>
+              <tr>
+                <td class="fw-semibold text-dark">
+                  <% if donor.has_logo_or_photo? %>
+                    <i class="fas fa-image me-2 text-muted"></i>
+                  <% else %>
+                    <i class="fas fa-heart me-2 text-muted"></i>
+                  <% end %>
+                  <%= donor.name %>
+                </td>
+                <td>
+                  <% if donor.donor_type == 'business' %>
+                    <span class="badge bg-info">
+                      <i class="fas fa-building me-1"></i>Business
+                    </span>
+                  <% else %>
+                    <span class="badge bg-secondary">
+                      <i class="fas fa-user me-1"></i>Individual
+                    </span>
+                  <% end %>
+                </td>
+                                <td class="text-dark">
+                  <i class="fas fa-dollar-sign me-2 text-success"></i>
+                  <%= donor.formatted_total_donated %>
+                </td>
+                <td class="text-dark">
+                  <div class="small">
+                    <i class="fas fa-gift me-1 text-muted"></i>
+                    <%= pluralize(donor.donation_count, 'donation') %>
+                  </div>
+                  <div class="small text-muted">
+                    <% monetary_count = donor.donations.where(value_type: 'monetary').count %>
+                    <% material_count = donor.donations.where(value_type: 'material').count %>
+                    <% service_count = donor.donations.where(value_type: 'service').count %>
+
+                    <% if monetary_count > 0 %>
+                      <span class="badge bg-success me-1">$<%= monetary_count %></span>
+                    <% end %>
+                    <% if material_count > 0 %>
+                      <span class="badge bg-warning me-1">📦<%= material_count %></span>
+                    <% end %>
+                    <% if service_count > 0 %>
+                      <span class="badge bg-info me-1">🤝<%= service_count %></span>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <% if donor.privacy_public? %>
+                    <span class="text-success">
+                      <i class="fas fa-eye me-1"></i>Public
+                    </span>
+                  <% elsif donor.privacy_anonymous? %>
+                    <span class="text-warning">
+                      <i class="fas fa-user-secret me-1"></i>Anonymous
+                    </span>
+                  <% else %>
+                    <span class="text-muted">
+                      <i class="fas fa-eye-slash me-1"></i>Private
+                    </span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to admin_donor_path(donor), class: "btn btn-sm btn-outline-primary me-1" do %>
+                    <i class="fas fa-eye me-1"></i>View
+                  <% end %>
+                  <%= link_to edit_admin_donor_path(donor), class: "btn btn-sm btn-outline-secondary me-1" do %>
+                    <i class="fas fa-edit me-1"></i>Edit
+                  <% end %>
+                  <% form_id = "delete-donor-#{donor.id}-form" %>
+                  <%= form_with model: [:admin, donor], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmationModal"
+                            data-confirm-title="Delete Donor"
+                            data-confirm-message="Are you sure you want to delete <%= donor.name %>? This action cannot be undone."
+                            data-confirm-action="Delete Donor"
+                            data-form-id="<%= form_id %>">
+                      <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="text-center py-5">
+        <i class="fas fa-hand-holding-heart fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted">No Donors Found</h5>
+        <p class="text-muted mb-3">
+          <% if params[:search].present? || params[:donor_type].present? %>
+            No donors match your current filters. Try adjusting your search criteria.
+          <% else %>
+            Start recognizing the generous donors who support the Pokémon Club.
+          <% end %>
+        </p>
+        <%= link_to new_admin_donor_path, class: "btn btn-success" do %>
+          <i class="fas fa-plus me-2"></i>Add First Donor
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<%= render "shared/generic_confirmation_modal" %>

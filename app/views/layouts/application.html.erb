@@ -56,6 +56,9 @@
             <li class="nav-item">
               <%= link_to "Students", students_path, class: "nav-link" %>
             </li>
+            <li class="nav-item">
+              <%= link_to "Donors", public_donors_path, class: "nav-link" %>
+            </li>
           </ul>
 
           <!-- Authentication links -->
@@ -71,6 +74,7 @@
                   <% if current_user.respond_to?(:admin?) && current_user.admin? %>
                     <li><hr class="dropdown-divider"></li>
                     <li><%= link_to "User Management", admin_users_path, class: "dropdown-item" %></li>
+                    <li><%= link_to "Donor Management", admin_donors_path, class: "dropdown-item" %></li>
                     <li><%= link_to "Admin Panel", "#", class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
                   <% end %>

@@ -1,0 +1,36 @@
+<% content_for :title, "New Donor" %>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Donors", admin_donors_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">New Donor</li>
+  </ol>
+</nav>
+
+<!-- Header Card -->
+<div class="card bg-primary text-white shadow-sm mb-4">
+  <div class="card-body">
+    <div class="d-flex align-items-center">
+      <div class="me-3">
+        <i class="fas fa-plus fa-2x"></i>
+      </div>
+      <div>
+        <h2 class="card-title mb-1">Add New Donor</h2>
+        <p class="card-text mb-0">Create a new donor record for recognition and tracking</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Card -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= render "form", donor: @donor %>
+  </div>
+</div>

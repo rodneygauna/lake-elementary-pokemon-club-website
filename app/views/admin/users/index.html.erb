@@ -1,120 +1,120 @@
 <% content_for :title, "User Management" %>
 
 <!-- Breadcrumb Navigation -->
-      <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <%= link_to "Home", root_path, class: "text-decoration-none" %>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">User Management</li>
-        </ol>
-      </nav>
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">User Management</li>
+  </ol>
+</nav>
 
-      <!-- Action Buttons (Before Header) -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <%= link_to root_path, class: "btn btn-outline-secondary me-2" do %>
-            <i class="fas fa-arrow-left me-1"></i>Back to Home
-          <% end %>
-        </div>
-        <div>
-          <%= link_to new_admin_user_path, class: "btn btn-success" do %>
-            <i class="fas fa-plus me-2"></i>Create New User
-          <% end %>
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to root_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Home
+    <% end %>
+  </div>
+  <div>
+    <%= link_to new_admin_user_path, class: "btn btn-success" do %>
+      <i class="fas fa-plus me-2"></i>Create New User
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-users-cog me-2"></i>
+        <h1 class="h4 mb-0">User Management</h1>
+      </div>
+      <div class="d-flex align-items-center">
+        <span class="badge bg-light text-dark">
+          <i class="fas fa-user me-1"></i>
+          <%= pluralize(@users.count, 'User') %>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Manage user accounts and permissions for the Pokémon Club website.
+    </p>
+  </div>
+</div>
+
+<!-- Filter Controls -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center">
+      <h6 class="text-dark mb-0">
+        <i class="fas fa-filter me-2"></i>Filter Options
+      </h6>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="showInactiveToggle"
+               <%= params[:show_inactive] == 'true' ? 'checked' : '' %>
+               onchange="this.form.submit()">
+        <label class="form-check-label" for="showInactiveToggle">
+          <i class="fas fa-eye-slash me-1"></i>Show Inactive Users
+        </label>
+        <%= form_with url: admin_users_path, method: :get, local: true, class: "d-none", id: "filterForm" do |form| %>
+          <%= form.hidden_field :show_inactive, id: "showInactiveField", value: params[:show_inactive] == 'true' ? 'false' : 'true' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Statistics Dashboard -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h6 class="text-dark border-bottom pb-2 mb-3">
+      <i class="fas fa-chart-bar me-2"></i>User Statistics
+    </h6>
+    <div class="row text-center">
+      <div class="col-md-4 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+          <i class="fas fa-users fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= @users.count %></div>
+          <small class="text-muted">Total Users</small>
         </div>
       </div>
-
-      <!-- Header Card -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-              <i class="fas fa-users-cog me-2"></i>
-              <h1 class="h4 mb-0">User Management</h1>
-            </div>
-            <div class="d-flex align-items-center">
-              <span class="badge bg-light text-dark">
-                <i class="fas fa-user me-1"></i>
-                <%= pluralize(@users.count, 'User') %>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <p class="text-muted mb-0">
-            <i class="fas fa-info-circle me-1"></i>
-            Manage user accounts and permissions for the Pokémon Club website.
-          </p>
+      <div class="col-md-4 col-6 mb-3">
+        <div class="p-3 rounded" style="background-color: var(--pokemon-light-yellow);">
+          <i class="fas fa-shield-alt fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= @users.where(role: 'admin').count %></div>
+          <small class="text-muted">Administrators</small>
         </div>
       </div>
-
-      <!-- Filter Controls -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <h6 class="text-dark mb-0">
-              <i class="fas fa-filter me-2"></i>Filter Options
-            </h6>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="showInactiveToggle"
-                     <%= params[:show_inactive] == 'true' ? 'checked' : '' %>
-                     onchange="this.form.submit()">
-              <label class="form-check-label" for="showInactiveToggle">
-                <i class="fas fa-eye-slash me-1"></i>Show Inactive Users
-              </label>
-              <%= form_with url: admin_users_path, method: :get, local: true, class: "d-none", id: "filterForm" do |form| %>
-                <%= form.hidden_field :show_inactive, id: "showInactiveField", value: params[:show_inactive] == 'true' ? 'false' : 'true' %>
-              <% end %>
-            </div>
-          </div>
+      <div class="col-md-4 col-12 mb-3">
+        <div class="p-3 rounded" style="background-color: #f8f9fa;">
+          <i class="fas fa-user fa-2x text-dark mb-2"></i>
+          <div class="fw-bold text-dark fs-4"><%= @users.where(role: 'user').count %></div>
+          <small class="text-muted">Regular Users</small>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Statistics Dashboard -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h6 class="text-dark border-bottom pb-2 mb-3">
-            <i class="fas fa-chart-bar me-2"></i>User Statistics
-          </h6>
-          <div class="row text-center">
-            <div class="col-md-4 col-6 mb-3">
-              <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
-                <i class="fas fa-users fa-2x text-dark mb-2"></i>
-                <div class="fw-bold text-dark fs-4"><%= @users.count %></div>
-                <small class="text-muted">Total Users</small>
-              </div>
-            </div>
-            <div class="col-md-4 col-6 mb-3">
-              <div class="p-3 rounded" style="background-color: var(--pokemon-light-yellow);">
-                <i class="fas fa-shield-alt fa-2x text-dark mb-2"></i>
-                <div class="fw-bold text-dark fs-4"><%= @users.where(role: 'admin').count %></div>
-                <small class="text-muted">Administrators</small>
-              </div>
-            </div>
-            <div class="col-md-4 col-12 mb-3">
-              <div class="p-3 rounded" style="background-color: #f8f9fa;">
-                <i class="fas fa-user fa-2x text-dark mb-2"></i>
-                <div class="fw-bold text-dark fs-4"><%= @users.where(role: 'user').count %></div>
-                <small class="text-muted">Regular Users</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<script>
+  document.getElementById('showInactiveToggle').addEventListener('change', function() {
+    const hiddenField = document.getElementById('showInactiveField');
+    hiddenField.value = this.checked ? 'true' : 'false';
+    document.getElementById('filterForm').submit();
+  });
+</script>
 
-      <script>
-        document.getElementById('showInactiveToggle').addEventListener('change', function() {
-          const hiddenField = document.getElementById('showInactiveField');
-          hiddenField.value = this.checked ? 'true' : 'false';
-          document.getElementById('filterForm').submit();
-        });
-      </script>
-
-      <!-- Users Table -->
-      <div class="card shadow-sm">
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
+<!-- Users Table -->
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
               <thead style="background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%); color: white;">
                 <tr>
                   <th scope="col" class="border-0">
@@ -204,8 +204,8 @@
               </tbody>
             </table>
           </div>
-      </div>
     </div>
+  </div>
 
 <!-- Confirmation Modal -->
 <%= render "shared/generic_confirmation_modal" %>

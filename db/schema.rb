@@ -10,7 +10,60 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_224252) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_13_165227) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "donations", force: :cascade do |t|
+    t.integer "donor_id", null: false
+    t.decimal "amount", precision: 10, scale: 2
+    t.string "donation_type", null: false
+    t.date "donation_date", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "value_type"
+    t.index ["donation_date"], name: "index_donations_on_donation_date"
+    t.index ["donor_id", "donation_date"], name: "index_donations_on_donor_id_and_donation_date"
+    t.index ["donor_id"], name: "index_donations_on_donor_id"
+  end
+
+  create_table "donors", force: :cascade do |t|
+    t.string "name"
+    t.string "donor_type"
+    t.string "privacy_setting"
+    t.string "website_link"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_donors_on_user_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.string "title", null: false
     t.text "description"
@@ -90,6 +143,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_224252) do
     t.index ["status"], name: "index_users_on_status"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "donations", "donors"
+  add_foreign_key "donors", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_students", "students"
   add_foreign_key "user_students", "users"
