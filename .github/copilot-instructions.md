@@ -157,12 +157,70 @@ rails generate scaffold Donor name:string donor_type:string amount:decimal priva
 rails generate scaffold Document title:string description:text category:string
 ```
 
-## UI/UX Requirements
+## Design Implementation Requirements
+
+### Before Creating Any View
+
+1. **Review `docs/DESIGN-GUIDE.md`** - Follow ALL established patterns
+2. **Apply Blue Text Rule** - Verify no blue text except hyperlinks
+3. **Use Standard Page Structure** - Breadcrumbs → Actions → Header Card → Content
+4. **Include Required Components**:
+   - Breadcrumb navigation with proper links
+   - Header card with `bg-primary` and white text
+   - Action buttons positioned before header
+   - Confirmation modal for delete actions (`<%= render "shared/generic_confirmation_modal" %>`)
+   - Proper responsive grid layout
+
+### Component Checklist
+
+- [ ] Font Awesome icons with proper spacing (`me-1`, `me-2`)
+- [ ] Semantic color usage (no blue text for non-links)
+- [ ] Card-based layout with `shadow-sm` styling
+- [ ] Proper form validation styling
+- [ ] Mobile-responsive design
+- [ ] Admin/user permission checks where needed
+
+## UI/UX Requirements & Design System
+
+### **CRITICAL DESIGN RULE** ⭐
+
+- **Blue Text Rule**: Blue text (`text-primary`) ONLY for hyperlinks and clickable elements
+- **All other text must use semantic colors:**
+  - `text-dark` - Regular content, headings, data values
+  - `text-muted` - Secondary information, helper text, labels
+  - `text-warning` - Pokémon-related content (theme appropriate)
+  - `text-success` - Success states, active statuses
+  - `text-danger` - Error states, danger actions
+
+### Design System Standards
 
 - **Pokemon Theme**: Electric Blue (#0084FF) primary, Pikachu Yellow (#FFD700) accents
 - **Bootstrap 5**: Responsive design with accessibility focus (WCAG 2.2 AA)
 - **Mobile-First**: All interfaces must work on mobile devices
 - **Clean Design**: Minimal, family-friendly interface suitable for parents
+- **Card-Based Layout**: Consistent structure across all pages
+- **Font Awesome Icons**: Consistent iconography throughout application
+
+### Standard Page Structure (MANDATORY)
+
+1. **Breadcrumb Navigation** - Clear hierarchy with `text-decoration-none` links
+2. **Action Buttons** - Back buttons, edit links positioned before header
+3. **Header Card** - Blue background (`bg-primary`) with white text, icon + title
+4. **Content Cards** - Shadow-sm styling, proper spacing (`shadow-sm mb-4`)
+5. **Confirmation Modals** - For all destructive actions
+
+### Component Patterns
+
+- **Information Cards**: Light gray backgrounds (#f8f9fa), proper typography hierarchy
+- **Form Sections**: Headers with `text-dark border-bottom pb-2 mb-3`
+- **Status Badges**: Green for active (`bg-success`), warning for inactive (`bg-warning text-dark`)
+- **Data Tables**: Gradient blue headers, alternating row colors
+- **Empty States**: Centered with large icons, contextual messaging
+
+### Reference Documentation
+
+- **Complete Design Guide**: `docs/DESIGN-GUIDE.md` - MUST follow all patterns documented here
+- **All new pages and components MUST conform to established design patterns**
 
 ## Email System Architecture
 
@@ -180,9 +238,12 @@ rails generate scaffold Document title:string description:text category:string
 
 ## Important File Locations
 
+- **Design Guide**: `docs/DESIGN-GUIDE.md` - **CRITICAL**: Complete UI/UX patterns and standards
 - Authentication logic: `app/controllers/concerns/authentication.rb`
 - User model patterns: `app/models/user.rb` (reference for enum/scope structure)
 - Routes with admin namespace: `config/routes.rb`
 - Time zone handling: `app/models/event.rb`
 - Development scripts: `bin/` directory
 - Project requirements: `docs/PRD.md` (comprehensive technical and business specs)
+- Generic confirmation modal: `app/views/shared/_generic_confirmation_modal.html.erb`
+- Design system CSS: `app/assets/stylesheets/application.css` (Pokemon theme colors)
