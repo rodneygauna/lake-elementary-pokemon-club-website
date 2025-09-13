@@ -20,7 +20,6 @@ class Admin::UsersController < ApplicationController
     temp_password = SecureRandom.alphanumeric(12)
     @user.password = temp_password
     @user.password_confirmation = temp_password
-    @user.status = "active"  # Set default status
 
     if @user.save
       redirect_to admin_user_path(@user), notice: "User was successfully created. Temporary password: #{temp_password}"
@@ -58,7 +57,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :email_address, :role)
+    params.require(:user).permit(:first_name, :last_name, :email_address, :phone_number, :role, :status)
   end
 
   def require_admin_access

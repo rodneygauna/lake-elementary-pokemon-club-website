@@ -124,6 +124,26 @@
                 <% end %>
               </div>
               <div class="col-md-6 mb-3">
+                <%= form.label :phone_number, class: "form-label" do %>
+                  <i class="fas fa-phone me-1"></i>Phone Number
+                <% end %>
+                <%= form.telephone_field :phone_number,
+                    class: "form-control #{'is-invalid' if @user.errors[:phone_number].any?}",
+                    placeholder: "Enter phone number (optional)" %>
+                <% if @user.errors[:phone_number].any? %>
+                  <div class="invalid-feedback">
+                    <%= @user.errors[:phone_number].first %>
+                  </div>
+                <% end %>
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Optional contact number for club communications.
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
                 <%= form.label :role, class: "form-label required" do %>
                   <i class="fas fa-shield-alt me-1"></i>User Role
                 <% end %>
@@ -140,6 +160,25 @@
                 <div class="form-text">
                   <i class="fas fa-info-circle me-1"></i>
                   Administrators have full access to manage the website.
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <%= form.label :status, class: "form-label required" do %>
+                  <i class="fas fa-user-check me-1"></i>Account Status
+                <% end %>
+                <%= form.select :status,
+                                options_for_select([['Active', 'active'], ['Inactive', 'inactive'], ['Suspended', 'suspended']], @user.status || 'active'),
+                                { prompt: 'Select account status' },
+                                { class: "form-select #{'is-invalid' if @user.errors[:status].any?}",
+                                  required: true } %>
+                <% if @user.errors[:status].any? %>
+                  <div class="invalid-feedback">
+                    <%= @user.errors[:status].first %>
+                  </div>
+                <% end %>
+                <div class="form-text">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Account status determines login access and permissions.
                 </div>
               </div>
             </div>
