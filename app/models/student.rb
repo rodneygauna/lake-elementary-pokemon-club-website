@@ -56,7 +56,7 @@ class Student < ApplicationRecord
   end
 
   def active_for_authentication?
-    super && status == "active"
+    status == "active"
   end
 
   def inactive_message

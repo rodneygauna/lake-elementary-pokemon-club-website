@@ -1,23 +1,33 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  first_name: MyString
-  middle_name: MyString
-  last_name: MyString
-  suffix_name: MyString
-  grade: MyString
-  class_number: MyString
-  teacher_name: MyString
-  favorite_pokemon: MyString
-  notes: MyText
+active_student_one:
+  first_name: "Alex"
+  last_name: "Johnson"
+  grade: "3"
+  status: "active"
+  favorite_pokemon: "Pikachu"
+  teacher_name: "Mrs. Smith"
 
-two:
-  first_name: MyString
-  middle_name: MyString
-  last_name: MyString
-  suffix_name: MyString
-  grade: MyString
-  class_number: MyString
-  teacher_name: MyString
-  favorite_pokemon: MyString
-  notes: MyText
+active_student_two:
+  first_name: "Emma"
+  last_name: "Wilson"
+  grade: "5"
+  status: "active"
+  favorite_pokemon: "Eevee"
+  teacher_name: "Mr. Jones"
+
+inactive_student:
+  first_name: "Mike"
+  last_name: "Brown"
+  grade: "4"
+  status: "inactive"
+  favorite_pokemon: "Charizard"
+  teacher_name: "Ms. Davis"
+
+test_student:
+  first_name: "Test"
+  last_name: "Student"
+  grade: "2"
+  status: "active"
+  favorite_pokemon: "Bulbasaur"
+  teacher_name: "Ms. Johnson"

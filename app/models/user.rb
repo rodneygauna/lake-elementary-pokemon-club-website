@@ -50,6 +50,10 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def initials
+    "#{first_name.first}#{last_name.first}".upcase
+  end
+
   def active_for_authentication?
     super && status == "active"
   end

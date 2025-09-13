@@ -1,15 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  donor: one
-  amount: 9.99
-  donation_type: MyString
-  donation_date: 2025-09-13
-  notes: MyText
+monetary_donation:
+  donor: individual_donor
+  amount: 50.00
+  value_type: "monetary"
+  donation_type: "General Support"
+  donation_date: <%= 1.month.ago %>
+  notes: "Monthly donation from John Smith"
 
-two:
-  donor: two
-  amount: 9.99
-  donation_type: MyString
-  donation_date: 2025-09-13
-  notes: MyText
+material_donation:
+  donor: business_donor
+  value_type: "material"
+  donation_type: "Pokemon Cards"
+  donation_date: <%= 2.weeks.ago %>
+  notes: "Donated Pokemon card collection for prizes"
+
+service_donation:
+  donor: individual_donor
+  value_type: "service"
+  donation_type: "Volunteer Time"
+  donation_date: <%= 1.week.ago %>
+  notes: "Helped with event setup and cleanup"

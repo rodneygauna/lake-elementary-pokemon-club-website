@@ -1,15 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  event: one
-  student: one
-  marked_by: one
-  present: false
-  marked_at: 2025-09-13 14:40:59
+present_attendance:
+  event: published_event
+  student: active_student_one
+  marked_by: admin_user
+  present: true
+  marked_at: <%= Time.current %>
 
-two:
-  event: two
-  student: two
-  marked_by: two
+absent_attendance:
+  event: published_event
+  student: active_student_two
+  marked_by: admin_user
   present: false
-  marked_at: 2025-09-13 14:40:59
+  marked_at: <%= Time.current %>

@@ -1,9 +1,36 @@
-<% password_digest = BCrypt::Password.create("password") %>
+<% password_digest = BCrypt::Password.create("password123") %>
 
-one:
-  email_address: one@example.com
+admin_user:
+  first_name: "Admin"
+  last_name: "User"
+  email_address: "admin@lakepokemon.test"
   password_digest: <%= password_digest %>
+  role: "admin"
+  status: "active"
+  phone_number: "555-123-4567"
 
-two:
-  email_address: two@example.com
+regular_user:
+  first_name: "John"
+  last_name: "Doe"
+  email_address: "john.doe@example.test"
   password_digest: <%= password_digest %>
+  role: "user"
+  status: "active"
+  phone_number: "555-987-6543"
+
+inactive_user:
+  first_name: "Jane"
+  last_name: "Smith"
+  email_address: "jane.smith@example.test"
+  password_digest: <%= password_digest %>
+  role: "user"
+  status: "inactive"
+
+test_parent:
+  first_name: "Test"
+  last_name: "Parent"
+  email_address: "test.parent@example.test"
+  password_digest: <%= password_digest %>
+  role: "user"
+  status: "active"
+  phone_number: "555-000-0000"

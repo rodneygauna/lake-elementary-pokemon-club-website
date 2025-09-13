@@ -1,17 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  donor_type: MyString
-  donation_amount: 9.99
-  donation_type: MyString
-  privacy_setting: MyString
-  website_link: MyString
+individual_donor:
+  name: "John Smith"
+  donor_type: "individual"
+  privacy_setting: "public"
 
-two:
-  name: MyString
-  donor_type: MyString
-  donation_amount: 9.99
-  donation_type: MyString
-  privacy_setting: MyString
-  website_link: MyString
+business_donor:
+  name: "ABC Company"
+  donor_type: "business"
+  website_link: "https://www.abccompany.com"
+  privacy_setting: "private"
+
+private_donor:
+  name: "Jane Doe"
+  donor_type: "individual"
+  privacy_setting: "private"

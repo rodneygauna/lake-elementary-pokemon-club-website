@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
-  student: one
+user_student_one:
+  user: regular_user
+  student: active_student_one
 
-two:
-  user: two
-  student: two
+user_student_two:
+  user: admin_user
+  student: active_student_two
