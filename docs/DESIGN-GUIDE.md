@@ -46,25 +46,36 @@ This guide documents the design paradigms, patterns, and standards established f
 <!-- 2. ACTION BUTTONS (Before Header) -->
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
+    <!-- Navigation and Record Actions (Left Side) -->
     <%= link_to back_path, class: "btn btn-outline-secondary me-2" do %>
       <i class="fas fa-arrow-left me-1"></i>Back
     <% end %>
-    <%= link_to edit_path, class: "btn btn-outline-primary me-2" do %>
-      <i class="fas fa-edit me-1"></i>Edit
+    <% if @record %> <!-- Show record actions on detail/edit pages -->
+      <%= link_to edit_path(@record), class: "btn btn-outline-primary me-2" do %>
+        <i class="fas fa-edit me-1"></i>Edit
+      <% end %>
+      <!-- Delete button (admin only) -->
+      <% if admin? %>
+        <%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
+          <button type="button"
+                  class="btn btn-outline-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirmationModal"
+                  data-confirm-title="Delete Record"
+                  data-confirm-message="Are you sure you want to delete this record?"
+                  data-confirm-action="Delete Record"
+                  data-form-id="delete-record-form">
+            <i class="fas fa-trash me-1"></i>Delete
+          </button>
+        <% end %>
+      <% end %>
     <% end %>
-    <!-- Delete button (admin only) -->
-    <% if admin? %>
-      <%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
-        <button type="button"
-                class="btn btn-outline-danger"
-                data-bs-toggle="modal"
-                data-bs-target="#confirmationModal"
-                data-confirm-title="Delete Record"
-                data-confirm-message="Are you sure you want to delete this record?"
-                data-confirm-action="Delete Record"
-                data-form-id="delete-record-form">
-          <i class="fas fa-trash me-1"></i>Delete
-        </button>
+  </div>
+  <div>
+    <!-- Create Actions (Right Side) - Only on index pages where contextually appropriate -->
+    <% if controller.action_name == 'index' && can_create? %>
+      <%= link_to new_record_path, class: "btn btn-success" do %>
+        <i class="fas fa-plus me-2"></i>New Record
       <% end %>
     <% end %>
   </div>
@@ -234,6 +245,9 @@ This guide documents the design paradigms, patterns, and standards established f
 - **All buttons use standard sizing** (no `btn-sm` for action buttons)
 - **Proper spacing**: Use `me-2` between buttons for consistent spacing
 - **Delete buttons**: Always include in action button group, never isolate in card bodies
+- **Create buttons**: Only appear on index pages (right side), never on detail/show pages
+- **Left side**: Navigation (Back) and record actions (Edit, Delete)
+- **Right side**: Create actions (only contextually appropriate on list views)
 
 ### 4. **Status Indicators**
 
@@ -278,16 +292,34 @@ This guide documents the design paradigms, patterns, and standards established f
 
 ### Confirmation Modal Usage
 
-**IMPORTANT**: Delete buttons must be placed in the action button area, not in card bodies.
+**IMPORTANT**: Delete buttons must be placed in the action button area, not in card bodies. Create buttons should only appear on index pages where contextually appropriate.
 
 ```erb
-<!-- Action Button Area (Correct Placement) -->
+<!-- Action Button Area Examples -->
+
+<!-- INDEX PAGE PATTERN (List View) -->
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
-    <%= link_to back_path, class: "btn btn-outline-secondary me-2" do %>
-      <i class="fas fa-arrow-left me-1"></i>Back
+    <%= link_to root_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Home
     <% end %>
-    <%= link_to edit_path, class: "btn btn-outline-primary me-2" do %>
+  </div>
+  <div>
+    <% if admin? %>
+      <%= link_to new_record_path, class: "btn btn-success" do %>
+        <i class="fas fa-plus me-2"></i>New Record
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- SHOW PAGE PATTERN (Detail View) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to records_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Records
+    <% end %>
+    <%= link_to edit_record_path(@record), class: "btn btn-outline-primary me-2" do %>
       <i class="fas fa-edit me-1"></i>Edit
     <% end %>
     <!-- Delete Button with Modal -->
@@ -306,6 +338,7 @@ This guide documents the design paradigms, patterns, and standards established f
       <% end %>
     <% end %>
   </div>
+  <!-- Note: No create button on show pages - not contextually appropriate -->
 </div>
 
 <!-- Include modal at bottom of page -->
