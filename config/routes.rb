@@ -17,7 +17,9 @@ Rails.application.routes.draw do
   # Admin management
   namespace :admin do
     resources :users
-    resources :donors
+    resources :donors do
+      resources :donations
+    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -1,0 +1,178 @@
+<%= form_with model: [:admin, @donor, donation], local: true do |form| %>
+  <% if donation.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <h5 class="alert-heading mb-0">Please correct the following errors:</h5>
+      </div>
+      <hr>
+      <ul class="mb-0">
+        <% donation.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Donation Information Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-gift me-2"></i>Donation Information
+      </h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :donation_type, class: "form-label required" do %>
+        <i class="fas fa-tag me-1"></i>Donation Type
+      <% end %>
+      <%= form.text_field :donation_type,
+          class: "form-control #{'is-invalid' if donation.errors[:donation_type].any?}",
+          placeholder: "e.g., Cash Donation, Art Supplies, IT Support",
+          required: true %>
+      <% if donation.errors[:donation_type].any? %>
+        <div class="invalid-feedback">
+          <%= donation.errors[:donation_type].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        Describe what was donated (e.g., "Pokemon Cards", "Meeting Snacks", "IT Support Services")
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :value_type, class: "form-label required" do %>
+        <i class="fas fa-coins me-1"></i>Value Type
+      <% end %>
+      <%= form.select :value_type,
+                      options_for_select([
+                        ['Monetary (Cash/Check)', 'monetary'],
+                        ['Material (Physical Items)', 'material'],
+                        ['Service (Time/Expertise)', 'service']
+                      ], donation.value_type),
+                      { prompt: 'Select value type' },
+                      { class: "form-select #{'is-invalid' if donation.errors[:value_type].any?}",
+                        required: true,
+                        id: "donation_value_type" } %>
+      <% if donation.errors[:value_type].any? %>
+        <div class="invalid-feedback">
+          <%= donation.errors[:value_type].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        Choose based on the type of contribution
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3" id="amount_field">
+      <%= form.label :amount, class: "form-label" do %>
+        <i class="fas fa-dollar-sign me-1"></i>Amount
+        <span class="text-danger" id="amount_required">*</span>
+      <% end %>
+      <%= form.number_field :amount,
+          step: 0.01,
+          min: 0,
+          class: "form-control #{'is-invalid' if donation.errors[:amount].any?}",
+          placeholder: "0.00",
+          id: "donation_amount" %>
+      <% if donation.errors[:amount].any? %>
+        <div class="invalid-feedback">
+          <%= donation.errors[:amount].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        <span id="amount_help">Required for monetary donations</span>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :donation_date, class: "form-label required" do %>
+        <i class="fas fa-calendar me-1"></i>Donation Date
+      <% end %>
+      <%= form.date_field :donation_date,
+          class: "form-control #{'is-invalid' if donation.errors[:donation_date].any?}",
+          required: true %>
+      <% if donation.errors[:donation_date].any? %>
+        <div class="invalid-feedback">
+          <%= donation.errors[:donation_date].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        When the donation was received
+      </div>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= form.label :notes, class: "form-label" do %>
+        <i class="fas fa-sticky-note me-1"></i>Notes
+      <% end %>
+      <%= form.text_area :notes,
+          rows: 3,
+          class: "form-control #{'is-invalid' if donation.errors[:notes].any?}",
+          placeholder: "Additional details about the donation..." %>
+      <% if donation.errors[:notes].any? %>
+        <div class="invalid-feedback">
+          <%= donation.errors[:notes].first %>
+        </div>
+      <% end %>
+      <div class="form-text">
+        <i class="fas fa-info-circle me-1"></i>
+        Optional additional information about the donation
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <%= link_to admin_donor_path(@donor), class: "btn btn-outline-secondary" do %>
+      <i class="fas fa-times me-1"></i>Cancel
+    <% end %>
+
+    <div>
+      <%= form.submit class: "btn btn-success" do %>
+        <i class="fas fa-save me-1"></i><%= donation.persisted? ? 'Update Donation' : 'Create Donation' %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- JavaScript for conditional amount field -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const valueTypeSelect = document.getElementById('donation_value_type');
+      const amountField = document.getElementById('amount_field');
+      const amountInput = document.getElementById('donation_amount');
+      const amountRequired = document.getElementById('amount_required');
+      const amountHelp = document.getElementById('amount_help');
+
+      function toggleAmountField() {
+        const valueType = valueTypeSelect.value;
+
+        if (valueType === 'monetary') {
+          amountField.style.display = 'block';
+          amountInput.required = true;
+          amountRequired.style.display = 'inline';
+          amountHelp.textContent = 'Required for monetary donations';
+          amountHelp.className = 'form-text';
+        } else {
+          amountField.style.display = 'block'; // Still show but not required
+          amountInput.required = false;
+          amountRequired.style.display = 'none';
+          amountHelp.textContent = 'Not applicable for ' + (valueType === 'material' ? 'material' : 'service') + ' donations';
+          amountHelp.className = 'form-text text-muted';
+        }
+      }
+
+      // Initial setup
+      toggleAmountField();
+
+      // Listen for changes
+      valueTypeSelect.addEventListener('change', toggleAmountField);
+    });
+  </script>
+<% end %>

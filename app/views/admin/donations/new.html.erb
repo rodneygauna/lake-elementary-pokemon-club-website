@@ -1,0 +1,57 @@
+<% content_for :title, "New Donation for #{@donor.display_name}" %>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Donor Management", admin_donors_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to @donor.display_name, admin_donor_path(@donor), class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">New Donation</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_donor_path(@donor), class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Donor
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-plus me-2"></i>
+        <h1 class="h4 mb-0">Add New Donation</h1>
+      </div>
+      <div class="d-flex align-items-center">
+        <span class="badge bg-light text-dark">
+          <i class="fas fa-heart me-1"></i>
+          <%= @donor.display_name %>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Create a new donation record for this donor. Choose the appropriate value type and provide details.
+    </p>
+  </div>
+</div>
+
+<!-- Donation Form Card -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= render 'form', donation: @donation %>
+  </div>
+</div>
