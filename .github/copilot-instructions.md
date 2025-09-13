@@ -178,7 +178,11 @@ rails generate scaffold Document title:string description:text category:string
 - [ ] Card-based layout with `shadow-sm` styling
 - [ ] Proper form validation styling
 - [ ] Mobile-responsive design
+- [ ] Toggle switches for binary filters (show/hide inactive, cancelled, etc.)
 - [ ] Admin/user permission checks where needed
+- [ ] Delete buttons in action area (never in card bodies)
+- [ ] Status badges only for exceptional states (not defaults like "published" or "active")
+- [ ] Action buttons grouped together with consistent spacing (`me-2`)
 
 ## UI/UX Requirements & Design System
 
@@ -204,7 +208,7 @@ rails generate scaffold Document title:string description:text category:string
 ### Standard Page Structure (MANDATORY)
 
 1. **Breadcrumb Navigation** - Clear hierarchy with `text-decoration-none` links
-2. **Action Buttons** - Back buttons, edit links positioned before header
+2. **Action Buttons** - Back, Edit, Delete buttons grouped together before header (never isolate delete buttons)
 3. **Header Card** - Blue background (`bg-primary`) with white text, icon + title
 4. **Content Cards** - Shadow-sm styling, proper spacing (`shadow-sm mb-4`)
 5. **Confirmation Modals** - For all destructive actions
@@ -213,9 +217,11 @@ rails generate scaffold Document title:string description:text category:string
 
 - **Information Cards**: Light gray backgrounds (#f8f9fa), proper typography hierarchy
 - **Form Sections**: Headers with `text-dark border-bottom pb-2 mb-3`
-- **Status Badges**: Green for active (`bg-success`), warning for inactive (`bg-warning text-dark`)
+- **Status Badges**: Only show for exceptional states (cancelled, draft, inactive) - NOT for normal states (published, active)
 - **Data Tables**: Gradient blue headers, alternating row colors
 - **Empty States**: Centered with large icons, contextual messaging
+- **Filter Toggles**: Use `form-check form-switch` for binary filters (show/hide inactive, cancelled, etc.) with auto-submit on change
+- **Action Button Grouping**: All action buttons (Back, Edit, Delete) must be grouped together before header card - never isolate delete buttons in card bodies
 
 ### Reference Documentation
 

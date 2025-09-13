@@ -51,7 +51,24 @@ This guide documents the design paradigms, patterns, and standards established f
           <%= link_to back_path, class: "btn btn-outline-secondary me-2" do %>
             <i class="fas fa-arrow-left me-1"></i>Back
           <% end %>
-          <!-- Additional action buttons -->
+          <%= link_to edit_path, class: "btn btn-outline-primary me-2" do %>
+            <i class="fas fa-edit me-1"></i>Edit
+          <% end %>
+          <!-- Delete button (admin only) -->
+          <% if admin? %>
+            <%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
+              <button type="button"
+                      class="btn btn-outline-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#confirmationModal"
+                      data-confirm-title="Delete Record"
+                      data-confirm-message="Are you sure you want to delete this record?"
+                      data-confirm-action="Delete Record"
+                      data-form-id="delete-record-form">
+                <i class="fas fa-trash me-1"></i>Delete
+              </button>
+            <% end %>
+          <% end %>
         </div>
       </div>
 
@@ -217,18 +234,44 @@ This guide documents the design paradigms, patterns, and standards established f
 - **Danger Actions**: `btn-outline-danger` (for delete)
 - **Success Actions**: `btn-success` (for create, add)
 
+#### Button Grouping Standards
+
+- **Action buttons must be grouped together** in the action button area (before header card)
+- **All buttons use standard sizing** (no `btn-sm` for action buttons)
+- **Proper spacing**: Use `me-2` between buttons for consistent spacing
+- **Delete buttons**: Always include in action button group, never isolate in card bodies
+
 ### 4. **Status Indicators**
 
-```erb
-<!-- Active Status -->
-<span class="badge bg-success">
-  <i class="fas fa-check-circle me-1"></i>Active
-</span>
+#### Badge Usage Standards
 
-<!-- Inactive/Warning Status -->
-<span class="badge bg-warning text-dark">
-  <i class="fas fa-pause-circle me-1"></i>Inactive
-</span>
+- **Only show badges for exceptional states** (not normal/default states)
+- **Normal states don't need badges** (e.g., "published" events, "active" students when that's the default)
+- **Exception states require badges** (e.g., "cancelled", "draft", "inactive")
+
+```erb
+<!-- Event Status Badges (only show exceptions) -->
+<% if @event.status == 'canceled' %>
+  <span class="badge bg-danger">
+    <i class="fas fa-times-circle me-1"></i>Cancelled
+  </span>
+<% elsif @event.status == 'draft' %>
+  <span class="badge bg-secondary">
+    <i class="fas fa-eye-slash me-1"></i>Draft
+  </span>
+<% end %>
+<!-- Note: No badge for "published" status as it's the default -->
+
+<!-- Student Status Badges -->
+<% if @student.status == "active" %>
+  <span class="badge bg-success">
+    <i class="fas fa-check-circle me-1"></i>Active Member
+  </span>
+<% else %>
+  <span class="badge bg-warning text-dark">
+    <i class="fas fa-pause-circle me-1"></i><%= @student.status.titleize %>
+  </span>
+<% end %>
 ```
 
 ### 5. **Color-Coded Sections**
@@ -241,20 +284,35 @@ This guide documents the design paradigms, patterns, and standards established f
 
 ### Confirmation Modal Usage
 
+**IMPORTANT**: Delete buttons must be placed in the action button area, not in card bodies.
+
 ```erb
-<!-- Delete Button with Modal -->
-<%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
-  <button type="button"
-          class="btn btn-outline-danger btn-sm"
-          data-bs-toggle="modal"
-          data-bs-target="#confirmationModal"
-          data-confirm-title="Delete Record"
-          data-confirm-message="Are you sure you want to delete this record? This action cannot be undone."
-          data-confirm-action="Delete Record"
-          data-form-id="delete-record-form">
-    <i class="fas fa-trash me-1"></i> Delete
-  </button>
-<% end %>
+<!-- Action Button Area (Correct Placement) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to back_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back
+    <% end %>
+    <%= link_to edit_path, class: "btn btn-outline-primary me-2" do %>
+      <i class="fas fa-edit me-1"></i>Edit
+    <% end %>
+    <!-- Delete Button with Modal -->
+    <% if admin? %>
+      <%= form_with model: @record, method: :delete, local: true, class: "d-inline", id: "delete-record-form" do |form| %>
+        <button type="button"
+                class="btn btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmationModal"
+                data-confirm-title="Delete Record"
+                data-confirm-message="Are you sure you want to delete this record? This action cannot be undone."
+                data-confirm-action="Delete Record"
+                data-form-id="delete-record-form">
+          <i class="fas fa-trash me-1"></i> Delete
+        </button>
+      <% end %>
+    <% end %>
+  </div>
+</div>
 
 <!-- Include modal at bottom of page -->
 <%= render "shared/generic_confirmation_modal" %>
@@ -264,9 +322,16 @@ This guide documents the design paradigms, patterns, and standards established f
 
 ### Toggle Switch for Filters
 
+Use toggle switches for binary filter options like showing/hiding inactive items or cancelled events. This provides better UX than buttons by clearly showing the current state.
+
 ```erb
 <div class="form-check form-switch">
   <%= form_with url: current_path, method: :get, local: true, class: "d-inline" do |form| %>
+    <!-- Preserve existing filters -->
+    <%= form.hidden_field :view, value: @view_mode if @view_mode %>
+    <%= form.hidden_field :status, value: params[:status] if params[:status] %>
+    <%= form.hidden_field :type, value: params[:type] if params[:type] %>
+
     <%= form.check_box :filter_param,
         {
           checked: @filter_active,
@@ -278,6 +343,53 @@ This guide documents the design paradigms, patterns, and standards established f
   <% end %>
 </div>
 ```
+
+#### Examples of Toggle Implementation
+
+**Students List - Show Inactive:**
+
+```erb
+<div class="form-check form-switch">
+  <%= form_with url: students_path, method: :get, local: true, class: "d-inline" do |form| %>
+    <%= form.check_box :show_inactive,
+        {
+          checked: @show_inactive,
+          class: "form-check-input",
+          onchange: "this.form.submit();"
+        },
+        "true", "false" %>
+    <%= form.label :show_inactive, "Show inactive students", class: "form-check-label" %>
+  <% end %>
+</div>
+```
+
+**Events List - Show Cancelled:**
+
+```erb
+<div class="form-check form-switch">
+  <%= form_with url: events_path, method: :get, local: true, class: "d-inline" do |form| %>
+    <%= form.hidden_field :view, value: @view_mode %>
+    <%= form.hidden_field :status, value: params[:status] %>
+    <%= form.hidden_field :type, value: params[:type] %>
+    <%= form.check_box :show_cancelled,
+        {
+          checked: params[:show_cancelled] == "true",
+          class: "form-check-input",
+          onchange: "this.form.submit();"
+        },
+        "true", "false" %>
+    <%= form.label :show_cancelled, "Show cancelled events", class: "form-check-label" %>
+  <% end %>
+</div>
+```
+
+### Toggle Design Standards
+
+- **Always use Bootstrap's `form-check form-switch` classes**
+- **Include `onchange: "this.form.submit();"` for immediate filtering**
+- **Preserve existing filters with hidden fields**
+- **Use descriptive labels (e.g., "Show inactive students", "Show cancelled events")**
+- **Position toggles in filter sections, typically aligned right**
 
 ## Responsive Design
 
@@ -363,12 +475,25 @@ This guide documents the design paradigms, patterns, and standards established f
 
 ### Core Files
 
+**Students Module:**
+
 - `app/views/students/index.html.erb` - List view with statistics, filtering
-- `app/views/students/show.html.erb` - Detail view with information cards
+- `app/views/students/show.html.erb` - Detail view with action button grouping
 - `app/views/students/edit.html.erb` - Edit form with consistent layout
 - `app/views/students/new.html.erb` - New form with header card
 - `app/views/students/_form.html.erb` - Form sections with proper styling
-- `app/views/shared/_generic_confirmation_modal.html.erb` - Reusable modal
+
+**Events Module:**
+
+- `app/views/events/index.html.erb` - List view with toggle filters, agenda/calendar modes
+- `app/views/events/show.html.erb` - Detail view with action button grouping, status badge cleanup
+- `app/views/events/edit.html.erb` - Edit form with timezone handling
+- `app/views/events/new.html.erb` - New form with proper card structure
+- `app/views/events/_form.html.erb` - Form with timezone conversion, clean layout
+
+**Shared Components:**
+
+- `app/views/shared/_generic_confirmation_modal.html.erb` - Enhanced modal with improved JavaScript
 
 ### CSS
 
@@ -377,7 +502,7 @@ This guide documents the design paradigms, patterns, and standards established f
 ## Checklist for New Pages
 
 - [ ] Use breadcrumb navigation
-- [ ] Include action buttons before header
+- [ ] Include action buttons before header (Back, Edit, Delete grouped together)
 - [ ] Header card with icon and title
 - [ ] Blue text ONLY for hyperlinks
 - [ ] Consistent icon usage (Font Awesome)
@@ -387,6 +512,8 @@ This guide documents the design paradigms, patterns, and standards established f
 - [ ] Include confirmation modal if needed
 - [ ] Empty states for lists
 - [ ] Proper admin/user permission checks
+- [ ] Delete buttons in action area (never in card bodies)
+- [ ] Status badges only for exceptional states (not defaults)
 
 ## Implementation Notes
 
