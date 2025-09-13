@@ -48,6 +48,28 @@
         </div>
       </div>
 
+      <!-- Filter Controls -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="text-dark mb-0">
+              <i class="fas fa-filter me-2"></i>Filter Options
+            </h6>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="showInactiveToggle"
+                     <%= params[:show_inactive] == 'true' ? 'checked' : '' %>
+                     onchange="this.form.submit()">
+              <label class="form-check-label" for="showInactiveToggle">
+                <i class="fas fa-eye-slash me-1"></i>Show Inactive Users
+              </label>
+              <%= form_with url: admin_users_path, method: :get, local: true, class: "d-none", id: "filterForm" do |form| %>
+                <%= form.hidden_field :show_inactive, id: "showInactiveField", value: params[:show_inactive] == 'true' ? 'false' : 'true' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Statistics Dashboard -->
       <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -79,6 +101,14 @@
           </div>
         </div>
       </div>
+
+      <script>
+        document.getElementById('showInactiveToggle').addEventListener('change', function() {
+          const hiddenField = document.getElementById('showInactiveField');
+          hiddenField.value = this.checked ? 'true' : 'false';
+          document.getElementById('filterForm').submit();
+        });
+      </script>
 
       <!-- Users Table -->
       <div class="card shadow-sm">
@@ -132,9 +162,19 @@
                       <% end %>
                     </td>
                     <td>
-                      <span class="text-success fw-medium">
-                        <i class="fas fa-check-circle me-1"></i>Active
-                      </span>
+                      <% if user.status == "active" %>
+                        <span class="text-success fw-medium">
+                          <i class="fas fa-check-circle me-1"></i>Active
+                        </span>
+                      <% elsif user.status == "inactive" %>
+                        <span class="text-warning fw-medium">
+                          <i class="fas fa-pause-circle me-1"></i>Inactive
+                        </span>
+                      <% elsif user.status == "suspended" %>
+                        <span class="text-danger fw-medium">
+                          <i class="fas fa-ban me-1"></i>Suspended
+                        </span>
+                      <% end %>
                     </td>
                     <td>
                       <%= link_to admin_user_path(user), class: "btn btn-sm btn-outline-primary me-1" do %>

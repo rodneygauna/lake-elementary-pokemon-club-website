@@ -111,16 +111,54 @@
             <div class="col-12 col-md-6">
               <div class="p-3 rounded" style="background-color: #f8f9fa;">
                 <h6 class="text-muted mb-1">
+                  <i class="fas fa-phone me-1"></i>Phone Number
+                </h6>
+                <div class="fw-bold text-dark">
+                  <% if @user.phone_number.present? %>
+                    <%= @user.phone_number %>
+                  <% else %>
+                    <span class="text-muted">Not provided</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                <h6 class="text-muted mb-1">
                   <i class="fas fa-shield-alt me-1"></i>Account Role
                 </h6>
                 <div class="fw-bold text-dark">
                   <% if @user.admin? %>
-                    <span class="badge bg-warning text-dark">
+                    <span class="text-warning fw-medium">
                       <i class="fas fa-shield-alt me-1"></i>Administrator
                     </span>
                   <% else %>
-                    <span class="badge bg-secondary">
+                    <span class="text-muted fw-medium">
                       <i class="fas fa-user me-1"></i>User
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                <h6 class="text-muted mb-1">
+                  <i class="fas fa-user-check me-1"></i>Account Status
+                </h6>
+                <div class="fw-bold text-dark">
+                  <% if @user.status == "active" %>
+                    <span class="text-success fw-medium">
+                      <i class="fas fa-check-circle me-1"></i>Active
+                    </span>
+                  <% elsif @user.status == "inactive" %>
+                    <span class="text-warning fw-medium">
+                      <i class="fas fa-pause-circle me-1"></i>Inactive
+                    </span>
+                  <% elsif @user.status == "suspended" %>
+                    <span class="text-danger fw-medium">
+                      <i class="fas fa-ban me-1"></i>Suspended
                     </span>
                   <% end %>
                 </div>

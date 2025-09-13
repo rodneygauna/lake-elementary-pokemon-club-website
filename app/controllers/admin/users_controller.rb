@@ -4,6 +4,11 @@ class Admin::UsersController < ApplicationController
 
   def index
     @users = User.order(:email_address)
+
+    # Filter out inactive users unless specifically requested
+    unless params[:show_inactive] == "true"
+      @users = @users.where(status: "active")
+    end
   end
 
   def show
