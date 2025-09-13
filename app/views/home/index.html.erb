@@ -1,75 +1,238 @@
+<% content_for :title, "Home" %>
+
 <!-- Hero Section -->
-<div class="hero-section bg-primary text-white py-5 mb-5">
-  <div class="container">
+<div class="card shadow-sm mb-4" style="background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%);">
+  <div class="card-body py-5">
     <div class="row align-items-center">
       <div class="col-lg-8">
-        <h1 class="display-4 fw-bold mb-3">Welcome to Lake Elementary Pokemon Club!</h1>
-        <p class="lead mb-4">Join us for exciting Pokemon adventures, trading card tournaments, and fun activities for all Pokemon trainers!</p>
-        <div class="d-flex gap-3">
-          <%= link_to "View Events", events_path, class: "btn btn-light btn-lg" %>
-          <%= link_to "Meet Our Members", students_path, class: "btn btn-outline-light btn-lg" %>
+        <h1 class="display-4 fw-bold text-white mb-3">
+          <i class="fas fa-star me-3 text-warning"></i>
+          Lake Elementary Pokémon Club
+        </h1>
+        <p class="lead text-white mb-4">
+          Our mission is to provide a safe and inclusive space for Lake Elementary students in Vista
+          to connect through the wonderful world of Pokémon. Join our after-school community of young trainers!
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <%= link_to events_path, class: "btn btn-light btn-lg" do %>
+            <i class="fas fa-calendar-alt me-2"></i>View Events
+          <% end %>
+          <%= link_to students_path, class: "btn btn-outline-light btn-lg" do %>
+            <i class="fas fa-users me-2"></i>Meet Our Members
+          <% end %>
         </div>
       </div>
-      <div class="col-lg-4 text-center">
-        <!-- Placeholder for Pokemon image/logo -->
-        <div class="placeholder-image bg-light rounded p-5" style="height: 200px;">
-          <i class="fas fa-star fs-1 text-warning"></i>
-          <p class="text-dark mt-3">Pokemon Logo Here</p>
+      <div class="col-lg-4 text-center mt-4 mt-lg-0">
+        <div class="bg-light rounded-circle p-4 d-inline-block" style="width: 180px; height: 180px;">
+          <i class="fas fa-star fs-1 text-warning mt-4"></i>
+          <div class="text-dark fw-bold mt-2">Pokémon<br>Club</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Quick Info Cards -->
-<div class="row g-4 mb-5">
-  <div class="col-md-4">
-    <div class="card h-100 text-center">
-      <div class="card-body">
-        <i class="fas fa-calendar-alt fs-1 text-primary mb-3"></i>
-        <h5 class="card-title">Upcoming Events</h5>
-        <p class="card-text">Check out our latest meetings, tournaments, and special events.</p>
-        <%= link_to "View Events", events_path, class: "btn btn-primary" %>
+<!-- Donor Carousel Section -->
+<% if @business_donors&.any? || @individual_donors&.any? %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-warning text-dark">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-heart me-2"></i>
+        <h3 class="h5 mb-0">Thank You to Our Amazing Supporters!</h3>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="text-muted mb-4">
+        <i class="fas fa-info-circle me-1"></i>
+        The Lake Elementary Pokémon Club is made possible by these generous community supporters.
+      </p>
+
+      <!-- Donor Carousel -->
+      <div id="donorCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+          <% all_donors = (@business_donors || []) + (@individual_donors || []) %>
+          <% all_donors.each_slice(3).each_with_index do |donor_group, index| %>
+            <div class="carousel-item <%= 'active' if index == 0 %>">
+              <div class="row g-3 justify-content-center">
+                <% donor_group.each do |donor| %>
+                  <div class="col-md-4 text-center">
+                    <div class="p-3">
+                      <% if donor.has_logo_or_photo? %>
+                        <%= image_tag donor.photo_or_logo,
+                                      alt: "#{donor.display_name}",
+                                      class: donor.donor_type == 'business' ? 'img-thumbnail mb-2' : 'rounded-circle img-thumbnail mb-2',
+                                      style: "max-width: 80px; max-height: 80px; object-fit: #{ donor.donor_type == 'business' ? 'contain' : 'cover' };" %>
+                      <% else %>
+                        <div class="mb-2">
+                          <% if donor.donor_type == 'business' %>
+                            <i class="fas fa-building fa-3x text-muted"></i>
+                          <% else %>
+                            <i class="fas fa-user-circle fa-3x text-muted"></i>
+                          <% end %>
+                        </div>
+                      <% end %>
+                      <div class="fw-medium text-dark small"><%= donor.display_name %></div>
+                      <% if donor.donor_type == 'business' %>
+                        <small class="text-muted d-block">Business Sponsor</small>
+                      <% else %>
+                        <small class="text-muted d-block">Individual Donor</small>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <% if all_donors.count > 3 %>
+          <button class="carousel-control-prev" type="button" data-bs-target="#donorCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#donorCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        <% end %>
+      </div>
+
+      <div class="text-center mt-4">
+        <%= link_to public_donors_path, class: "btn btn-outline-warning" do %>
+          <i class="fas fa-heart me-2"></i>View All Our Supporters
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Volunteer and Next Event Cards -->
+<div class="row g-4 mb-4">
+  <!-- Volunteer Card -->
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-success text-white">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-hands-helping me-2"></i>
+          <h4 class="h5 mb-0">Volunteers Needed</h4>
+        </div>
+      </div>
+      <div class="card-body d-flex flex-column">
+        <p class="text-dark mb-3">
+          <i class="fas fa-heart me-1 text-success"></i>
+          The Lake Elementary Pokémon Club is always looking for enthusiastic volunteers to help make our activities even more amazing!
+        </p>
+        <p class="text-muted mb-4">
+          Whether you're helping with events, supervising activities, or sharing your Pokémon expertise,
+          every bit of help makes a difference in our students' experience.
+        </p>
+        <div class="mt-auto">
+          <a href="mailto:contact@lakepokemonclub.org" class="btn btn-success">
+            <i class="fas fa-envelope me-2"></i>Contact Us to Volunteer
+          </a>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="col-md-4">
-    <div class="card h-100 text-center">
-      <div class="card-body">
-        <i class="fas fa-users fs-1 text-success mb-3"></i>
-        <h5 class="card-title">Our Members</h5>
-        <p class="card-text">Meet the amazing Pokemon trainers in our club community.</p>
-        <%= link_to "Meet Members", students_path, class: "btn btn-success" %>
+  <!-- Next Event Card -->
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-primary text-white">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-calendar-alt me-2"></i>
+          <h4 class="h5 mb-0">Next Event</h4>
+        </div>
       </div>
-    </div>
-  </div>
+      <div class="card-body d-flex flex-column">
+        <% if @next_event %>
+          <h5 class="text-dark mb-3">
+            <i class="fas fa-star me-1 text-warning"></i>
+            <%= @next_event.title %>
+          </h5>
+          <div class="mb-3">
+            <div class="text-muted small mb-1">
+              <i class="fas fa-calendar me-1"></i>Date & Time
+            </div>
+            <div class="fw-medium text-dark">
+              <%= @next_event.starts_at.in_time_zone(@next_event.time_zone).strftime("%A, %B %d, %Y") %>
+            </div>
+            <div class="text-dark">
+              <%= @next_event.starts_at.in_time_zone(@next_event.time_zone).strftime("%l:%M %p") %> -
+              <%= @next_event.ends_at.in_time_zone(@next_event.time_zone).strftime("%l:%M %p") %>
+              <small class="text-muted">(<%= @next_event.time_zone %>)</small>
+            </div>
+          </div>
 
-  <div class="col-md-4">
-    <div class="card h-100 text-center">
-      <div class="card-body">
-        <i class="fas fa-gift fs-1 text-warning mb-3"></i>
-        <h5 class="card-title">Support Us</h5>
-        <p class="card-text">Learn about our generous donors and how to support the club.</p>
-        <a href="#" class="btn btn-warning">Coming Soon</a>
+          <% if @next_event.venue.present? %>
+            <div class="mb-3">
+              <div class="text-muted small mb-1">
+                <i class="fas fa-map-marker-alt me-1"></i>Location
+              </div>
+              <div class="text-dark"><%= @next_event.venue %></div>
+            </div>
+          <% end %>
+
+          <% if @next_event.description.present? %>
+            <div class="mb-3">
+              <div class="text-muted small mb-1">
+                <i class="fas fa-info-circle me-1"></i>Description
+              </div>
+              <div class="text-dark"><%= truncate(@next_event.description, length: 120) %></div>
+            </div>
+          <% end %>
+
+          <div class="mt-auto">
+            <%= link_to events_path, class: "btn btn-primary" do %>
+              <i class="fas fa-arrow-right me-2"></i>View All Events
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-4">
+            <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">More Events Coming Soon!</h5>
+            <p class="text-muted mb-4">
+              We're planning exciting new Pokémon adventures. Keep checking this page for updates!
+            </p>
+            <div class="mt-auto">
+              <%= link_to events_path, class: "btn btn-outline-primary" do %>
+                <i class="fas fa-calendar me-2"></i>Check Events Page
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
 </div>
 
-<!-- About Section -->
-<div class="row">
-  <div class="col-lg-8 mx-auto text-center">
-    <h2 class="mb-4">About Our Pokemon Club</h2>
-    <p class="lead">
-      The Lake Elementary Pokemon Club is a community of young Pokemon trainers who come together
-      to share their love of Pokemon, participate in trading card games, and build lasting friendships.
-      Our club welcomes trainers of all skill levels!
+<!-- Mission Statement -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body text-center py-4" style="background-color: var(--pokemon-light-yellow);">
+    <h3 class="text-dark mb-3">
+      <i class="fas fa-shield-alt me-2 text-warning"></i>
+      Our Mission
+    </h3>
+    <p class="lead text-dark mb-3">
+      To provide a safe and inclusive environment where Lake Elementary students in Vista can
+      build friendships, develop social skills, and explore their passion for Pokémon.
     </p>
-    <p>
-      We meet regularly for tournaments, trading sessions, and special events.
-      Whether you're just starting your Pokemon journey or you're a seasoned trainer,
-      you'll find a welcoming community here.
-    </p>
+    <div class="row g-3 text-center mt-4">
+      <div class="col-md-4">
+        <i class="fas fa-users fa-2x text-dark mb-2"></i>
+        <h6 class="text-dark">Community Building</h6>
+        <small class="text-muted">Connecting students through shared interests</small>
+      </div>
+      <div class="col-md-4">
+        <i class="fas fa-handshake fa-2x text-dark mb-2"></i>
+        <h6 class="text-dark">Inclusive Environment</h6>
+        <small class="text-muted">Welcoming all trainers regardless of skill level</small>
+      </div>
+      <div class="col-md-4">
+        <i class="fas fa-graduation-cap fa-2x text-dark mb-2"></i>
+        <h6 class="text-dark">Learning & Fun</h6>
+        <small class="text-muted">Educational activities wrapped in entertainment</small>
+      </div>
+    </div>
   </div>
 </div>
