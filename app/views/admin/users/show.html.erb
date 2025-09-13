@@ -216,8 +216,9 @@
                         <% if admin? %>
                           <% user_student = @user.user_students.find_by(student: student) %>
                           <% if user_student %>
-                            <%= form_with model: user_student, url: user_student_path(user_student), method: :delete, local: true, class: "d-inline", id: "remove-student-#{student.id}-form" do |form| %>
-                              <%= form.hidden_field :redirect_to, value: request.path %>
+                            <% form_id = "remove-student-#{student.id}-form" %>
+                            <%= form_with model: user_student, url: user_student_path(user_student), method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
+                              <%= hidden_field_tag :redirect_to, request.path %>
                               <button type="button"
                                       class="btn btn-sm btn-outline-danger"
                                       data-bs-toggle="modal"
@@ -225,7 +226,7 @@
                                       data-confirm-title="Remove Student Link"
                                       data-confirm-message="Are you sure you want to remove the link between <%= @user.full_name %> and <%= student.display_name_for(current_user) %>? This will not delete the student, only remove the parent-child relationship."
                                       data-confirm-action="Remove Link"
-                                      data-form-id="remove-student-<%= student.id %>-form">
+                                      data-form-id="<%= form_id %>">
                                 <i class="fas fa-unlink"></i>
                               </button>
                             <% end %>
