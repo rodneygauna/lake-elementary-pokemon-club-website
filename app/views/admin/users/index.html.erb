@@ -184,7 +184,8 @@
                         <i class="fas fa-edit me-1"></i>Edit
                       <% end %>
                       <% unless user == current_user %>
-                        <%= form_with model: [:admin, user], method: :delete, local: true, class: "d-inline", id: "delete-user-#{user.id}-form" do |form| %>
+                        <% form_id = "delete-user-#{user.id}-form" %>
+                        <%= form_with model: [:admin, user], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
                           <button type="button"
                                   class="btn btn-sm btn-outline-danger"
                                   data-bs-toggle="modal"
@@ -192,7 +193,7 @@
                                   data-confirm-title="Delete User"
                                   data-confirm-message="Are you sure you want to delete <%= user.full_name %> (<%= user.email_address %>)? This action cannot be undone."
                                   data-confirm-action="Delete User"
-                                  data-form-id="delete-user-<%= user.id %>-form">
+                                  data-form-id="<%= form_id %>">
                             <i class="fas fa-trash me-1"></i>Delete
                           </button>
                         <% end %>
