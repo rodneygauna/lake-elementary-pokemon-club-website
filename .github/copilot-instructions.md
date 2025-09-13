@@ -36,6 +36,18 @@ Student (club members)
 Event (club meetings/activities)
 ├─ Time zone aware with UTC storage
 └─ Status enum: draft|published|canceled
+
+Donor (individual/business donors)
+├─ has_many :donations
+├─ has_one_attached :photo (Active Storage)
+├─ donor_type enum: individual|business
+└─ visibility enum: public|private
+
+Donation (normalized donation tracking)
+├─ belongs_to :donor
+├─ value_type enum: monetary|material|service
+├─ amount (decimal, required for monetary)
+└─ donation_type and description (text)
 ```
 
 ### Model Conventions
@@ -125,26 +137,43 @@ Events are timezone-aware:
 
 ## Donor Management System
 
+### Complete Implementation Status ✅
+
+The donor management system is fully implemented with the following features:
+
 ### Donor Types & Features
 
-- **Individual Donors**: Name, donation amount/type, optional photo upload
-- **Business Donors**: Company name, logo upload, contribution details, website link
+- **Individual Donors**: Name, contact info, optional photo upload
+- **Business Donors**: Company name, logo upload, website link, contact details
 - **Privacy Controls**: Donor visibility preferences in admin interface
-- **Recognition**: Automated display on public donor wall with carousel for business logos
+- **Recognition**: Public donor wall with carousel for business logos and privacy filtering
 
-### Donor Model Requirements
+### Normalized Database Structure
 
-- Support for both individual and business donors
-- Donation tracking with amounts and types
-- Photo/logo upload using Active Storage
-- Privacy settings for donor visibility preferences
-- Public donor recognition page with carousel display
+- **Donor Model**: Individual/business donors with photo attachment via Active Storage
+- **Donation Model**: Separate normalized model for flexible donation tracking
+- **Value Types**: Monetary, material, and service donations with conditional amount fields
+- **Relationships**: One-to-many (Donor has_many donations)
+
+### Admin Interface Components
+
+- **Admin::DonorsController**: Full CRUD for donor management
+- **Admin::DonationsController**: Nested CRUD for donation management under donors
+- **Responsive Forms**: Conditional fields based on donor_type and value_type
+- **Flash Messages**: Success/error feedback for all operations
+- **Confirmation Modals**: Delete confirmation following design patterns
+
+### Public Recognition System
+
+- **Public Donors Page**: Filtered display respecting privacy settings
+- **Business Carousel**: Logo display for business donors
+- **Individual Recognition**: Name and photo display for individual donors
+- **Privacy Filtering**: Only shows donors with public visibility preference
 
 ## Future Models & Features (Per PRD)
 
 Planned models to implement using Rails scaffolding:
 
-- **Donor**: Individual/business donors with Active Storage for photos/logos
 - **Document**: File repository with categorization and access control
 - **EmailSubscription**: Granular notification preferences for users
 
@@ -153,7 +182,6 @@ Planned models to implement using Rails scaffolding:
 Follow Rails 8 scaffolding for rapid CRUD development:
 
 ```bash
-rails generate scaffold Donor name:string donor_type:string amount:decimal privacy_setting:string
 rails generate scaffold Document title:string description:text category:string
 ```
 

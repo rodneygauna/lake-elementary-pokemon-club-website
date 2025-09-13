@@ -520,6 +520,17 @@ Use toggle switches for binary filter options like showing/hiding inactive items
 - `app/views/events/new.html.erb` - New form with proper card structure
 - `app/views/events/_form.html.erb` - Form with timezone conversion, clean layout
 
+**Donor Management Module:**
+
+- `app/views/admin/donors/index.html.erb` - List view with individual/business filtering
+- `app/views/admin/donors/show.html.erb` - Detail view with integrated donation management
+- `app/views/admin/donors/edit.html.erb` - Edit form with conditional donor type fields
+- `app/views/admin/donors/new.html.erb` - New form with photo upload capability
+- `app/views/admin/donors/_form.html.erb` - Form with conditional business/individual fields
+- `app/views/admin/donations/_form.html.erb` - Nested donation form with value type conditionals
+- `app/views/admin/donations/new.html.erb` - Donation creation under specific donor
+- `app/views/admin/donations/edit.html.erb` - Donation editing with full form validation
+
 **Shared Components:**
 
 - `app/views/shared/_generic_confirmation_modal.html.erb` - Enhanced modal with improved JavaScript

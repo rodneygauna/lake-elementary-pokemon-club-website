@@ -6,13 +6,13 @@
 **Version:** 2.1
 **Date:** September 12, 2025
 **Author:** Rodney Gauna
-**Status:** Development Phase - Secure User Management Implemented
+**Status:** Development Phase - Secure User Management & Donor System Implemented
 
 ---
 
 ## 1. Executive Summary
 
-The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources. The application features a secure user authentication system with admin-managed accounts, comprehensive content management capabilities, email notifications, and robust data management through Active Record and Active Storage. Enhanced security measures ensure that only authorized administrators can create user accounts, providing better control and safety for the school environment.
+The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources. The application features a secure user authentication system with admin-managed accounts, comprehensive content management capabilities, complete donor and donation management system, email notifications, and robust data management through Active Record and Active Storage. Enhanced security measures ensure that only authorized administrators can create user accounts, providing better control and safety for the school environment.
 
 ---
 
@@ -221,16 +221,19 @@ A **Ruby on Rails 8 web application** featuring:
 - **User:** Authentication, roles (admin/normal), email preferences
 - **Student:** Name, grade, belongs_to user (parent/guardian)
 - **Event:** Title, description, date, status, category, created_by admin
-- **Donor:** Name, type (individual/business), donation details, privacy settings
+- **Donor:** Name, donor_type (individual/business), contact info, privacy settings, photo attachment
+- **Donation:** Normalized donation tracking with value_type (monetary/material/service), amounts, descriptions
 - **Document:** Title, description, category, file attachment via Active Storage
 - **EmailSubscription:** User preferences for notification types and individual content
 
 #### Relationships
 
-- User has_many students
+- User has_many students through user_students (many-to-many)
 - User has_many email_subscriptions
 - Event belongs_to user (creator)
-- Donor belongs_to user (creator)
+- Donor has_many donations (one-to-many)
+- Donation belongs_to donor
+- Donor has_one_attached photo (Active Storage)
 - Document belongs_to user (creator)
 - Document has_one_attached file
 
@@ -246,28 +249,39 @@ A **Ruby on Rails 8 web application** featuring:
 │   ├── controllers/
 │   │   ├── application_controller.rb
 │   │   ├── events_controller.rb      # Generated scaffold
-│   │   ├── donors_controller.rb      # Generated scaffold
-│   │   ├── documents_controller.rb   # Generated scaffold
-│   │   ├── students_controller.rb    # Generated scaffold
-│   │   ├── users_controller.rb       # User management
-│   │   └── dashboard_controller.rb   # User dashboard
+│   │   ├── home_controller.rb        # Public homepage
+│   │   ├── students_controller.rb    # Student management
+│   │   ├── users_controller.rb       # User profile management
+│   │   ├── admin/
+│   │   │   ├── users_controller.rb   # Admin user management
+│   │   │   ├── donors_controller.rb  # Donor management (admin)
+│   │   │   └── donations_controller.rb # Donation management (nested)
+│   │   ├── documents_controller.rb   # Document management (future)
+│   │   └── dashboard_controller.rb   # User dashboard (future)
 │   ├── models/
 │   │   ├── application_record.rb
 │   │   ├── user.rb
 │   │   ├── student.rb
+│   │   ├── user_student.rb           # Join table for many-to-many
 │   │   ├── event.rb
-│   │   ├── donor.rb
-│   │   ├── document.rb
-│   │   └── email_subscription.rb
+│   │   ├── donor.rb                  # Individual/business donors
+│   │   ├── donation.rb               # Normalized donation tracking
+│   │   ├── document.rb               # File repository (future)
+│   │   └── email_subscription.rb     # Email preferences (future)
 │   ├── views/
 │   │   ├── layouts/
 │   │   │   └── application.html.erb
-│   │   ├── events/                   # Scaffolded views
-│   │   ├── donors/                   # Scaffolded views
-│   │   ├── documents/                # Scaffolded views
-│   │   ├── students/                 # Scaffolded views
-│   │   ├── users/
-│   │   └── dashboard/
+│   │   ├── events/                   # Event management views
+│   │   ├── home/                     # Public homepage
+│   │   ├── students/                 # Student management views
+│   │   ├── users/                    # User profile views
+│   │   ├── admin/
+│   │   │   ├── users/                # Admin user management
+│   │   │   ├── donors/               # Admin donor management
+│   │   │   └── donations/            # Admin donation management
+│   │   ├── shared/                   # Reusable components
+│   │   ├── documents/                # Document views (future)
+│   │   └── dashboard/                # User dashboard (future)
 │   ├── mailers/
 │   │   ├── application_mailer.rb
 │   │   └── notification_mailer.rb
