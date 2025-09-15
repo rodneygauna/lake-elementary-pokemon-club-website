@@ -1,6 +1,6 @@
 class AttendancesController < ApplicationController
-  # Ensure only admins can access attendance functionality
-  before_action :require_admin
+  # Ensure only admin_level users can access attendance functionality
+  before_action :require_admin_level
   before_action :set_event, only: [ :toggle ]
   before_action :set_student, only: [ :toggle ]
 
@@ -12,7 +12,7 @@ class AttendancesController < ApplicationController
       student: @student
     )
 
-    # Set the admin who is marking attendance
+    # Set the user who is marking attendance
     @attendance.marked_by = current_user
 
     if @attendance.persisted?
@@ -48,15 +48,6 @@ class AttendancesController < ApplicationController
   end
 
   private
-
-  def require_admin
-    unless current_user&.admin?
-      respond_to do |format|
-        format.json { render json: { success: false, error: "Unauthorized" }, status: :unauthorized }
-        format.html { redirect_to root_path, alert: "You must be an admin to access this feature." }
-      end
-    end
-  end
 
   def set_event
     @event = Event.find(params[:event_id])
