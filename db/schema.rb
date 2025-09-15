@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_13_214059) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_174025) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -51,6 +51,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_214059) do
     t.index ["event_id"], name: "index_attendances_on_event_id"
     t.index ["marked_by_id"], name: "index_attendances_on_marked_by_id"
     t.index ["student_id"], name: "index_attendances_on_student_id"
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.string "document_type", null: false
+    t.text "url"
+    t.integer "created_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_documents_on_created_at"
+    t.index ["created_by_id"], name: "index_documents_on_created_by_id"
+    t.index ["document_type", "created_at"], name: "index_documents_on_document_type_and_created_at"
+    t.index ["document_type"], name: "index_documents_on_document_type"
   end
 
   create_table "donations", force: :cascade do |t|
@@ -162,6 +176,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_214059) do
   add_foreign_key "attendances", "events"
   add_foreign_key "attendances", "students"
   add_foreign_key "attendances", "users", column: "marked_by_id"
+  add_foreign_key "documents", "users", column: "created_by_id"
   add_foreign_key "donations", "donors"
   add_foreign_key "donors", "users"
   add_foreign_key "sessions", "users"

@@ -659,5 +659,61 @@ monetary_donations = Donation.where(value_type: 'monetary')
 if monetary_donations.count > 0
   puts "   - Average Monetary Donation: $#{(monetary_donations.sum(:amount) / monetary_donations.count).to_f.round(2)}"
 end
+# Create sample documents
+puts "Creating sample documents..."
+
+sample_documents = [
+  {
+    title: "Club Handbook",
+    description: "Complete guide to Pokemon Club rules, activities, and expectations for students and parents.",
+    document_type: "link",
+    url: "https://example.com/pokemon-club-handbook"
+  },
+  {
+    title: "Meeting Schedule",
+    description: "Current semester meeting dates and special events calendar.",
+    document_type: "link",
+    url: "https://example.com/meeting-schedule"
+  },
+  {
+    title: "Permission Slip",
+    description: "Required permission form for all club activities and field trips.",
+    document_type: "link",
+    url: "https://forms.google.com/pokemon-club-permission"
+  },
+  {
+    title: "Pokemon Care Guide",
+    description: "Educational resource about Pokemon types, abilities, and care tips for young trainers.",
+    document_type: "link",
+    url: "https://pokemon.com/us/pokemon-care-guide"
+  },
+  {
+    title: "Contact Information",
+    description: "Emergency contacts and club leadership information for parents and guardians.",
+    document_type: "link",
+    url: "https://example.com/contact-info"
+  },
+  {
+    title: "Club Rules",
+    description: "Behavior expectations and safety guidelines for all club members.",
+    document_type: "link",
+    url: "https://example.com/club-rules"
+  }
+]
+
+sample_documents.each do |doc_data|
+  document = Document.find_or_create_by!(title: doc_data[:title]) do |doc|
+    doc.description = doc_data[:description]
+    doc.document_type = doc_data[:document_type]
+    doc.url = doc_data[:url] if doc_data[:url]
+    doc.created_by = admin_user
+  end
+  puts "   ✓ #{document.title} (#{document.document_type})"
+end
+
+puts "\n📄 Documents: #{Document.count}"
+puts "   - Link Documents: #{Document.where(document_type: 'link').count}"
+puts "   - File Documents: #{Document.where(document_type: 'file').count}"
+
 puts "\nAll users can log in with their email and password 'password123'"
 puts "==========================="

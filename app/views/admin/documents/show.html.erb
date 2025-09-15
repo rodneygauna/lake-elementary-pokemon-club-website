@@ -1,0 +1,273 @@
+<% content_for :title, @document.display_name %>
+
+<!-- Navigation Controls -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Admin", admin_users_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Documents", admin_documents_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><%= truncate(@document.display_name, length: 30) %></li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_documents_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Documents
+    <% end %>
+  </div>
+  <div>
+    <%= link_to edit_admin_document_path(@document), class: "btn btn-primary me-2" do %>
+      <i class="fas fa-edit me-2"></i>Edit
+    <% end %>
+    <% form_id = "delete-document-form" %>
+    <%= form_with model: [:admin, @document], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
+      <button type="button"
+              class="btn btn-outline-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmationModal"
+              data-confirm-title="Delete Document"
+              data-confirm-message="Are you sure you want to delete <%= @document.display_name %>? This action cannot be undone."
+              data-confirm-action="Delete Document"
+              data-form-id="<%= form_id %>">
+        <i class="fas fa-trash me-2"></i>Delete
+      </button>
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4" style="background: var(--pokemon-electric-blue);">
+  <div class="card-body text-white">
+    <div class="d-flex align-items-center">
+      <% if @document.link? %>
+        <i class="fas fa-external-link-alt fa-2x me-3"></i>
+      <% elsif @document.is_image? %>
+        <i class="fas fa-image fa-2x me-3"></i>
+      <% else %>
+        <i class="fas fa-file fa-2x me-3"></i>
+      <% end %>
+      <div>
+        <h1 class="h3 mb-1"><%= @document.display_name %></h1>
+        <p class="mb-0">
+          <% if @document.link? %>
+            External Link • Created <%= @document.created_at.strftime("%B %d, %Y") %>
+          <% else %>
+            File Upload • Created <%= @document.created_at.strftime("%B %d, %Y") %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Details -->
+<div class="row g-4">
+  <!-- Main Content -->
+  <div class="col-lg-8">
+    <!-- Description -->
+    <% if @document.description.present? %>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>Description
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="text-dark mb-0"><%= simple_format(@document.description) %></p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Link Details -->
+    <% if @document.link? %>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-external-link-alt me-2"></i>Link Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label text-muted small">URL</label>
+            <div class="d-flex align-items-center">
+              <code class="flex-grow-1 me-3"><%= @document.url %></code>
+              <%= link_to @document.url,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  class: "btn btn-outline-primary btn-sm" do %>
+                <i class="fas fa-external-link-alt me-1"></i>Visit Link
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- File Details -->
+    <% if @document.file? && @document.file_attachment.attached? %>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-file me-2"></i>File Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Filename</label>
+                <div><%= @document.file_attachment.filename %></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label text-muted small">File Size</label>
+                <div><%= number_to_human_size(@document.file_size) %></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label text-muted small">File Type</label>
+                <div><%= @document.file_extension&.upcase || "Unknown" %></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Created</label>
+                <div><%= @document.created_at.strftime("%B %d, %Y") %></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Preview -->
+          <% if @document.is_image? %>
+            <div class="mb-3">
+              <label class="form-label text-muted small">Preview</label>
+              <div class="text-center">
+                <%= image_tag @document.file_attachment.variant(:preview),
+                    alt: @document.display_name,
+                    class: "img-fluid rounded shadow-sm",
+                    style: "max-height: 300px;" %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Download Actions -->
+          <div class="d-flex gap-2">
+            <%= link_to resource_download_path(@document),
+                class: "btn btn-success" do %>
+              <i class="fas fa-download me-2"></i>Download File
+            <% end %>
+            <%= link_to url_for(@document.file_attachment),
+                target: "_blank",
+                class: "btn btn-outline-success" do %>
+              <i class="fas fa-external-link-alt me-2"></i>View in Browser
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="col-lg-4">
+    <!-- Quick Stats -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-warning text-dark">
+        <h6 class="mb-0">
+          <i class="fas fa-chart-bar me-2"></i>Quick Stats
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-6">
+            <div class="border-end">
+              <div class="text-primary">
+                <% if @document.link? %>
+                  <i class="fas fa-external-link-alt fa-2x mb-2"></i>
+                <% else %>
+                  <i class="fas fa-file fa-2x mb-2"></i>
+                <% end %>
+              </div>
+              <h6 class="text-uppercase text-muted small">Type</h6>
+              <p class="mb-0 fw-medium">
+                <% if @document.link? %>
+                  Link
+                <% else %>
+                  File
+                <% end %>
+              </p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="text-info">
+              <i class="fas fa-calendar fa-2x mb-2"></i>
+            </div>
+            <h6 class="text-uppercase text-muted small">Created</h6>
+            <p class="mb-0 fw-medium"><%= time_ago_in_words(@document.created_at) %> ago</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creation Info -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-info text-white">
+        <h6 class="mb-0">
+          <i class="fas fa-info-circle me-2"></i>Creation Info
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label text-muted small">Created By</label>
+          <div class="d-flex align-items-center">
+            <i class="fas fa-user-circle fa-lg text-muted me-2"></i>
+            <span><%= @document.created_by.full_name %></span>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted small">Created At</label>
+          <div><%= @document.created_at.strftime("%B %d, %Y at %I:%M %p") %></div>
+        </div>
+        <% if @document.updated_at != @document.created_at %>
+          <div class="mb-0">
+            <label class="form-label text-muted small">Last Updated</label>
+            <div><%= @document.updated_at.strftime("%B %d, %Y at %I:%M %p") %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Public Access -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-secondary text-white">
+        <h6 class="mb-0">
+          <i class="fas fa-globe me-2"></i>Public Access
+        </h6>
+      </div>
+      <div class="card-body">
+        <p class="small text-muted mb-3">
+          This document is publicly visible on the resources page at:
+        </p>
+        <div class="d-grid">
+          <%= link_to public_resources_path,
+              target: "_blank",
+              class: "btn btn-outline-secondary btn-sm" do %>
+            <i class="fas fa-external-link-alt me-2"></i>View Public Resources Page
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<%= render "shared/generic_confirmation_modal" %>

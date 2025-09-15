@@ -1,0 +1,211 @@
+<% content_for :title, "Edit Document" %>
+
+<!-- Navigation Controls -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Admin", admin_users_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Documents", admin_documents_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Document</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_document_path(@document), class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Document
+    <% end %>
+  </div>
+  <div>
+    <%= link_to admin_document_path(@document),
+        method: :delete,
+        class: "btn btn-outline-danger",
+        data: {
+          confirm: "Are you sure you want to delete '#{@document.display_name}'? This action cannot be undone.",
+          "turbo-method": "delete"
+        } do %>
+      <i class="fas fa-trash me-2"></i>Delete Document
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4" style="background: var(--pokemon-electric-blue);">
+  <div class="card-body text-white">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-edit fa-2x me-3"></i>
+      <div>
+        <h1 class="h3 mb-1">Edit Document</h1>
+        <p class="mb-0">Update <%= @document.display_name %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Card -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= form_with model: [:admin, @document], local: true, multipart: true, class: "needs-validation", novalidate: true do |form| %>
+      <% if @document.errors.any? %>
+        <div class="alert alert-danger" role="alert">
+          <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+          <ul class="mb-0">
+            <% @document.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Current Type Display -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Current Type:</strong>
+            <% if @document.link? %>
+              External Link <i class="fas fa-external-link-alt ms-1"></i>
+            <% else %>
+              File Upload <i class="fas fa-file ms-1"></i>
+            <% end %>
+            <br>
+            <small>Document type cannot be changed after creation. Create a new document if you need a different type.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-info-circle me-2"></i>Basic Information
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :title, class: "form-control", placeholder: "Document Title", required: true %>
+            <%= form.label :title, "Title *", class: "form-label" %>
+            <div class="invalid-feedback">
+              Please provide a document title.
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-floating mb-3">
+            <%= form.text_area :description, class: "form-control", placeholder: "Description", style: "height: 100px" %>
+            <%= form.label :description, "Description", class: "form-label" %>
+            <div class="form-text">Optional description to help users understand what this resource contains.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Link Section (shown only for link type documents) -->
+      <% if @document.link? %>
+        <div class="row mb-4">
+          <div class="col-12">
+            <h5 class="text-dark border-bottom pb-2 mb-3">
+              <i class="fas fa-link me-2"></i>Link Information
+            </h5>
+          </div>
+          <div class="col-12">
+            <div class="form-floating mb-3">
+              <%= form.url_field :url, class: "form-control", placeholder: "https://example.com", required: true %>
+              <%= form.label :url, "URL *", class: "form-label" %>
+              <div class="form-text">Enter the full URL including https://</div>
+              <div class="invalid-feedback">
+                Please provide a valid URL.
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- File Section (shown only for file type documents) -->
+      <% if @document.file? %>
+        <div class="row mb-4">
+          <div class="col-12">
+            <h5 class="text-dark border-bottom pb-2 mb-3">
+              <i class="fas fa-file-upload me-2"></i>File Information
+            </h5>
+          </div>
+
+          <!-- Current File Display -->
+          <% if @document.file_attachment.attached? %>
+            <div class="col-12 mb-3">
+              <div class="alert alert-success">
+                <div class="d-flex align-items-center">
+                  <% if @document.is_image? %>
+                    <i class="fas fa-image fa-2x me-3"></i>
+                  <% else %>
+                    <i class="fas fa-file fa-2x me-3"></i>
+                  <% end %>
+                  <div>
+                    <strong>Current File:</strong> <%= @document.file_attachment.filename %>
+                    <br>
+                    <small class="text-muted">
+                      Size: <%= number_to_human_size(@document.file_size) %>
+                      • Type: <%= @document.file_extension&.upcase %>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- File Upload -->
+          <div class="col-12">
+            <div class="mb-3">
+              <%= form.file_field :file_attachment,
+                  class: "form-control",
+                  accept: "image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" %>
+              <div class="form-text">
+                <strong>Upload a new file to replace the current one</strong> (optional)
+                <br>
+                <strong>Allowed file types:</strong> Images (JPG, PNG, GIF, WebP), PDF, Word documents, Excel spreadsheets, PowerPoint presentations, text files
+                <br>
+                <strong>Maximum file size:</strong> 10MB
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <div>
+          <%= link_to admin_document_path(@document), class: "btn btn-outline-secondary" do %>
+            <i class="fas fa-times me-2"></i>Cancel
+          <% end %>
+        </div>
+        <div>
+          <%= form.submit "Update Document", class: "btn btn-primary" do %>
+            <i class="fas fa-save me-2"></i>Update Document
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Form validation
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+});
+</script>

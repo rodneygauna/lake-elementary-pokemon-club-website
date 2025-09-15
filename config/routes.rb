@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   # Public donor recognition page
   get "donors", to: "donors#public_index", as: :public_donors
 
+  # Public resources page
+  get "resources", to: "documents#public_index", as: :public_resources
+  get "resources/:id/download", to: "documents#download", as: :resource_download
+
   # User profile management (users can edit their own profile)
   resource :user, only: [ :show, :edit, :update ]
 
@@ -24,6 +28,7 @@ Rails.application.routes.draw do
     resources :donors do
       resources :donations
     end
+    resources :documents
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

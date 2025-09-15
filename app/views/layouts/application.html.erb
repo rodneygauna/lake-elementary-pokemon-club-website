@@ -59,6 +59,9 @@
             <li class="nav-item">
               <%= link_to "Donors", public_donors_path, class: "nav-link" %>
             </li>
+            <li class="nav-item">
+              <%= link_to "Resources", public_resources_path, class: "nav-link" %>
+            </li>
           </ul>
 
           <!-- Authentication links -->
@@ -76,6 +79,7 @@
                     <li><hr class="dropdown-divider"></li>
                     <li><%= link_to "User Management", admin_users_path, class: "dropdown-item" %></li>
                     <li><%= link_to "Donor Management", admin_donors_path, class: "dropdown-item" %></li>
+                    <li><%= link_to "Document Management", admin_documents_path, class: "dropdown-item" %></li>
                     <li><hr class="dropdown-divider"></li>
                   <% end %>
                   <li>

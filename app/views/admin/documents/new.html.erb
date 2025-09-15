@@ -1,0 +1,261 @@
+<% content_for :title, "New Document" %>
+
+<!-- Navigation Controls -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Admin", admin_users_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Documents", admin_documents_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">New Document</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_documents_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Documents
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4" style="background: var(--pokemon-electric-blue);">
+  <div class="card-body text-white">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-plus fa-2x me-3"></i>
+      <div>
+        <h1 class="h3 mb-1">Create New Document</h1>
+        <p class="mb-0">Add a new link or file to the resources page</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Card -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= form_with model: [:admin, @document], local: true, multipart: true, class: "needs-validation", novalidate: true do |form| %>
+      <% if @document.errors.any? %>
+        <div class="alert alert-danger" role="alert">
+          <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+          <ul class="mb-0">
+            <% @document.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Document Type Selection -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-cog me-2"></i>Document Type
+          </h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check form-check-lg">
+                <%= form.radio_button :document_type, "link",
+                    class: "form-check-input",
+                    id: "document_type_link",
+                    checked: @document.document_type == "link" || @document.document_type.blank? %>
+                <%= form.label :document_type_link, class: "form-check-label" do %>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-external-link-alt fa-2x text-primary me-3"></i>
+                    <div>
+                      <strong>External Link</strong>
+                      <br>
+                      <small class="text-muted">Link to another website or resource</small>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check form-check-lg">
+                <%= form.radio_button :document_type, "file",
+                    class: "form-check-input",
+                    id: "document_type_file" %>
+                <%= form.label :document_type_file, class: "form-check-label" do %>
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-file-upload fa-2x text-success me-3"></i>
+                    <div>
+                      <strong>File Upload</strong>
+                      <br>
+                      <small class="text-muted">Upload a PDF, image, or document</small>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-info-circle me-2"></i>Basic Information
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :title, class: "form-control", placeholder: "Document Title", required: true %>
+            <%= form.label :title, "Title *", class: "form-label" %>
+            <div class="invalid-feedback">
+              Please provide a document title.
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-floating mb-3">
+            <%= form.text_area :description, class: "form-control", placeholder: "Description", style: "height: 100px" %>
+            <%= form.label :description, "Description", class: "form-label" %>
+            <div class="form-text">Optional description to help users understand what this resource contains.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Link Section (shown when link type is selected) -->
+      <div id="link-section" class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-link me-2"></i>Link Information
+          </h5>
+        </div>
+        <div class="col-12">
+          <div class="form-floating mb-3">
+            <%= form.url_field :url, class: "form-control", placeholder: "https://example.com" %>
+            <%= form.label :url, "URL *", class: "form-label" %>
+            <div class="form-text">Enter the full URL including https://</div>
+            <div class="invalid-feedback">
+              Please provide a valid URL.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Section (shown when file type is selected) -->
+      <div id="file-section" class="row mb-4" style="display: none;">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-file-upload me-2"></i>File Upload
+          </h5>
+        </div>
+        <div class="col-12">
+          <div class="mb-3">
+            <%= form.file_field :file_attachment,
+                class: "form-control",
+                accept: "image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" %>
+            <div class="form-text">
+              <strong>Allowed file types:</strong> Images (JPG, PNG, GIF, WebP), PDF, Word documents, Excel spreadsheets, PowerPoint presentations, text files
+              <br>
+              <strong>Maximum file size:</strong> 10MB
+            </div>
+            <div class="invalid-feedback">
+              Please select a valid file to upload.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <div>
+          <%= link_to admin_documents_path, class: "btn btn-outline-secondary" do %>
+            <i class="fas fa-times me-2"></i>Cancel
+          <% end %>
+        </div>
+        <div>
+          <%= form.submit "Create Document", class: "btn btn-success" do %>
+            <i class="fas fa-save me-2"></i>Create Document
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function initDocumentForm() {
+  const linkRadio = document.getElementById('document_type_link');
+  const fileRadio = document.getElementById('document_type_file');
+  const linkSection = document.getElementById('link-section');
+  const fileSection = document.getElementById('file-section');
+
+  console.log('Initializing document form...');
+  console.log('Elements found:', {
+    linkRadio: !!linkRadio,
+    fileRadio: !!fileRadio,
+    linkSection: !!linkSection,
+    fileSection: !!fileSection
+  });
+
+  function toggleSections() {
+    console.log('Toggle sections called');
+    console.log('Link radio checked:', linkRadio ? linkRadio.checked : 'not found');
+    console.log('File radio checked:', fileRadio ? fileRadio.checked : 'not found');
+
+    if (linkRadio && linkRadio.checked) {
+      console.log('Showing link section');
+      if (linkSection) linkSection.style.display = 'block';
+      if (fileSection) fileSection.style.display = 'none';
+    } else if (fileRadio && fileRadio.checked) {
+      console.log('Showing file section');
+      if (linkSection) linkSection.style.display = 'none';
+      if (fileSection) fileSection.style.display = 'block';
+    }
+  }
+
+  // Set up event listeners
+  if (linkRadio) {
+    linkRadio.addEventListener('change', function() {
+      console.log('Link radio changed');
+      toggleSections();
+    });
+  }
+
+  if (fileRadio) {
+    fileRadio.addEventListener('change', function() {
+      console.log('File radio changed');
+      toggleSections();
+    });
+  }
+
+  // Initial call to set correct state
+  console.log('Initial toggle call');
+  toggleSections();
+
+  // Form validation
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+}
+
+// Run on both DOMContentLoaded and turbo:load for Rails with Turbo
+document.addEventListener('DOMContentLoaded', initDocumentForm);
+document.addEventListener('turbo:load', initDocumentForm);
+
+// Fallback - run after a short delay to ensure DOM is ready
+setTimeout(function() {
+  if (document.getElementById('document_type_link')) {
+    console.log('Running fallback initialization');
+    initDocumentForm();
+  }
+}, 100);
+</script>

@@ -40,23 +40,43 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function initializeConfirmationModal() {
+  console.log('Initializing confirmation modal...');
+
   const confirmationModal = document.getElementById('confirmationModal');
+  if (!confirmationModal) {
+    console.log('Confirmation modal not found');
+    return;
+  }
+
   const modalTitleText = document.getElementById('modal-title-text');
   const modalMessageText = document.getElementById('modal-message-text');
   const modalActionText = document.getElementById('modal-action-text');
   const modalConfirmBtn = document.getElementById('modal-confirm-btn');
 
+  if (!modalTitleText || !modalMessageText || !modalActionText || !modalConfirmBtn) {
+    console.log('Modal elements not found');
+    return;
+  }
+
   let triggerElement = null;
 
   // Listen for modal show event
   confirmationModal.addEventListener('show.bs.modal', function(event) {
+    console.log('Modal show event triggered');
     triggerElement = event.relatedTarget; // Button that triggered the modal
+
+    if (!triggerElement) {
+      console.log('No trigger element found');
+      return;
+    }
 
     // Extract data attributes
     const title = triggerElement.dataset.confirmTitle || 'Confirm Action';
     const message = triggerElement.dataset.confirmMessage || 'Are you sure you want to perform this action?';
     const action = triggerElement.dataset.confirmAction || 'Confirm';
+
+    console.log('Modal data:', { title, message, action });
 
     // Update modal content
     modalTitleText.textContent = title;
@@ -66,33 +86,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Handle confirm button click
   modalConfirmBtn.addEventListener('click', function() {
-    if (triggerElement) {
-      // First try to get form by ID if specified
-      const formId = triggerElement.dataset.formId;
-      let form;
+    console.log('Confirm button clicked');
 
-      if (formId) {
-        form = document.getElementById(formId);
-      } else {
-        // Fallback to finding the closest form
-        form = triggerElement.closest('form');
-      }
+    if (!triggerElement) {
+      console.log('No trigger element available');
+      return;
+    }
 
-      if (form) {
-        // Close the modal first
+    // First try to get form by ID if specified
+    const formId = triggerElement.dataset.formId;
+    console.log('Looking for form with ID:', formId);
+
+    let form;
+
+    if (formId) {
+      form = document.getElementById(formId);
+      console.log('Form found by ID:', form);
+    } else {
+      // Fallback to finding the closest form
+      form = triggerElement.closest('form');
+      console.log('Form found by closest:', form);
+    }
+
+    if (form) {
+      console.log('Submitting form:', form);
+
+      // Close the modal first
+      try {
         const modalInstance = bootstrap.Modal.getInstance(confirmationModal);
         if (modalInstance) {
           modalInstance.hide();
         }
-
-        // Submit the form after a small delay to ensure modal closes
-        setTimeout(() => {
-          form.submit();
-        }, 150);
-      } else {
-        console.error('Could not find form to submit for ID:', formId);
+      } catch (e) {
+        console.log('Error closing modal:', e);
       }
+
+      // Submit the form after a small delay to ensure modal closes
+      setTimeout(() => {
+        form.submit();
+      }, 150);
+    } else {
+      console.error('Could not find form to submit for ID:', formId);
     }
   });
+
+  console.log('Confirmation modal initialized successfully');
+}
+
+// Initialize on DOM ready and Turbo load
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOMContentLoaded fired');
+  initializeConfirmationModal();
+});
+
+document.addEventListener('turbo:load', function() {
+  console.log('turbo:load fired');
+  initializeConfirmationModal();
 });
 </script>
