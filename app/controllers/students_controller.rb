@@ -22,6 +22,15 @@ class StudentsController < ApplicationController
     # Public sees limited info, linked parents see full info
     @can_view_details = current_user&.admin? || (current_user && @student.users.include?(current_user))
     @linked_parents = @student.users if admin?
+
+    # Load attendance history for authorized users (following same privacy rules)
+    if @can_view_details
+      @attended_events = @student.attendances
+                                 .present
+                                 .includes(event: [])
+                                 .joins(:event)
+                                 .order("events.starts_at DESC")
+    end
   end
 
   # GET /students/new

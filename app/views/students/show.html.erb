@@ -194,6 +194,120 @@
             </div>
           </div>
         </div>
+
+        <!-- Attendance History -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-success text-white">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-calendar-check me-2"></i>
+                <h5 class="mb-0">Event Attendance History</h5>
+              </div>
+              <div>
+                <% if @attended_events&.any? %>
+                  <span class="badge bg-light text-dark">
+                    <i class="fas fa-check me-1"></i><%= @attended_events.count %> Events Attended
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <% if @attended_events&.any? %>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead style="background: linear-gradient(135deg, var(--pokemon-electric-blue) 0%, #0066CC 100%);" class="text-white">
+                    <tr>
+                      <th scope="col">
+                        <i class="fas fa-calendar me-1"></i>Event
+                      </th>
+                      <th scope="col">
+                        <i class="fas fa-clock me-1"></i>Date & Time
+                      </th>
+                      <th scope="col">
+                        <i class="fas fa-map-marker-alt me-1"></i>Location
+                      </th>
+                      <th scope="col">
+                        <i class="fas fa-user-check me-1"></i>Marked
+                      </th>
+                      <th scope="col" class="text-center">
+                        <i class="fas fa-check-circle me-1"></i>Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @attended_events.each_with_index do |attendance, index| %>
+                      <% event = attendance.event %>
+                      <tr class="<%= 'table-light' if index.even? %>">
+                        <td>
+                          <div class="fw-medium text-dark">
+                            <%= link_to event.title, event_path(event), class: "text-decoration-none" %>
+                          </div>
+                          <% if event.description.present? %>
+                            <small class="text-muted">
+                              <%= truncate(strip_tags(event.description), length: 60) %>
+                            </small>
+                          <% end %>
+                        </td>
+                        <td>
+                          <div class="text-dark">
+                            <%= event.starts_at.in_time_zone(event.time_zone).strftime("%m/%d/%Y") %>
+                          </div>
+                          <small class="text-muted">
+                            <%= event.starts_at.in_time_zone(event.time_zone).strftime("%l:%M %p") %>
+                            <% if event.ends_at %>
+                              - <%= event.ends_at.in_time_zone(event.time_zone).strftime("%l:%M %p") %>
+                            <% end %>
+                          </small>
+                        </td>
+                        <td>
+                          <% if event.venue.present? %>
+                            <span class="text-dark"><%= event.venue %></span>
+                          <% else %>
+                            <span class="text-muted">-</span>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% if attendance.marked_at.present? %>
+                            <small class="text-muted">
+                              <i class="fas fa-clock me-1"></i>
+                              Marked <%= attendance.marked_at.strftime("%m/%d/%Y") %>
+                            </small>
+                            <% if admin? %>
+                              <br><small class="text-muted">by <%= attendance.marked_by_name %></small>
+                            <% end %>
+                          <% else %>
+                            <span class="text-muted">-</span>
+                          <% end %>
+                        </td>
+                        <td class="text-center">
+                          <span class="badge bg-success">
+                            <i class="fas fa-check me-1"></i>Attended
+                          </span>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% else %>
+              <!-- Empty State -->
+              <div class="text-center py-5">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted mb-3">No Events Attended Yet</h5>
+                <p class="text-muted mb-4">
+                  <%= @can_view_details ? @student.first_name : "This student" %> hasn't attended any club events yet.
+                  Encourage participation in upcoming activities!
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                  <%= link_to events_path, class: "btn btn-outline-primary" do %>
+                    <i class="fas fa-calendar-alt me-2"></i>View Upcoming Events
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
       <% else %>
         <!-- Limited Information Card -->
         <div class="card shadow-sm mb-4">
