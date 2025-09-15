@@ -112,9 +112,102 @@
       </div>
     <% end %>
 
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="d-none position-fixed top-0 start-0 w-100 h-100" style="z-index: 9999; background-color: rgba(255, 255, 255, 0.9);">
+      <div class="d-flex align-items-center justify-content-center h-100">
+        <div class="text-center">
+          <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div class="mt-3">
+            <h5 class="text-primary">Loading...</h5>
+            <p class="text-muted small">Please wait while we fetch your content</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Main content -->
     <main class="container mt-4">
       <%= yield %>
     </main>
+
+    <script>
+      // Global loading spinner functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const spinner = document.getElementById('loading-spinner');
+
+        // Show spinner on Turbo navigation
+        document.addEventListener('turbo:visit', function() {
+          if (spinner) {
+            spinner.classList.remove('d-none');
+          }
+        });
+
+        // Hide spinner when page loads
+        document.addEventListener('turbo:load', function() {
+          if (spinner) {
+            spinner.classList.add('d-none');
+          }
+        });
+
+        // Show spinner on form submissions
+        document.addEventListener('turbo:submit-start', function() {
+          if (spinner) {
+            spinner.classList.remove('d-none');
+          }
+        });
+
+        // Hide spinner after form submission
+        document.addEventListener('turbo:submit-end', function() {
+          if (spinner) {
+            spinner.classList.add('d-none');
+          }
+        });
+
+        // Show spinner for AJAX requests
+        document.addEventListener('ajax:before', function() {
+          if (spinner) {
+            spinner.classList.remove('d-none');
+          }
+        });
+
+        document.addEventListener('ajax:complete', function() {
+          if (spinner) {
+            spinner.classList.add('d-none');
+          }
+        });
+
+        // Fallback: Hide spinner after a maximum time to prevent it from getting stuck
+        let spinnerTimeout;
+        document.addEventListener('turbo:visit', function() {
+          clearTimeout(spinnerTimeout);
+          spinnerTimeout = setTimeout(function() {
+            if (spinner) {
+              spinner.classList.add('d-none');
+            }
+          }, 10000); // Hide after 10 seconds maximum
+        });
+
+        document.addEventListener('turbo:load', function() {
+          clearTimeout(spinnerTimeout);
+        });
+      });
+
+      // Global function to show/hide spinner programmatically
+      window.showLoadingSpinner = function() {
+        const spinner = document.getElementById('loading-spinner');
+        if (spinner) {
+          spinner.classList.remove('d-none');
+        }
+      };
+
+      window.hideLoadingSpinner = function() {
+        const spinner = document.getElementById('loading-spinner');
+        if (spinner) {
+          spinner.classList.add('d-none');
+        }
+      };
+    </script>
   </body>
 </html>
