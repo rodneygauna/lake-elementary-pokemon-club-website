@@ -31,7 +31,7 @@
                       data-bs-toggle="modal"
                       data-bs-target="#confirmationModal"
                       data-confirm-title="Delete Student"
-                      data-confirm-message="Are you sure you want to delete <%= @student.display_name_for(current_user) %>? This action cannot be undone."
+                      data-confirm-message="Are you sure you want to delete <%= @student.display_name_for(current_user).gsub('"', '&quot;') %>? This action cannot be undone."
                       data-confirm-action="Delete Student"
                       data-form-id="delete-student-form">
                 <i class="fas fa-trash me-1"></i> Delete
