@@ -81,8 +81,8 @@ module Authentication
     def require_admin
       unless admin?
         respond_to do |format|
-          format.json { render json: { error: "Admin access required" }, status: :forbidden }
-          format.html { redirect_to root_path, alert: "Admin access required" }
+          format.json { render json: { error: "You must be an admin to access this page." }, status: :forbidden }
+          format.html { redirect_to root_path, alert: "You must be an admin to access this page." }
         end
       end
     end
@@ -90,8 +90,8 @@ module Authentication
     def require_admin_level
       unless admin_level?
         respond_to do |format|
-          format.json { render json: { error: "Admin access required" }, status: :forbidden }
-          format.html { redirect_to root_path, alert: "Admin access required" }
+          format.json { render json: { error: "You must be an admin to access this page." }, status: :forbidden }
+          format.html { redirect_to root_path, alert: "You must be an admin to access this page." }
         end
       end
     end

@@ -1,5 +1,10 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+one:
+  name: "Test Donor"
+  donor_type: "individual"
+  privacy_setting: "public"
+
 individual_donor:
   name: "John Smith"
   donor_type: "individual"

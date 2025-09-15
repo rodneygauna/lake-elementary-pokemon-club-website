@@ -1,5 +1,18 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+one:
+  title: "Test Event"
+  description: "Test event for tests"
+  starts_at: <%= 1.week.from_now %>
+  ends_at: <%= 1.week.from_now + 2.hours %>
+  time_zone: "America/Los_Angeles"
+  venue: "Test Venue"
+  address1: "123 Test St"
+  city: "Test City"
+  state: "CA"
+  zipcode: "12345"
+  status: "published"
+
 published_event:
   title: "Weekly Pokemon Club Meeting"
   description: "Join us for our weekly Pokemon club meeting!"
