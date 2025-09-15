@@ -82,8 +82,9 @@ A **Ruby on Rails 8 web application** featuring:
 ### 4.3 Administrative Users
 
 - **Club Leader (Administrator):** Full CRUD access to all content, exclusive user management and account creation
-- **Assistant Leaders (Administrator):** Content management, site updates, and user management capabilities
-- **Future Contributors:** Additional staff or volunteers with guided admin access and user management permissions
+- **Assistant Leaders (Super User):** Admin interface access, content management, attendance tracking, but no delete permissions
+- **School Staff (Administrator):** Information about club activities and schedules with potential admin access
+- **Future Contributors:** Additional staff or volunteers with guided admin or super user access and user management permissions
 
 ### 4.4 User Account Management
 
@@ -99,12 +100,14 @@ A **Ruby on Rails 8 web application** featuring:
 ### 5.1 User Authentication & Authorization
 
 - **REQ-1.1:** Secure user authentication system using Rails 8 authentication (admin-managed accounts only)
-- **REQ-1.2:** Role-based access control (Administrator vs Normal User)
+- **REQ-1.2:** Role-based access control (Administrator, Super User, vs Normal User)
 - **REQ-1.3:** Administrator users have full CRUD access to all resources including user management
-- **REQ-1.4:** Normal users have read-only access to public content
+- **REQ-1.4:** Super User role has admin interface access but restricted delete permissions for volunteer safety
+- **REQ-1.5:** Normal users have read-only access to public content
 - **REQ-1.5:** Password reset functionality via email
 - **REQ-1.6:** User profile management with email subscription preferences
 - **REQ-1.7:** Enhanced security model with admin-only user creation and temporary password assignment
+- **REQ-1.8:** Three-tier role system with granular permissions (user < super_user < admin)
 
 ### 5.2 Student Management
 
@@ -132,12 +135,12 @@ A **Ruby on Rails 8 web application** featuring:
 
 ### 5.5 Event Attendance Tracking System
 
-- **REQ-5.1:** Admin-only attendance tracking interface on event show pages
+- **REQ-5.1:** Admin-level attendance tracking interface on event show pages (admin and super_user roles)
 - **REQ-5.2:** Toggle-based attendance marking for all active students
 - **REQ-5.3:** Attendance model with event-student-admin relationships
 - **REQ-5.4:** Visual feedback for attendance status (color-coded toggle buttons)
 - **REQ-5.5:** Attendance tracking available for all events regardless of status or timing
-- **REQ-5.6:** Attendance audit trail with timestamp and admin tracking
+- **REQ-5.6:** Attendance audit trail with timestamp and admin-level user tracking
 
 ### 5.6 Document Repository
 

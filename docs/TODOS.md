@@ -56,6 +56,14 @@ Based on the Product Requirements Document (PRD) v2.1
 - **Seed Data Updated**: Added super_user examples in database seeding
 - **Form Updates**: Enhanced user forms to include super_user role selection
 
+### ✅ Enhanced Attendance System for Super Users Implemented
+
+- **Super User Attendance Access**: Updated AttendancesController to use `require_admin_level` instead of `require_admin`
+- **Permission Enhancement**: Super Users can now toggle attendance alongside administrators
+- **Comprehensive Testing**: Added super user test coverage including toggle access, record creation, and audit trail verification
+- **Authorization Update**: Changed from admin-only to admin-level (admin + super_user) access pattern
+- **Security Maintained**: Regular users still blocked from attendance functionality while expanding access to trusted volunteers
+
 ### ✅ Document Repository System Implemented
 
 - **Complete Document Management**: Full CRUD interface with admin authorization at `/admin/documents`
@@ -122,11 +130,11 @@ Based on the Product Requirements Document (PRD) v2.1
 - [x] Login/logout functionality
 - [x] Admin-only user account creation implemented
 
-### REQ-1.2: Role-based access control (Administrator vs Normal User)
+### REQ-1.2: Role-based access control (Administrator, Super User, vs Normal User)
 
-- [x] User roles enum (admin/user) implemented
-- [x] Role-based authorization in controllers
-- [x] Admin and normal user access levels
+- [x] User roles enum (admin/super_user/user) implemented
+- [x] Role-based authorization in controllers with admin_level and admin-only filters
+- [x] Admin, super_user, and normal user access levels with granular permissions
 
 ### REQ-1.3: Administrator users have full CRUD access to all resources including user management
 
@@ -137,7 +145,14 @@ Based on the Product Requirements Document (PRD) v2.1
 - [x] Admin user editing and deletion with safety checks
 - [x] Complete admin interface for donors and donations (Admin::DonorsController, Admin::DonationsController)
 
-### REQ-1.4: Normal users have read-only access to public content
+### REQ-1.4: Super User role has admin interface access but restricted delete permissions for volunteer safety
+
+- [x] Super User role with admin_level access to most admin interfaces
+- [x] Delete permission restrictions (cannot delete users, events, documents, etc.)
+- [x] Role-based UI controls hiding delete buttons for super_users
+- [x] Comprehensive permission helper methods for granular authorization
+
+### REQ-1.5: Normal users have read-only access to public content
 
 - [x] Public access to events (index/show)
 - [x] Public access to students (limited info)
@@ -172,6 +187,15 @@ Based on the Product Requirements Document (PRD) v2.1
 - [x] Admin safety features (cannot delete own account)
 - [x] Complete user CRUD operations with proper validation
 - [x] Role management restricted to administrators only
+
+### REQ-1.8: Three-tier role system with granular permissions (user < super_user < admin)
+
+- [x] Three-tier role hierarchy implementation in User model
+- [x] Granular authorization methods (admin_level?, can_delete?, can_edit_user?)
+- [x] Controller filters for different permission levels (require_admin_level vs require_admin)
+- [x] Role-based UI controls and conditional delete button display
+- [x] Super user access to admin interfaces with delete restrictions
+- [x] Comprehensive test coverage for all three role levels
 
 ---
 
@@ -245,11 +269,11 @@ Based on the Product Requirements Document (PRD) v2.1
 
 ## 3A. Event Attendance Tracking System
 
-### REQ-5.1: Admin-only attendance tracking interface on event show pages
+### REQ-5.1: Admin-level attendance tracking interface on event show pages
 
 - [x] Attendance model generation with proper relationships
 - [x] Database migration for attendance table (event_id, student_id, marked_by_id, present, marked_at)
-- [x] Attendance controller with admin-only authorization (AttendancesController)
+- [x] Attendance controller with admin-level authorization (AttendancesController) - Updated for super_user access
 - [x] Attendance toggle interface on event show page
 
 ### REQ-5.2: Toggle-based attendance marking for all active students
@@ -279,12 +303,12 @@ Based on the Product Requirements Document (PRD) v2.1
 - [x] Allow attendance marking for draft, published, and canceled events
 - [x] Allow attendance marking for past, current, and future events
 
-### REQ-5.6: Attendance audit trail with timestamp and admin tracking
+### REQ-5.6: Attendance audit trail with timestamp and admin-level user tracking
 
-- [x] Track which admin marked attendance (marked_by relationship)
+- [x] Track which admin/super_user marked attendance (marked_by relationship)
 - [x] Automatic timestamp recording (marked_at field)
 - [x] Attendance history and audit capabilities (via Attendance model scopes)
-- [x] Admin attribution display in attendance interface
+- [x] Admin-level attribution display in attendance interface
 
 ---
 
