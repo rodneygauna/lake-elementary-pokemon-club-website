@@ -3,6 +3,7 @@ require "test_helper"
 class UserTest < ActiveSupport::TestCase
   def setup
     @admin_user = users(:admin_user)
+    @super_user = users(:super_user)
     @regular_user = users(:regular_user)
     @valid_attributes = {
       first_name: "Test",
@@ -59,8 +60,10 @@ class UserTest < ActiveSupport::TestCase
   # Test enums
   test "should have role enum" do
     assert_equal "admin", @admin_user.role
+    assert_equal "super_user", @super_user.role
     assert_equal "user", @regular_user.role
     assert @admin_user.admin?
+    assert @super_user.super_user?
     assert @regular_user.user?
   end
 
@@ -125,5 +128,79 @@ class UserTest < ActiveSupport::TestCase
     user = User.create!(@valid_attributes)
     assert user.authenticate("password123")
     assert_not user.authenticate("wrong_password")
+  end
+
+  # Test role assignment permissions
+  test "admin should be able to assign all roles" do
+    expected_roles = %w[user super_user admin]
+    assert_equal expected_roles, @admin_user.can_assign_roles
+
+    expected_roles.each do |role|
+      assert @admin_user.can_assign_role?(role), "Admin should be able to assign #{role} role"
+    end
+  end
+
+  test "super_user should be able to assign user and super_user roles only" do
+    expected_roles = %w[user super_user]
+    assert_equal expected_roles, @super_user.can_assign_roles
+
+    assert @super_user.can_assign_role?("user")
+    assert @super_user.can_assign_role?("super_user")
+    assert_not @super_user.can_assign_role?("admin"), "Super user should not be able to assign admin role"
+  end
+
+  test "regular user should not be able to assign any roles" do
+    assert_equal [], @regular_user.can_assign_roles
+
+    %w[user super_user admin].each do |role|
+      assert_not @regular_user.can_assign_role?(role), "Regular user should not be able to assign #{role} role"
+    end
+  end
+
+  # Test user editing permissions
+  test "admin should be able to edit all users" do
+    assert @admin_user.can_edit_user?(@regular_user)
+    assert @admin_user.can_edit_user?(@super_user)
+    assert @admin_user.can_edit_user?(@admin_user)
+  end
+
+  test "super_user should be able to edit users and super_users but not admins" do
+    assert @super_user.can_edit_user?(@regular_user)
+    assert @super_user.can_edit_user?(@super_user)
+    assert_not @super_user.can_edit_user?(@admin_user), "Super user should not be able to edit admin"
+  end
+
+  test "regular user should not be able to edit any users" do
+    assert_not @regular_user.can_edit_user?(@regular_user)
+    assert_not @regular_user.can_edit_user?(@super_user)
+    assert_not @regular_user.can_edit_user?(@admin_user)
+  end
+
+  # Test role display names
+  test "should return correct role display names" do
+    assert_equal "Administrator", @admin_user.role_display_name
+    assert_equal "Super User", @super_user.role_display_name
+    assert_equal "User", @regular_user.role_display_name
+  end
+
+  # Test admin_level? helper
+  test "admin_level should return true for admin and super_user" do
+    assert @admin_user.admin_level?
+    assert @super_user.admin_level?
+    assert_not @regular_user.admin_level?
+  end
+
+  # Test can_delete? permissions
+  test "only admins should be able to delete" do
+    assert @admin_user.can_delete?
+    assert_not @super_user.can_delete?
+    assert_not @regular_user.can_delete?
+  end
+
+  # Test can_manage_users? permissions
+  test "admin_level users should be able to manage users" do
+    assert @admin_user.can_manage_users?
+    assert @super_user.can_manage_users?
+    assert_not @regular_user.can_manage_users?
   end
 end

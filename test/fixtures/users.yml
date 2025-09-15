@@ -18,6 +18,15 @@ regular_user:
   status: "active"
   phone_number: "555-987-6543"
 
+super_user:
+  first_name: "Super"
+  last_name: "User"
+  email_address: "super@lakepokemon.test"
+  password_digest: <%= password_digest %>
+  role: "super_user"
+  status: "active"
+  phone_number: "555-456-7890"
+
 inactive_user:
   first_name: "Jane"
   last_name: "Smith"
