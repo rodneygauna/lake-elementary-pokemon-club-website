@@ -1,13 +1,29 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  title: MyString
-  description: MyText
-  document_type: MyString
-  url: MyText
+pokemon_guide_link:
+  title: "Official Pokémon Guide"
+  description: "Comprehensive guide to Pokémon types, moves, and strategies for beginners."
+  document_type: "link"
+  url: "https://www.pokemon.com/us/pokemon-news/pokemon-guide/"
+  created_by: admin_user
 
-two:
-  title: MyString
-  description: MyText
-  document_type: MyString
-  url: MyText
+club_rules_pdf:
+  title: "Club Rules and Guidelines"
+  description: "Complete set of rules and guidelines for Lake Elementary Pokémon Club members."
+  document_type: "file"
+  url: ""
+  created_by: admin_user
+
+trading_card_tips:
+  title: "Trading Card Game Tips"
+  description: "Essential tips and strategies for playing the Pokémon Trading Card Game."
+  document_type: "link"
+  url: "https://www.pokemon.com/us/pokemon-tcg/"
+  created_by: admin_user
+
+meeting_schedule:
+  title: "Meeting Schedule Template"
+  description: "Template for organizing and planning weekly club meetings."
+  document_type: "file"
+  url: ""
+  created_by: admin_user
