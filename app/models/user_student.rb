@@ -24,11 +24,11 @@ class UserStudent < ApplicationRecord
 
   # Email notification methods
   def send_student_linked_notification
-    NotificationMailer.send_student_linked_notification(user, student)
+    NotificationJob.perform_later("student_linked", user_id, student_id)
   end
 
   def send_student_unlinked_notification
-    NotificationMailer.send_student_unlinked_notification(user, student)
+    NotificationJob.perform_later("student_unlinked", user_id, student_id)
   end
 
   private

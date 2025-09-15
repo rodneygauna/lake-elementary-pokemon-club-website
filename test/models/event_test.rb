@@ -1,6 +1,8 @@
 require "test_helper"
 
 class EventTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   def setup
     @published_event = events(:published_event)
     @draft_event = events(:draft_event)
@@ -122,57 +124,69 @@ class EventTest < ActiveSupport::TestCase
   end
 
   # Test email notification callbacks
-  test "should send new event notifications when creating published event" do
-    # Set up user with subscription
+  test "should enqueue new event notification job when creating published event" do
+    # Set up user with subscription (use find_or_create to avoid duplication)
     user = users(:regular_user)
-    EmailSubscription.create!(user: user, subscription_type: "new_events", enabled: true)
+    EmailSubscription.find_or_create_by(user: user, subscription_type: "new_event") do |sub|
+      sub.enabled = true
+    end
 
-    assert_emails 1 do
+    assert_enqueued_jobs 1, only: NotificationJob do
       Event.create!(@valid_attributes.merge(status: "published"))
     end
   end
 
-  test "should not send notifications when creating draft event" do
+  test "should not enqueue jobs when creating draft event" do
     user = users(:regular_user)
-    EmailSubscription.create!(user: user, subscription_type: "new_events", enabled: true)
+    EmailSubscription.find_or_create_by(user: user, subscription_type: "new_event") do |sub|
+      sub.enabled = true
+    end
 
-    assert_emails 0 do
+    assert_no_enqueued_jobs only: NotificationJob do
       Event.create!(@valid_attributes.merge(status: "draft"))
     end
   end
 
-  test "should send update notifications when significant fields change" do
+  test "should enqueue update notification job when significant fields change" do
     user = users(:regular_user)
-    EmailSubscription.create!(user: user, subscription_type: "event_updates", enabled: true)
+    EmailSubscription.find_or_create_by(user: user, subscription_type: "event_updated") do |sub|
+      sub.enabled = true
+    end
 
-    assert_emails 1 do
+    assert_enqueued_jobs 1, only: NotificationJob do
       @published_event.update!(title: "Updated Title")
     end
   end
 
-  test "should send cancellation notifications when status changes to canceled" do
+  test "should enqueue cancellation notification job when status changes to canceled" do
     user = users(:regular_user)
-    EmailSubscription.create!(user: user, subscription_type: "event_cancellations", enabled: true)
+    EmailSubscription.find_or_create_by(user: user, subscription_type: "event_cancelled") do |sub|
+      sub.enabled = true
+    end
 
-    assert_emails 1 do
+    assert_enqueued_jobs 1, only: NotificationJob do
       @published_event.update!(status: "canceled")
     end
   end
 
-  test "should not send notifications when insignificant fields change" do
+  test "should not enqueue jobs when insignificant fields change" do
     user = users(:regular_user)
-    EmailSubscription.create!(user: user, subscription_type: "event_updates", enabled: true)
+    EmailSubscription.find_or_create_by(user: user, subscription_type: "event_updated") do |sub|
+      sub.enabled = true
+    end
 
-    assert_emails 0 do
+    assert_no_enqueued_jobs only: NotificationJob do
       @published_event.update!(special: true) # Not in significant_changes list
     end
   end
 
-  test "should not send notifications for draft event updates" do
+  test "should not enqueue jobs for draft event updates" do
     user = users(:regular_user)
-    EmailSubscription.create!(user: user, subscription_type: "event_updates", enabled: true)
+    EmailSubscription.find_or_create_by(user: user, subscription_type: "event_updated") do |sub|
+      sub.enabled = true
+    end
 
-    assert_emails 0 do
+    assert_no_enqueued_jobs only: NotificationJob do
       @draft_event.update!(title: "Updated Draft Title")
     end
   end

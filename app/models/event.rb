@@ -117,23 +117,31 @@ class Event < ApplicationRecord
     # Only send notifications for published events
     return unless published?
 
-    NotificationMailer.send_new_event_notifications(self)
+    NotificationJob.perform_later("new_event", id)
   end
 
   def send_event_update_notifications
-    # Only send notifications if the event is published and significant fields changed
-    return unless published? && saved_changes.any?
+    # Only send notifications if there are changes
+    return unless saved_changes.any?
+
+    # Check if this was a published event (either still published or was published before cancellation)
+    was_published = saved_changes.key?("status") ? saved_changes["status"][0] == "published" : published?
+    return unless was_published || published?
+
+    # If status changed to canceled, send cancellation notification
+    if saved_changes.key?("status") && status == "canceled"
+      NotificationJob.perform_later("event_cancelled", id)
+      return
+    end
+
+    # Only send update notifications for published events
+    return unless published?
 
     # Track which fields changed for the notification
     significant_changes = saved_changes.keys & %w[title starts_at ends_at venue address1 city state description]
 
     if significant_changes.any?
-      # If status changed to canceled, send cancellation notification instead
-      if saved_changes.key?("status") && status == "canceled"
-        NotificationMailer.send_event_cancelled_notifications(self)
-      else
-        NotificationMailer.send_event_updated_notifications(self, significant_changes)
-      end
+      NotificationJob.perform_later("event_updated", id, significant_changes)
     end
   end
 

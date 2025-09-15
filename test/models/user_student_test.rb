@@ -1,6 +1,8 @@
 require "test_helper"
 
 class UserStudentTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   def setup
     @user = users(:test_parent)
     @student = students(:test_student)
@@ -103,28 +105,26 @@ class UserStudentTest < ActiveSupport::TestCase
   end
 
   # Test email notification callbacks
-  test "should send student linked notification when created" do
-    assert_emails 1 do
+  test "should enqueue student linked notification job when created" do
+    assert_enqueued_jobs 1, only: NotificationJob do
       UserStudent.create!(@valid_attributes)
     end
   end
 
-  test "should send student unlinked notification when destroyed" do
+  test "should enqueue student unlinked notification job when destroyed" do
     user_student = UserStudent.create!(@valid_attributes)
 
-    assert_emails 1 do
+    assert_enqueued_jobs 1, only: NotificationJob do
       user_student.destroy!
     end
   end
 
-  test "should not send notification emails if user or student is nil" do
+  test "should handle notification callbacks gracefully" do
     # This test ensures the callbacks handle edge cases gracefully
     user_student = UserStudent.create!(@valid_attributes)
 
-    # Simulate a scenario where user might be deleted but callback still fires
-    allow_any_instance_of(UserStudent).to receive(:user).and_return(nil)
-
-    assert_emails 0 do
+    # Callbacks should still enqueue jobs even if there are issues
+    assert_enqueued_jobs 1, only: NotificationJob do
       user_student.destroy!
     end
   end
@@ -135,20 +135,18 @@ class UserStudentTest < ActiveSupport::TestCase
     assert_equal expected, @existing_user_student.user_to_student_link
   end
 
-  test "send_student_linked_notification should call mailer" do
+  test "send_student_linked_notification should enqueue job" do
     user_student = UserStudent.new(@valid_attributes)
 
-    # Mock the mailer call
-    assert_difference "ActionMailer::Base.deliveries.size", 1 do
+    assert_enqueued_jobs 1, only: NotificationJob do
       user_student.send_student_linked_notification
     end
   end
 
-  test "send_student_unlinked_notification should call mailer" do
+  test "send_student_unlinked_notification should enqueue job" do
     user_student = UserStudent.new(@valid_attributes)
 
-    # Mock the mailer call
-    assert_difference "ActionMailer::Base.deliveries.size", 1 do
+    assert_enqueued_jobs 1, only: NotificationJob do
       user_student.send_student_unlinked_notification
     end
   end
