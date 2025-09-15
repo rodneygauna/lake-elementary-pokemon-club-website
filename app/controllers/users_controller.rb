@@ -12,6 +12,19 @@ class UsersController < ApplicationController
   end
 
   def update
+    # Check if role is being changed and validate permission
+    if params[:user][:role].present? && params[:user][:role] != @user.role
+      unless current_user.admin_level?
+        redirect_to user_path, alert: "You don't have permission to change roles."
+        return
+      end
+
+      unless current_user.can_assign_role?(params[:user][:role])
+        redirect_to user_path, alert: "You don't have permission to assign that role."
+        return
+      end
+    end
+
     if @user.update(user_params)
       redirect_to user_path, notice: "Your profile was successfully updated."
     else
@@ -26,8 +39,14 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    # Users can update their names, email and password, but not their role
-    params.require(:user).permit(:first_name, :last_name, :email_address, :password, :password_confirmation)
+    permitted_params = [ :first_name, :last_name, :email_address, :password, :password_confirmation ]
+    
+    # Allow role changes for admin_level users
+    if current_user.admin_level?
+      permitted_params << :role
+    end
+    
+    params.require(:user).permit(permitted_params)
   end
 
   def ensure_own_profile

@@ -230,18 +230,20 @@
                   <%= link_to edit_admin_document_path(document), class: "btn btn-sm btn-outline-secondary me-1" do %>
                     <i class="fas fa-edit me-1"></i>Edit
                   <% end %>
-                  <% form_id = "delete-document-#{document.id}-form" %>
-                  <%= form_with model: [:admin, document], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
-                    <button type="button"
-                            class="btn btn-sm btn-outline-danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#confirmationModal"
-                            data-confirm-title="Delete Document"
-                            data-confirm-message="Are you sure you want to delete <%= document.display_name %>? This action cannot be undone."
-                            data-confirm-action="Delete Document"
-                            data-form-id="<%= form_id %>">
-                      <i class="fas fa-trash me-1"></i>Delete
-                    </button>
+                  <% if current_user.can_delete? %>
+                    <% form_id = "delete-document-#{document.id}-form" %>
+                    <%= form_with model: [:admin, document], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
+                      <button type="button"
+                              class="btn btn-sm btn-outline-danger"
+                              data-bs-toggle="modal"
+                              data-bs-target="#confirmationModal"
+                              data-confirm-title="Delete Document"
+                              data-confirm-message="Are you sure you want to delete <%= document.display_name %>? This action cannot be undone."
+                              data-confirm-action="Delete Document"
+                              data-form-id="<%= form_id %>">
+                        <i class="fas fa-trash me-1"></i>Delete
+                      </button>
+                    <% end %>
                   <% end %>
                 </td>
               </tr>

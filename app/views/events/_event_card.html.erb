@@ -122,7 +122,7 @@
         <i class="bi bi-eye"></i> View Details
       <% end %>
 
-      <% if current_user&.admin? %>
+      <% if current_user&.admin_level? %>
         <%= link_to edit_event_path(event), class: "btn btn-outline-secondary btn-sm d-flex align-items-center gap-1" do %>
           <i class="bi bi-pencil"></i> Edit
         <% end %>

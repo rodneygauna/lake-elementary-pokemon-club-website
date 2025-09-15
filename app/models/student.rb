@@ -68,8 +68,8 @@ class Student < ApplicationRecord
   end
 
   def display_name_for(user)
-    # Admin can see all full names
-    return full_name if user&.admin?
+    # Admin and super_user can see all full names
+    return full_name if user&.admin_level?
 
     # Linked parents can see their student's full name
     return full_name if user && users.include?(user)

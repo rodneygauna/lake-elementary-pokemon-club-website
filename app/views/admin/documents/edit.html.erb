@@ -24,14 +24,16 @@
     <% end %>
   </div>
   <div>
-    <%= link_to admin_document_path(@document),
-        method: :delete,
-        class: "btn btn-outline-danger",
-        data: {
-          confirm: "Are you sure you want to delete '#{@document.display_name}'? This action cannot be undone.",
-          "turbo-method": "delete"
-        } do %>
-      <i class="fas fa-trash me-2"></i>Delete Document
+    <% if current_user.can_delete? %>
+      <%= link_to admin_document_path(@document),
+          method: :delete,
+          class: "btn btn-outline-danger",
+          data: {
+            confirm: "Are you sure you want to delete '#{@document.display_name}'? This action cannot be undone.",
+            "turbo-method": "delete"
+          } do %>
+        <i class="fas fa-trash me-2"></i>Delete Document
+      <% end %>
     <% end %>
   </div>
 </div>

@@ -181,11 +181,17 @@
                   <i class="fas fa-shield-alt me-1"></i>User Role
                 <% end %>
                 <%= form.select :role,
-                                options_for_select([
-                                  ['User', 'user'],
-                                  ['Super User (Volunteer)', 'super_user'],
-                                  ['Administrator', 'admin']
-                                ], @user.role),
+                                options_for_select(
+                                  current_user.can_assign_roles.map { |role| 
+                                    case role
+                                    when "admin"
+                                      ['Administrator', 'admin']
+                                    when "super_user"
+                                      ['Super User (Volunteer)', 'super_user']
+                                    when "user"
+                                      ['User', 'user']
+                                    end
+                                  }, @user.role),
                                 {},
                                 { class: "form-select #{'is-invalid' if @user.errors[:role].any?}",
                                   required: true } %>
@@ -196,7 +202,11 @@
                 <% end %>
                 <div class="form-text">
                   <i class="fas fa-info-circle me-1"></i>
-                  Super Users can manage content but cannot delete. Administrators have full access to manage the website.
+                  <% if current_user.admin? %>
+                    Super Users can manage content but cannot delete. Administrators have full access to manage the website.
+                  <% else %>
+                    You can assign User and Super User roles. Super Users can manage content but cannot delete.
+                  <% end %>
                 </div>
               </div>
               <div class="col-md-6 mb-3">

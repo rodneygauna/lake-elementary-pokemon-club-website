@@ -18,13 +18,13 @@
             <i class="fas fa-arrow-left me-1"></i>
             Back to Students
           <% end %>
-          <% if @can_view_details && (admin? || (current_user && @student.users.include?(current_user))) %>
+          <% if @can_view_details && (admin_level? || (current_user && @student.users.include?(current_user))) %>
             <%= link_to edit_student_path(@student), class: "btn btn-outline-primary me-2" do %>
               <i class="fas fa-edit me-1"></i>
               Edit Student
             <% end %>
           <% end %>
-          <% if admin? %>
+          <% if can_delete? %>
             <%= form_with model: @student, method: :delete, local: true, class: "d-inline", id: "delete-student-form" do |form| %>
               <button type="button"
                       class="btn btn-outline-danger"
@@ -273,7 +273,7 @@
                               <i class="fas fa-clock me-1"></i>
                               Marked <%= attendance.marked_at.strftime("%m/%d/%Y") %>
                             </small>
-                            <% if admin? %>
+                            <% if admin_level? %>
                               <br><small class="text-muted">by <%= attendance.marked_by_name %></small>
                             <% end %>
                           <% else %>
@@ -322,12 +322,12 @@
       <% end %>
 
       <!-- Admin Panel -->
-      <% if admin? %>
+      <% if admin_level? %>
         <div class="card shadow-sm">
           <div class="card-header text-white" style="background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);">
             <h5 class="card-title mb-0 d-flex align-items-center">
               <i class="fas fa-shield-alt me-2"></i>
-              Admin Controls
+              Admin Level Controls
             </h5>
           </div>
           <div class="card-body">

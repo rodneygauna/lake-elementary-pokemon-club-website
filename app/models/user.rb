@@ -90,6 +90,20 @@ class User < ApplicationRecord
     !target_user.admin?
   end
 
+  def can_assign_roles
+    if admin?
+      %w[user super_user admin]
+    elsif super_user?
+      %w[user super_user]
+    else
+      []
+    end
+  end
+
+  def can_assign_role?(role_to_assign)
+    can_assign_roles.include?(role_to_assign.to_s)
+  end
+
   def role_display_name
     case role
     when "admin"

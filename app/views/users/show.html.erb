@@ -36,11 +36,15 @@
         </span>
         <% if current_user.admin? %>
           <span class="badge bg-warning text-dark">
-            <i class="fas fa-shield-alt me-1"></i>Administrator
+            <i class="fas fa-shield-alt me-1"></i><%= current_user.role_display_name %>
+          </span>
+        <% elsif current_user.super_user? %>
+          <span class="badge bg-success text-white">
+            <i class="fas fa-user-friends me-1"></i><%= current_user.role_display_name %>
           </span>
         <% else %>
           <span class="badge bg-light text-dark">
-            <i class="fas fa-user me-1"></i>User
+            <i class="fas fa-user me-1"></i><%= current_user.role_display_name %>
           </span>
         <% end %>
       </div>

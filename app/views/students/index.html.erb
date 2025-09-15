@@ -18,7 +18,7 @@
     <% end %>
   </div>
   <div>
-    <% if admin? %>
+    <% if admin_level? %>
       <%= link_to new_student_path, class: "btn btn-success" do %>
         <i class="fas fa-plus me-2"></i>Add New Student
       <% end %>
@@ -47,7 +47,7 @@
             <p class="text-muted mb-0">
               <i class="fas fa-info-circle me-1"></i>
               Manage club members and their information.
-              <% unless admin? %>
+              <% unless admin_level? %>
                 You can only view students you're linked to as a parent/guardian.
               <% end %>
             </p>
@@ -201,12 +201,12 @@
                         <%= link_to student, class: "btn btn-sm btn-outline-primary me-1" do %>
                           <i class="fas fa-eye me-1"></i>View
                         <% end %>
-                        <% if admin? || (current_user && student.users.include?(current_user)) %>
+                        <% if admin_level? || (current_user && student.users.include?(current_user)) %>
                           <%= link_to edit_student_path(student), class: "btn btn-sm btn-outline-secondary me-1" do %>
                             <i class="fas fa-edit me-1"></i>Edit
                           <% end %>
                         <% end %>
-                        <% if admin? %>
+                        <% if can_delete? %>
                           <%= form_with model: student, method: :delete, local: true, class: "d-inline", id: "delete-student-#{student.id}-form" do |form| %>
                             <button type="button"
                                     class="btn btn-sm btn-outline-danger"
@@ -236,7 +236,7 @@
               <i class="fas fa-users fa-4x text-muted mb-3"></i>
               <h4 class="text-muted">No Students Found</h4>
               <p class="text-muted mb-4">
-                <% if admin? %>
+                <% if admin_level? %>
                   <% if @show_inactive %>
                     The club doesn't have any registered students yet. Start by adding your first member!
                   <% else %>
@@ -250,7 +250,7 @@
                   <% end %>
                 <% end %>
               </p>
-              <% if admin? %>
+              <% if admin_level? %>
                 <%= link_to new_student_path, class: "btn btn-primary" do %>
                   <i class="fas fa-plus me-2"></i>Add First Student
                 <% end %>

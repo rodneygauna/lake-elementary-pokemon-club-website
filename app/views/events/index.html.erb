@@ -18,7 +18,7 @@
     <% end %>
   </div>
   <div>
-    <% if current_user&.admin? %>
+    <% if current_user&.admin_level? %>
       <%= link_to new_event_path, class: "btn btn-success" do %>
         <i class="fas fa-plus me-2"></i>New Event
       <% end %>
@@ -133,7 +133,7 @@
                   There are no events scheduled at this time.
                 <% end %>
               </p>
-              <% if current_user&.admin? %>
+              <% if current_user&.admin_level? %>
                 <%= link_to new_event_path, class: "btn btn-primary" do %>
                   <i class="fas fa-plus me-2"></i>Create First Event
                 <% end %>

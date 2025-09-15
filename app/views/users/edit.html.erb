@@ -36,11 +36,15 @@
         </span>
         <% if current_user.admin? %>
           <span class="badge bg-warning text-dark">
-            <i class="fas fa-shield-alt me-1"></i>Administrator
+            <i class="fas fa-shield-alt me-1"></i><%= current_user.role_display_name %>
+          </span>
+        <% elsif current_user.super_user? %>
+          <span class="badge bg-success text-white">
+            <i class="fas fa-user-friends me-1"></i><%= current_user.role_display_name %>
           </span>
         <% else %>
           <span class="badge bg-light text-dark">
-            <i class="fas fa-user me-1"></i>User
+            <i class="fas fa-user me-1"></i><%= current_user.role_display_name %>
           </span>
         <% end %>
       </div>
@@ -156,27 +160,59 @@
         </div>
       </div>
 
-      <!-- Account Role Display -->
+      <!-- Account Role Display/Edit -->
       <div class="row mb-4">
         <div class="col-md-6 mb-3">
-          <label class="form-label">
-            <i class="fas fa-shield-alt me-1"></i>Current Role
-          </label>
-          <div class="p-3 rounded" style="background-color: #f8f9fa;">
-            <% if current_user.admin? %>
-              <span class="badge bg-warning text-dark">
-                <i class="fas fa-shield-alt me-1"></i>Administrator
-              </span>
-            <% else %>
-              <span class="badge bg-secondary">
-                <i class="fas fa-user me-1"></i>User
-              </span>
+          <% if current_user.admin_level? %>
+            <%= form.label :role, class: "form-label required" do %>
+              <i class="fas fa-shield-alt me-1"></i>Account Role
             <% end %>
-            <div class="form-text mt-2">
+            <%= form.select :role, 
+                options_for_select(
+                  current_user.can_assign_roles.map { |role| 
+                    case role
+                    when "admin"
+                      ["Administrator", role]
+                    when "super_user"
+                      ["Super User", role]
+                    when "user"
+                      ["User", role]
+                    end
+                  },
+                  @user.role
+                ),
+                {},
+                {
+                  class: "form-select #{'is-invalid' if @user.errors[:role].any?}",
+                  required: true
+                } %>
+            <% if @user.errors[:role].any? %>
+              <div class="invalid-feedback">
+                <%= @user.errors[:role].first %>
+              </div>
+            <% end %>
+            <div class="form-text">
               <i class="fas fa-info-circle me-1"></i>
-              Contact an administrator to change your account role.
+              <% if current_user.admin? %>
+                Administrators can assign any role including other administrators.
+              <% else %>
+                Super Users can assign User and Super User roles only.
+              <% end %>
             </div>
-          </div>
+          <% else %>
+            <label class="form-label">
+              <i class="fas fa-shield-alt me-1"></i>Current Role
+            </label>
+            <div class="p-3 rounded" style="background-color: #f8f9fa;">
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-user me-1"></i><%= current_user.role_display_name %>
+              </span>
+              <div class="form-text mt-2">
+                <i class="fas fa-info-circle me-1"></i>
+                Contact an administrator to change your account role.
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
 

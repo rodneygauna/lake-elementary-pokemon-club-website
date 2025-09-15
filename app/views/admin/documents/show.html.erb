@@ -27,18 +27,20 @@
     <%= link_to edit_admin_document_path(@document), class: "btn btn-primary me-2" do %>
       <i class="fas fa-edit me-2"></i>Edit
     <% end %>
-    <% form_id = "delete-document-form" %>
-    <%= form_with model: [:admin, @document], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
-      <button type="button"
-              class="btn btn-outline-danger"
-              data-bs-toggle="modal"
-              data-bs-target="#confirmationModal"
-              data-confirm-title="Delete Document"
-              data-confirm-message="Are you sure you want to delete <%= @document.display_name %>? This action cannot be undone."
-              data-confirm-action="Delete Document"
-              data-form-id="<%= form_id %>">
-        <i class="fas fa-trash me-2"></i>Delete
-      </button>
+    <% if current_user.can_delete? %>
+      <% form_id = "delete-document-form" %>
+      <%= form_with model: [:admin, @document], method: :delete, local: true, class: "d-inline", id: form_id do |form| %>
+        <button type="button"
+                class="btn btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmationModal"
+                data-confirm-title="Delete Document"
+                data-confirm-message="Are you sure you want to delete <%= @document.display_name %>? This action cannot be undone."
+                data-confirm-action="Delete Document"
+                data-form-id="<%= form_id %>">
+          <i class="fas fa-trash me-2"></i>Delete
+        </button>
+      <% end %>
     <% end %>
   </div>
 </div>

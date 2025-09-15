@@ -23,6 +23,13 @@ class Admin::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
+    # Validate role assignment permissions
+    if params[:user][:role].present? && !current_user.can_assign_role?(params[:user][:role])
+      @user.errors.add(:role, "You don't have permission to assign that role")
+      render :new, status: :unprocessable_entity
+      return
+    end
+
     # Set a temporary password that user must change on first login
     temp_password = SecureRandom.alphanumeric(12)
     @user.password = temp_password
@@ -39,6 +46,14 @@ class Admin::UsersController < ApplicationController
   end
 
   def update
+    # Validate role assignment permissions if role is being changed
+    if params[:user][:role].present? && params[:user][:role] != @user.role
+      unless current_user.can_assign_role?(params[:user][:role])
+        redirect_to admin_user_path(@user), alert: "You don't have permission to assign that role."
+        return
+      end
+    end
+
     if @user.update(user_params)
       redirect_to admin_user_path(@user), notice: "User was successfully updated."
     else
