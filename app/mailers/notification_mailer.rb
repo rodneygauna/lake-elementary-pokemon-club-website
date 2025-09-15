@@ -146,7 +146,7 @@ class NotificationMailer < ApplicationMailer
     return unless user.subscribed_to?(:student_linked)
 
     begin
-      student_linked(user, student).deliver_now
+      NotificationMailer.student_linked(user, student).deliver_now
     rescue => e
       Rails.logger.error "Failed to send student linked notification to user #{user.id}: #{e.message}"
     end
@@ -156,7 +156,7 @@ class NotificationMailer < ApplicationMailer
     return unless user.subscribed_to?(:student_unlinked)
 
     begin
-      student_unlinked(user, student).deliver_now
+      NotificationMailer.student_unlinked(user, student).deliver_now
     rescue => e
       Rails.logger.error "Failed to send student unlinked notification to user #{user.id}: #{e.message}"
     end
