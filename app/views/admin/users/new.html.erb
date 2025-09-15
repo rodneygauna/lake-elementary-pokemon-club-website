@@ -110,10 +110,14 @@
           <div class="mb-3">
             <%= form.label :role, "User Role *", class: "form-label" %>
             <%= form.select :role,
-                            options_for_select([['User', 'user'], ['Administrator', 'admin']], @user.role),
+                            options_for_select([
+                              ['User', 'user'],
+                              ['Super User (Volunteer)', 'super_user'],
+                              ['Administrator', 'admin']
+                            ], @user.role),
                             { prompt: 'Select a role' },
                             { class: "form-select", required: true } %>
-            <div class="form-text">Administrators have full access to manage the website.</div>
+            <div class="form-text">Super Users can manage content but cannot delete. Administrators have full access.</div>
             <div class="invalid-feedback">
               Please select a user role.
             </div>

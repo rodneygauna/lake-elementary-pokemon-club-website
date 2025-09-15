@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   # ----- Enums -----
-  enum :role, { user: "user", admin: "admin" }
+  enum :role, { user: "user", super_user: "super_user", admin: "admin" }
   enum :status, { active: "active", inactive: "inactive", suspended: "suspended" }
 
   # ----- Validations -----
@@ -30,8 +30,10 @@ class User < ApplicationRecord
   scope :by_last_name, -> { order(last_name: :asc, first_name: :asc) }
 
   # Role-based
-  scope :admins, -> { where(role: "admin") }
-  scope :users,  -> { where(role: "user") }
+  scope :admins,      -> { where(role: "admin") }
+  scope :super_users, -> { where(role: "super_user") }
+  scope :users,       -> { where(role: "user") }
+  scope :admin_level, -> { where(role: [ "admin", "super_user" ]) }
 
   # Status-based
   scope :active,    -> { where(status: "active") }
@@ -65,6 +67,39 @@ class User < ApplicationRecord
       "Your account has been suspended. Please contact support."
     else
       super
+    end
+  end
+
+  # Role-based permission helpers
+  def admin_level?
+    admin? || super_user?
+  end
+
+  def can_delete?
+    admin?
+  end
+
+  def can_manage_users?
+    admin_level?
+  end
+
+  def can_edit_user?(target_user)
+    return false unless admin_level?
+    return true if admin?
+    # Super users can only edit regular users and other super users, not admins
+    !target_user.admin?
+  end
+
+  def role_display_name
+    case role
+    when "admin"
+      "Administrator"
+    when "super_user"
+      "Super User"
+    when "user"
+      "User"
+    else
+      role.humanize
     end
   end
 

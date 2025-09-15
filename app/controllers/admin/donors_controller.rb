@@ -1,6 +1,7 @@
 class Admin::DonorsController < ApplicationController
   before_action :require_authentication
-  before_action :require_admin_access
+  before_action :require_admin_level
+  before_action :require_admin, only: [ :destroy ]
   before_action :set_donor, only: %i[ show edit update destroy ]
 
   # GET /donors or /donors.json
@@ -63,11 +64,5 @@ class Admin::DonorsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def donor_params
       params.require(:donor).permit(:name, :donor_type, :privacy_setting, :website_link, :photo_or_logo)
-    end
-
-    def require_admin_access
-      unless current_user&.admin?
-        redirect_to root_path, alert: "Access denied. Admin privileges required."
-      end
     end
 end

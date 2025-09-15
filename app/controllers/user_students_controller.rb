@@ -1,6 +1,7 @@
 class UserStudentsController < ApplicationController
   before_action :require_authentication
-  before_action :require_admin
+  before_action :require_admin_level, only: [ :create ]
+  before_action :require_admin, only: [ :destroy ]
 
   def create
     @student = Student.find(params[:student_id])
@@ -37,11 +38,5 @@ class UserStudentsController < ApplicationController
 
   def user_student_params
     params.expect(user_student: [ :user_id, :student_id ])
-  end
-
-  def require_admin
-    unless current_user&.admin?
-      redirect_to root_path, alert: "You do not have permission to perform this action."
-    end
   end
 end

@@ -75,7 +75,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li><%= link_to "Profile", user_path, class: "dropdown-item" %></li>
-                  <% if current_user.respond_to?(:admin?) && current_user.admin? %>
+                  <% if current_user.respond_to?(:admin_level?) && current_user.admin_level? %>
                     <li><hr class="dropdown-divider"></li>
                     <li><%= link_to "User Management", admin_users_path, class: "dropdown-item" %></li>
                     <li><%= link_to "Donor Management", admin_donors_path, class: "dropdown-item" %></li>

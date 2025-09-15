@@ -1,11 +1,13 @@
 class EventsController < ApplicationController
   allow_unauthenticated_access only: [ :index, :show ]
+  before_action :require_admin_level, only: [ :new, :create, :edit, :update ]
+  before_action :require_admin, only: [ :destroy ]
   before_action :set_event, only: %i[ show edit update destroy ]
 
   # GET /events or /events.json
   def index
     # Filter events based on user role
-    base_events = current_user&.admin? ? Event.visible_to_admin : Event.visible_to_public
+    base_events = current_user&.admin_level? ? Event.visible_to_admin : Event.visible_to_public
 
     # Apply filters
     @events = base_events.ordered

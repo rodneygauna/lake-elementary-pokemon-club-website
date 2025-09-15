@@ -1,7 +1,8 @@
 class StudentsController < ApplicationController
   before_action :require_authentication, except: [ :index, :show ]
   before_action :set_student, only: %i[ show edit update destroy ]
-  before_action :require_admin, only: [ :new, :create, :destroy ]
+  before_action :require_admin_level, only: [ :new, :create ]
+  before_action :require_admin, only: [ :destroy ]
   before_action :require_admin_or_linked_parent, only: [ :edit, :update ]
 
   # GET /students or /students.json
@@ -20,8 +21,8 @@ class StudentsController < ApplicationController
   # GET /students/1 or /students/1.json
   def show
     # Public sees limited info, linked parents see full info
-    @can_view_details = current_user&.admin? || (current_user && @student.users.include?(current_user))
-    @linked_parents = @student.users if admin?
+    @can_view_details = current_user&.admin_level? || (current_user && @student.users.include?(current_user))
+    @linked_parents = @student.users if admin_level?
 
     # Load attendance history for authorized users (following same privacy rules)
     if @can_view_details
@@ -93,15 +94,8 @@ class StudentsController < ApplicationController
 
     # Ensure the current user is an admin or a parent linked to this student
     def require_admin_or_linked_parent
-      unless current_user&.admin? || (current_user && @student.users.include?(current_user))
+      unless current_user&.admin_level? || (current_user && @student.users.include?(current_user))
         redirect_to students_path, alert: "You do not have permission to view this student."
-      end
-    end
-
-    # Ensure the current user is an admin
-    def require_admin
-      unless current_user&.admin?
-        redirect_to students_path, alert: "You do not have permission to perform this action."
       end
     end
 end

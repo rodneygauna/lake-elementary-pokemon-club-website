@@ -72,6 +72,18 @@ parent_users_data = [
     first_name: "James",
     last_name: "Anderson",
     role: "user"
+  },
+  {
+    email: "jessica.volunteer@email.com",
+    first_name: "Jessica",
+    last_name: "Miller",
+    role: "super_user"
+  },
+  {
+    email: "david.helper@email.com",
+    first_name: "David",
+    last_name: "Clark",
+    role: "super_user"
   }
 ]
 

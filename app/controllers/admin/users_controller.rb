@@ -1,6 +1,8 @@
 class Admin::UsersController < ApplicationController
-  before_action :require_admin_access
+  before_action :require_admin_level
+  before_action :require_admin, only: [ :destroy ]
   before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+  before_action :check_user_edit_permissions, only: [ :edit, :update ]
 
   def index
     @users = User.order(:email_address)
@@ -65,9 +67,9 @@ class Admin::UsersController < ApplicationController
     params.require(:user).permit(:first_name, :last_name, :email_address, :phone_number, :role, :status)
   end
 
-  def require_admin_access
-    unless current_user&.admin?
-      redirect_to root_path, alert: "Access denied. Admin privileges required."
+  def check_user_edit_permissions
+    unless current_user.can_edit_user?(@user)
+      redirect_to admin_users_path, alert: "You don't have permission to edit this user."
     end
   end
 end

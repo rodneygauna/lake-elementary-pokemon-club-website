@@ -1,5 +1,6 @@
 class Admin::DocumentsController < ApplicationController
-  before_action :require_admin_access
+  before_action :require_admin_level
+  before_action :require_admin, only: [ :destroy ]
   before_action :set_document, only: [ :show, :edit, :update, :destroy ]
 
   def index
@@ -55,11 +56,5 @@ class Admin::DocumentsController < ApplicationController
 
   def document_params
     params.require(:document).permit(:title, :description, :document_type, :url, :file_attachment)
-  end
-
-  def require_admin_access
-    unless current_user&.admin?
-      redirect_to root_path, alert: "You must be an admin to access this page."
-    end
   end
 end

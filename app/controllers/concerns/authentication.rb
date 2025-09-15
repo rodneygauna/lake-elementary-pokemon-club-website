@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :authenticated?, :current_user, :admin?
+    helper_method :authenticated?, :current_user, :admin?, :super_user?, :admin_level?, :can_delete?
   end
 
   class_methods do
@@ -64,5 +64,35 @@ module Authentication
 
     def admin?
       current_user&.admin?
+    end
+
+    def super_user?
+      current_user&.super_user?
+    end
+
+    def admin_level?
+      current_user&.admin_level?
+    end
+
+    def can_delete?
+      current_user&.can_delete?
+    end
+
+    def require_admin
+      unless admin?
+        respond_to do |format|
+          format.json { render json: { error: "Admin access required" }, status: :forbidden }
+          format.html { redirect_to root_path, alert: "Admin access required" }
+        end
+      end
+    end
+
+    def require_admin_level
+      unless admin_level?
+        respond_to do |format|
+          format.json { render json: { error: "Admin access required" }, status: :forbidden }
+          format.html { redirect_to root_path, alert: "Admin access required" }
+        end
+      end
     end
 end

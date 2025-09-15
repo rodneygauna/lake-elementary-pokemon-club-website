@@ -1,7 +1,8 @@
 class Admin::DonationsController < ApplicationController
   include Authentication
 
-  before_action :require_admin_access
+  before_action :require_admin_level
+  before_action :require_admin, only: [ :destroy ]
   before_action :set_donor
   before_action :set_donation, only: [ :show, :edit, :update, :destroy ]
 
@@ -60,11 +61,5 @@ class Admin::DonationsController < ApplicationController
 
   def donation_params
     params.require(:donation).permit(:amount, :donation_type, :value_type, :donation_date, :notes)
-  end
-
-  def require_admin_access
-    unless current_user&.admin?
-      redirect_to root_path, alert: "Access denied. Admin privileges required."
-    end
   end
 end
