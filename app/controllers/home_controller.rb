@@ -9,4 +9,8 @@ class HomeController < ApplicationController
     # Get the next upcoming event
     @next_event = Event.published.upcoming.order(:starts_at).first
   end
+
+  def bylaws
+    # Serve the Club Bylaws page
+  end
 end

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "home/index"
+  get "bylaws", to: "home#bylaws"
   resource :session
   resources :passwords, param: :token
   resources :events do

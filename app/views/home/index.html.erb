@@ -106,10 +106,37 @@
   </div>
 <% end %>
 
-<!-- Volunteer and Next Event Cards -->
+<!-- Information and Next Event Cards -->
 <div class="row g-4 mb-4">
+  <!-- Club Bylaws Card -->
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-warning text-dark">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-gavel me-2"></i>
+          <h4 class="h5 mb-0">Club Bylaws</h4>
+        </div>
+      </div>
+      <div class="card-body d-flex flex-column">
+        <p class="text-dark mb-3">
+          <i class="fas fa-shield-alt me-1 text-warning"></i>
+          Review our official club rules, guidelines, and expectations for all members and families.
+        </p>
+        <p class="text-muted mb-4">
+          Learn about safety policies, behavior expectations, card trading rules, and how we create
+          an inclusive environment for all Pokémon trainers in grades K-5.
+        </p>
+        <div class="mt-auto">
+          <%= link_to bylaws_path, class: "btn btn-warning" do %>
+            <i class="fas fa-book me-2"></i>Read Club Bylaws
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Volunteer Card -->
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="card shadow-sm h-100">
       <div class="card-header bg-success text-white">
         <div class="d-flex align-items-center">
@@ -136,7 +163,7 @@
   </div>
 
   <!-- Next Event Card -->
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="card shadow-sm h-100">
       <div class="card-header bg-primary text-white">
         <div class="d-flex align-items-center">
