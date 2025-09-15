@@ -167,9 +167,9 @@
             <%= form.label :role, class: "form-label required" do %>
               <i class="fas fa-shield-alt me-1"></i>Account Role
             <% end %>
-            <%= form.select :role, 
+            <%= form.select :role,
                 options_for_select(
-                  current_user.can_assign_roles.map { |role| 
+                  current_user.can_assign_roles.map { |role|
                     case role
                     when "admin"
                       ["Administrator", role]

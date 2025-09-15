@@ -40,12 +40,12 @@ class UsersController < ApplicationController
 
   def user_params
     permitted_params = [ :first_name, :last_name, :email_address, :password, :password_confirmation ]
-    
+
     # Allow role changes for admin_level users
     if current_user.admin_level?
       permitted_params << :role
     end
-    
+
     params.require(:user).permit(permitted_params)
   end
 
