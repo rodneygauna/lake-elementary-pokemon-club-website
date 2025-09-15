@@ -1,206 +1,193 @@
 <% content_for :title, "Create New User" %>
 
-<!-- Breadcrumb Navigation -->
-      <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <%= link_to "Home", root_path, class: "text-decoration-none" %>
-          </li>
-          <li class="breadcrumb-item">
-            <%= link_to "User Management", admin_users_path, class: "text-decoration-none" %>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">Create New User</li>
-        </ol>
-      </nav>
+<!-- Navigation Controls -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Admin", admin_users_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Users", admin_users_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">New User</li>
+  </ol>
+</nav>
 
-      <!-- Action Buttons (Before Header) -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <%= link_to admin_users_path, class: "btn btn-outline-secondary me-2" do %>
-            <i class="fas fa-arrow-left me-1"></i>Back to User Management
-          <% end %>
-        </div>
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_users_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Users
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4" style="background: var(--pokemon-electric-blue);">
+  <div class="card-body text-white">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-user-plus fa-2x me-3"></i>
+      <div>
+        <h1 class="h3 mb-1">Create New User</h1>
+        <p class="mb-0">Add a new user account with access to the Pokémon Club website</p>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Header Card -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-              <i class="fas fa-user-plus me-2"></i>
-              <h1 class="h4 mb-0">Create New User</h1>
+<!-- Form Card -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <%= form_with model: [:admin, @user], local: true, class: "needs-validation", novalidate: true do |form| %>
+      <% if @user.errors.any? %>
+        <div class="alert alert-danger" role="alert">
+          <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:</h6>
+          <ul class="mb-0">
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Personal Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-user me-2"></i>Personal Information
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :first_name, class: "form-control", placeholder: "First Name", required: true %>
+            <%= form.label :first_name, "First Name *", class: "form-label" %>
+            <div class="invalid-feedback">
+              Please provide a first name.
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <p class="text-muted mb-0">
-            <i class="fas fa-info-circle me-1"></i>
-            Create a new user account with access to the Pokémon Club website.
-          </p>
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.text_field :last_name, class: "form-control", placeholder: "Last Name", required: true %>
+            <%= form.label :last_name, "Last Name *", class: "form-label" %>
+            <div class="invalid-feedback">
+              Please provide a last name.
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Form Card -->
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <%= form_with model: [:admin, @user], local: true do |form| %>
-            <% if @user.errors.any? %>
-              <div class="alert alert-danger" role="alert">
-                <div class="d-flex align-items-center">
-                  <i class="fas fa-exclamation-triangle me-2"></i>
-                  <h5 class="alert-heading mb-0">Please correct the following errors:</h5>
-                </div>
-                <hr>
-                <ul class="mb-0">
-                  <% @user.errors.full_messages.each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
-
-            <!-- Personal Information Section -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <h5 class="text-dark border-bottom pb-2 mb-3">
-                  <i class="fas fa-user me-2"></i>Personal Information
-                </h5>
-              </div>
+      <!-- Account Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h5 class="text-dark border-bottom pb-2 mb-3">
+            <i class="fas fa-cog me-2"></i>Account Information
+          </h5>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.email_field :email_address, class: "form-control", placeholder: "user@example.com", required: true %>
+            <%= form.label :email_address, "Email Address *", class: "form-label" %>
+            <div class="invalid-feedback">
+              Please provide a valid email address.
             </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <%= form.telephone_field :phone_number, class: "form-control", placeholder: "Phone Number" %>
+            <%= form.label :phone_number, "Phone Number", class: "form-label" %>
+            <div class="form-text">Optional contact number for club communications.</div>
+          </div>
+        </div>
+      </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <%= form.label :first_name, class: "form-label required" do %>
-                  <i class="fas fa-user me-1"></i>First Name
-                <% end %>
-                <%= form.text_field :first_name,
-                    class: "form-control #{'is-invalid' if @user.errors[:first_name].any?}",
-                    placeholder: "Enter first name",
-                    required: true %>
-                <% if @user.errors[:first_name].any? %>
-                  <div class="invalid-feedback">
-                    <%= @user.errors[:first_name].first %>
-                  </div>
-                <% end %>
-              </div>
-              <div class="col-md-6 mb-3">
-                <%= form.label :last_name, class: "form-label required" do %>
-                  <i class="fas fa-user me-1"></i>Last Name
-                <% end %>
-                <%= form.text_field :last_name,
-                    class: "form-control #{'is-invalid' if @user.errors[:last_name].any?}",
-                    placeholder: "Enter last name",
-                    required: true %>
-                <% if @user.errors[:last_name].any? %>
-                  <div class="invalid-feedback">
-                    <%= @user.errors[:last_name].first %>
-                  </div>
-                <% end %>
-              </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :role, "User Role *", class: "form-label" %>
+            <%= form.select :role,
+                            options_for_select([['User', 'user'], ['Administrator', 'admin']], @user.role),
+                            { prompt: 'Select a role' },
+                            { class: "form-select", required: true } %>
+            <div class="form-text">Administrators have full access to manage the website.</div>
+            <div class="invalid-feedback">
+              Please select a user role.
             </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :status, "Account Status *", class: "form-label" %>
+            <%= form.select :status,
+                            options_for_select([['Active', 'active'], ['Inactive', 'inactive'], ['Suspended', 'suspended']], @user.status || 'active'),
+                            { prompt: 'Select account status' },
+                            { class: "form-select", required: true } %>
+            <div class="form-text">Account status determines login access and permissions.</div>
+            <div class="invalid-feedback">
+              Please select an account status.
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Account Information Section -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <h5 class="text-dark border-bottom pb-2 mb-3">
-                  <i class="fas fa-cog me-2"></i>Account Information
-                </h5>
-              </div>
-            </div>
+      <!-- Important Notice -->
+      <div class="alert alert-info" role="alert">
+        <div class="d-flex align-items-start">
+          <i class="fas fa-info-circle me-2 mt-1"></i>
+          <div>
+            <h6 class="alert-heading">Password Information</h6>
+            <p class="mb-0">A temporary password will be automatically generated for this user. They will need to change it on their first login for security purposes.</p>
+          </div>
+        </div>
+      </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <%= form.label :email_address, class: "form-label required" do %>
-                  <i class="fas fa-envelope me-1"></i>Email Address
-                <% end %>
-                <%= form.email_field :email_address,
-                    class: "form-control #{'is-invalid' if @user.errors[:email_address].any?}",
-                    placeholder: "Enter email address",
-                    required: true %>
-                <% if @user.errors[:email_address].any? %>
-                  <div class="invalid-feedback">
-                    <%= @user.errors[:email_address].first %>
-                  </div>
-                <% end %>
-              </div>
-              <div class="col-md-6 mb-3">
-                <%= form.label :phone_number, class: "form-label" do %>
-                  <i class="fas fa-phone me-1"></i>Phone Number
-                <% end %>
-                <%= form.telephone_field :phone_number,
-                    class: "form-control #{'is-invalid' if @user.errors[:phone_number].any?}",
-                    placeholder: "Enter phone number (optional)" %>
-                <% if @user.errors[:phone_number].any? %>
-                  <div class="invalid-feedback">
-                    <%= @user.errors[:phone_number].first %>
-                  </div>
-                <% end %>
-                <div class="form-text">
-                  <i class="fas fa-info-circle me-1"></i>
-                  Optional contact number for club communications.
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <%= form.label :role, class: "form-label required" do %>
-                  <i class="fas fa-shield-alt me-1"></i>User Role
-                <% end %>
-                <%= form.select :role,
-                                options_for_select([['User', 'user'], ['Administrator', 'admin']], @user.role),
-                                { prompt: 'Select a role' },
-                                { class: "form-select #{'is-invalid' if @user.errors[:role].any?}",
-                                  required: true } %>
-                <% if @user.errors[:role].any? %>
-                  <div class="invalid-feedback">
-                    <%= @user.errors[:role].first %>
-                  </div>
-                <% end %>
-                <div class="form-text">
-                  <i class="fas fa-info-circle me-1"></i>
-                  Administrators have full access to manage the website.
-                </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <%= form.label :status, class: "form-label required" do %>
-                  <i class="fas fa-user-check me-1"></i>Account Status
-                <% end %>
-                <%= form.select :status,
-                                options_for_select([['Active', 'active'], ['Inactive', 'inactive'], ['Suspended', 'suspended']], @user.status || 'active'),
-                                { prompt: 'Select account status' },
-                                { class: "form-select #{'is-invalid' if @user.errors[:status].any?}",
-                                  required: true } %>
-                <% if @user.errors[:status].any? %>
-                  <div class="invalid-feedback">
-                    <%= @user.errors[:status].first %>
-                  </div>
-                <% end %>
-                <div class="form-text">
-                  <i class="fas fa-info-circle me-1"></i>
-                  Account status determines login access and permissions.
-                </div>
-              </div>
-            </div>
-
-            <!-- Important Notice -->
-            <div class="alert alert-info" role="alert">
-              <div class="d-flex align-items-start">
-                <i class="fas fa-info-circle me-2 mt-1"></i>
-                <div>
-                  <h6 class="alert-heading">Password Information</h6>
-                  <p class="mb-0">A temporary password will be automatically generated for this user. They will need to change it on their first login for security purposes.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="d-flex justify-content-between pt-3 border-top">
-              <%= link_to admin_users_path, class: "btn btn-outline-secondary" do %>
-                <i class="fas fa-times me-2"></i>Cancel
-              <% end %>
-              <%= form.submit "Create User", class: "btn btn-success" %>
-            </div>
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <div>
+          <%= link_to admin_users_path, class: "btn btn-outline-secondary" do %>
+            <i class="fas fa-times me-2"></i>Cancel
+          <% end %>
+        </div>
+        <div>
+          <%= form.submit "Create User", class: "btn btn-success" do %>
+            <i class="fas fa-save me-2"></i>Create User
           <% end %>
         </div>
       </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function initUserForm() {
+  console.log('Initializing user form...');
+
+  // Form validation
+  const forms = document.querySelectorAll('.needs-validation');
+  Array.from(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+}
+
+// Run on both DOMContentLoaded and turbo:load for Rails with Turbo
+document.addEventListener('DOMContentLoaded', initUserForm);
+document.addEventListener('turbo:load', initUserForm);
+
+// Fallback - run after a short delay to ensure DOM is ready
+setTimeout(function() {
+  if (document.querySelector('.needs-validation')) {
+    console.log('Running fallback initialization');
+    initUserForm();
+  }
+}, 100);
+</script>
