@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Updated: <%= @student.first_name %></title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #6f42c1, #6610f2);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .content {
+      padding: 30px;
+    }
+    .student-card {
+      background-color: #e2e3f5;
+      border-left: 4px solid #6f42c1;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .student-name {
+      color: #6f42c1;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .detail-label {
+      font-weight: bold;
+      color: #495057;
+    }
+    .footer {
+      background-color: #495057;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+    .emoji {
+      font-size: 1.2em;
+    }
+    .changes-notice {
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="emoji">📝</span> Profile Updated</h1>
+      <p>Lake Elementary Pokémon Club</p>
+    </div>
+
+    <div class="content">
+      <p>Hi <%= @user.first_name %>,</p>
+
+      <p>This is to let you know that your student's profile has been updated:</p>
+
+      <div class="student-card">
+        <div class="student-name"><%= @student.first_name %> <%= @student.last_name %></div>
+
+        <p><span class="detail-label">🎓 Grade:</span> <%= @student.grade_display %></p>
+        <% if @student.pokemon_experience.present? %>
+          <p><span class="detail-label">⚡ Pokémon Experience:</span> <%= @student.pokemon_experience %></p>
+        <% end %>
+        <% if @student.favorite_pokemon.present? %>
+          <p><span class="detail-label">❤️ Favorite Pokémon:</span> <%= @student.favorite_pokemon %></p>
+        <% end %>
+      </div>
+
+      <% if @changed_fields.any? %>
+        <div class="changes-notice">
+          <strong><span class="emoji">📝</span> What Was Updated:</strong>
+          <ul>
+            <% @changed_fields.each do |field| %>
+              <li><%= field.humanize %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <p>Thank you for keeping your student's information up to date!</p>
+
+      <p>Best regards,<br>
+         The <%= @club_name %> Team</p>
+    </div>
+
+    <div class="footer">
+      <p>Lake Elementary Pokémon Club</p>
+      <p>This email was sent because you're subscribed to student profile notifications.</p>
+      <p>You can manage your email preferences in your account settings.</p>
+    </div>
+  </div>
+</body>
+</html>

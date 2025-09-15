@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_15_174025) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_224159) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -90,6 +90,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_174025) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.index ["user_id"], name: "index_donors_on_user_id"
+  end
+
+  create_table "email_subscriptions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "subscription_type"
+    t.boolean "enabled"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_email_subscriptions_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -179,6 +188,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_174025) do
   add_foreign_key "documents", "users", column: "created_by_id"
   add_foreign_key "donations", "donors"
   add_foreign_key "donors", "users"
+  add_foreign_key "email_subscriptions", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_students", "students"
   add_foreign_key "user_students", "users"

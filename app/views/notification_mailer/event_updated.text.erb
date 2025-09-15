@@ -1,0 +1,40 @@
+📅 EVENT UPDATED: <%= @event.title %>
+
+Hi <%= @user.first_name %>,
+
+We wanted to let you know that an event has been updated:
+
+UPDATED EVENT DETAILS:
+======================
+
+Title: <%= @event.title %>
+Date & Time: <%= @event.event_datetime.strftime("%A, %B %d, %Y at %I:%M %p") %>
+<% if @event.location.present? -%>
+Location: <%= @event.location %>
+<% end -%>
+
+<% if @event.description.present? -%>
+Description:
+<%= @event.description %>
+
+<% end -%>
+<% if @event.special_event? -%>
+⭐ This is a special event!
+
+<% end -%>
+<% if @changed_fields.any? -%>
+📝 WHAT CHANGED:
+<% @changed_fields.each do |field| -%>
+- <%= field.humanize %>
+<% end -%>
+
+<% end -%>
+Please make note of any changes. We hope to see you there!
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to event update notifications.
+You can manage your email preferences in your account settings.

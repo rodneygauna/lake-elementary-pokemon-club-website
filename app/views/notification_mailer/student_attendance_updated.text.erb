@@ -1,0 +1,26 @@
+✅ ATTENDANCE UPDATED: <%= @student.first_name %> <%= @student.last_name %>
+
+Hi <%= @user.first_name %>,
+
+This is to let you know that attendance has been updated for your student:
+
+ATTENDANCE DETAILS:
+==================
+
+Student: <%= @student.first_name %> <%= @student.last_name %>
+Event: <%= @event.title %>
+Date: <%= @event.event_datetime.strftime("%A, %B %d, %Y") %>
+
+Attendance Status: <% if @attendance.present? %>✅ Present<% else %>❌ Absent<% end %>
+
+Recorded at: <%= @attendance.marked_at.strftime("%I:%M %p on %B %d, %Y") %>
+
+Thank you for being part of the <%= @club_name %>!
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to attendance notifications.
+You can manage your email preferences in your account settings.

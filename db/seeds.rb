@@ -728,5 +728,21 @@ puts "\n📄 Documents: #{Document.count}"
 puts "   - Link Documents: #{Document.where(document_type: 'link').count}"
 puts "   - File Documents: #{Document.where(document_type: 'file').count}"
 
+# Create default email subscriptions for all users
+puts "\nCreating default email subscriptions..."
+all_users = User.all
+subscription_count = 0
+
+all_users.each do |user|
+  puts "   Setting up subscriptions for #{user.first_name} #{user.last_name}..."
+  user.create_default_subscriptions!
+  subscription_count += user.email_subscriptions.count
+end
+
+puts "\n📧 Email Subscriptions: #{EmailSubscription.count}"
+puts "   - Total Users with Subscriptions: #{User.joins(:email_subscriptions).distinct.count}"
+puts "   - Enabled Subscriptions: #{EmailSubscription.enabled.count}"
+puts "   - Disabled Subscriptions: #{EmailSubscription.disabled.count}"
+
 puts "\nAll users can log in with their email and password 'password123'"
 puts "==========================="

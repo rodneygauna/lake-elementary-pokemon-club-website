@@ -121,6 +121,62 @@ class EventTest < ActiveSupport::TestCase
     assert_not_nil event.time_zone
   end
 
+  # Test email notification callbacks
+  test "should send new event notifications when creating published event" do
+    # Set up user with subscription
+    user = users(:regular_user)
+    EmailSubscription.create!(user: user, subscription_type: "new_events", enabled: true)
+
+    assert_emails 1 do
+      Event.create!(@valid_attributes.merge(status: "published"))
+    end
+  end
+
+  test "should not send notifications when creating draft event" do
+    user = users(:regular_user)
+    EmailSubscription.create!(user: user, subscription_type: "new_events", enabled: true)
+
+    assert_emails 0 do
+      Event.create!(@valid_attributes.merge(status: "draft"))
+    end
+  end
+
+  test "should send update notifications when significant fields change" do
+    user = users(:regular_user)
+    EmailSubscription.create!(user: user, subscription_type: "event_updates", enabled: true)
+
+    assert_emails 1 do
+      @published_event.update!(title: "Updated Title")
+    end
+  end
+
+  test "should send cancellation notifications when status changes to canceled" do
+    user = users(:regular_user)
+    EmailSubscription.create!(user: user, subscription_type: "event_cancellations", enabled: true)
+
+    assert_emails 1 do
+      @published_event.update!(status: "canceled")
+    end
+  end
+
+  test "should not send notifications when insignificant fields change" do
+    user = users(:regular_user)
+    EmailSubscription.create!(user: user, subscription_type: "event_updates", enabled: true)
+
+    assert_emails 0 do
+      @published_event.update!(special: true) # Not in significant_changes list
+    end
+  end
+
+  test "should not send notifications for draft event updates" do
+    user = users(:regular_user)
+    EmailSubscription.create!(user: user, subscription_type: "event_updates", enabled: true)
+
+    assert_emails 0 do
+      @draft_event.update!(title: "Updated Draft Title")
+    end
+  end
+
   # Test instance methods (if any exist in the model)
   test "should respond to attendance methods" do
     # Test that the event can find its attendances

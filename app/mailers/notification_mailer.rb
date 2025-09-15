@@ -1,0 +1,177 @@
+class NotificationMailer < ApplicationMailer
+  default from: "Lake Elementary Pokémon Club <#{Rails.application.credentials.smtp&.user_name}>"
+
+  # 3.1. New Event
+  def new_event(user, event)
+    @user = user
+    @event = event
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "🌟 New Event: #{@event.title}"
+    )
+  end
+
+  # 3.2. Event was cancelled
+  def event_cancelled(user, event)
+    @user = user
+    @event = event
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "⚠️ Event Cancelled: #{@event.title}"
+    )
+  end
+
+  # 3.3. Event was edited
+  def event_updated(user, event, changed_fields = [])
+    @user = user
+    @event = event
+    @changed_fields = changed_fields
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "📅 Event Updated: #{@event.title}"
+    )
+  end
+
+  # 3.4. Student's attendance was updated
+  def student_attendance_updated(user, student, event, attendance)
+    @user = user
+    @student = student
+    @event = event
+    @attendance = attendance
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "✅ Attendance Updated for #{@student.first_name}"
+    )
+  end
+
+  # 3.5. Student was linked to user's account
+  def student_linked(user, student)
+    @user = user
+    @student = student
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "👨‍👩‍👧‍👦 Student Added to Your Account: #{@student.first_name}"
+    )
+  end
+
+  # 3.6. Student was unlinked from user's account
+  def student_unlinked(user, student)
+    @user = user
+    @student = student
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "👋 Student Removed from Your Account: #{@student.first_name}"
+    )
+  end
+
+  # 3.7. Student's profile was updated
+  def student_profile_updated(user, student, changed_fields = [])
+    @user = user
+    @student = student
+    @changed_fields = changed_fields
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "📝 Profile Updated for #{@student.first_name}"
+    )
+  end
+
+  private
+
+  # Helper method to get subscribed users for a notification type
+  def self.users_subscribed_to(subscription_type)
+    User.joins(:email_subscriptions)
+        .where(email_subscriptions: { subscription_type: subscription_type, enabled: true })
+        .where(status: "active")
+  end
+
+  # Helper method to send notifications to all subscribed users
+  def self.notify_subscribed_users(subscription_type, &block)
+    users_subscribed_to(subscription_type).find_each do |user|
+      begin
+        yield(user)
+      rescue => e
+        Rails.logger.error "Failed to send #{subscription_type} notification to user #{user.id}: #{e.message}"
+      end
+    end
+  end
+
+  # Bulk notification methods
+  def self.send_new_event_notifications(event)
+    notify_subscribed_users(:new_event) do |user|
+      new_event(user, event).deliver_now
+    end
+  end
+
+  def self.send_event_cancelled_notifications(event)
+    notify_subscribed_users(:event_cancelled) do |user|
+      event_cancelled(user, event).deliver_now
+    end
+  end
+
+  def self.send_event_updated_notifications(event, changed_fields = [])
+    notify_subscribed_users(:event_updated) do |user|
+      event_updated(user, event, changed_fields).deliver_now
+    end
+  end
+
+  # Individual user notification methods for student-specific notifications
+  def self.send_student_attendance_notification(student, event, attendance)
+    student.users.joins(:email_subscriptions)
+           .where(email_subscriptions: { subscription_type: :student_attendance_updated, enabled: true })
+           .where(status: "active")
+           .find_each do |user|
+      begin
+        student_attendance_updated(user, student, event, attendance).deliver_now
+      rescue => e
+        Rails.logger.error "Failed to send attendance notification to user #{user.id}: #{e.message}"
+      end
+    end
+  end
+
+  def self.send_student_linked_notification(user, student)
+    return unless user.subscribed_to?(:student_linked)
+
+    begin
+      student_linked(user, student).deliver_now
+    rescue => e
+      Rails.logger.error "Failed to send student linked notification to user #{user.id}: #{e.message}"
+    end
+  end
+
+  def self.send_student_unlinked_notification(user, student)
+    return unless user.subscribed_to?(:student_unlinked)
+
+    begin
+      student_unlinked(user, student).deliver_now
+    rescue => e
+      Rails.logger.error "Failed to send student unlinked notification to user #{user.id}: #{e.message}"
+    end
+  end
+
+  def self.send_student_profile_updated_notifications(student, changed_fields = [])
+    student.users.joins(:email_subscriptions)
+           .where(email_subscriptions: { subscription_type: :student_profile_updated, enabled: true })
+           .where(status: "active")
+           .find_each do |user|
+      begin
+        student_profile_updated(user, student, changed_fields).deliver_now
+      rescue => e
+        Rails.logger.error "Failed to send student profile update notification to user #{user.id}: #{e.message}"
+      end
+    end
+  end
+end

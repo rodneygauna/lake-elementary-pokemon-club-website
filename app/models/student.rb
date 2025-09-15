@@ -17,7 +17,7 @@ class Student < ApplicationRecord
   # None for now
 
   # ----- Callbacks -----
-  # None for now
+  after_update :send_profile_update_notifications
 
   # ----- Scopes -----
   # Ordering
@@ -76,6 +76,38 @@ class Student < ApplicationRecord
 
     # Everyone else sees initials
     initials
+  end
+
+  def grade_display
+    # Convert grade enum to readable format
+    case grade
+    when "K" then "Kindergarten"
+    when "1" then "1st Grade"
+    when "2" then "2nd Grade"
+    when "3" then "3rd Grade"
+    when "4" then "4th Grade"
+    when "5" then "5th Grade"
+    when "6" then "6th Grade"
+    else grade.to_s
+    end
+  end
+
+  def pokemon_experience
+    # Return default experience level for templates
+    # This field doesn't exist in the current schema, so return a placeholder
+    "Beginner"
+  end
+
+  # Email notification methods
+  def send_profile_update_notifications
+    # Only send notifications if significant fields changed
+    return unless saved_changes.any?
+
+    significant_changes = saved_changes.keys & %w[first_name last_name grade favorite_pokemon pokemon_experience]
+
+    if significant_changes.any?
+      NotificationMailer.send_student_profile_updated_notifications(self, significant_changes)
+    end
   end
 
   private

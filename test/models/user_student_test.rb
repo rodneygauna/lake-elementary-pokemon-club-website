@@ -102,9 +102,54 @@ class UserStudentTest < ActiveSupport::TestCase
     assert_not_includes student_associations, @existing_user_student
   end
 
+  # Test email notification callbacks
+  test "should send student linked notification when created" do
+    assert_emails 1 do
+      UserStudent.create!(@valid_attributes)
+    end
+  end
+
+  test "should send student unlinked notification when destroyed" do
+    user_student = UserStudent.create!(@valid_attributes)
+
+    assert_emails 1 do
+      user_student.destroy!
+    end
+  end
+
+  test "should not send notification emails if user or student is nil" do
+    # This test ensures the callbacks handle edge cases gracefully
+    user_student = UserStudent.create!(@valid_attributes)
+
+    # Simulate a scenario where user might be deleted but callback still fires
+    allow_any_instance_of(UserStudent).to receive(:user).and_return(nil)
+
+    assert_emails 0 do
+      user_student.destroy!
+    end
+  end
+
   # Test instance methods
   test "user_to_student_link should return formatted string" do
     expected = "UserStudent: User##{@existing_user_student.user.id} <-> Student##{@existing_user_student.student.id}"
     assert_equal expected, @existing_user_student.user_to_student_link
+  end
+
+  test "send_student_linked_notification should call mailer" do
+    user_student = UserStudent.new(@valid_attributes)
+
+    # Mock the mailer call
+    assert_difference "ActionMailer::Base.deliveries.size", 1 do
+      user_student.send_student_linked_notification
+    end
+  end
+
+  test "send_student_unlinked_notification should call mailer" do
+    user_student = UserStudent.new(@valid_attributes)
+
+    # Mock the mailer call
+    assert_difference "ActionMailer::Base.deliveries.size", 1 do
+      user_student.send_student_unlinked_notification
+    end
   end
 end

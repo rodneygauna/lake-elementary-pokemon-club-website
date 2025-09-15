@@ -20,7 +20,10 @@ Rails.application.routes.draw do
   get "resources/:id/download", to: "documents#download", as: :resource_download
 
   # User profile management (users can edit their own profile)
-  resource :user, only: [ :show, :edit, :update ]
+  resource :user, only: [ :show, :edit, :update ] do
+    get :email_preferences, on: :member
+    patch :update_email_preferences, on: :member
+  end
 
   # Admin management
   namespace :admin do

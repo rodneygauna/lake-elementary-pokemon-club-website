@@ -1,0 +1,35 @@
+🌟 NEW EVENT: <%= @event.title %>
+
+Hi <%= @user.first_name %>,
+
+We're excited to announce a new event for the <%= @club_name %>!
+
+EVENT DETAILS:
+==============
+
+Title: <%= @event.title %>
+Date & Time: <%= @event.event_datetime.strftime("%A, %B %d, %Y at %I:%M %p") %>
+<% if @event.location.present? -%>
+Location: <%= @event.location %>
+<% end -%>
+
+<% if @event.description.present? -%>
+Description:
+<%= @event.description %>
+
+<% end -%>
+<% if @event.special_event? -%>
+⭐ This is a special event!
+
+<% end -%>
+We hope to see you and your Pokémon trainer there!
+
+If you have any questions, please don't hesitate to reach out to us.
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to new event notifications.
+You can manage your email preferences in your account settings.

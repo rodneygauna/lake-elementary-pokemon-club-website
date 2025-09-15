@@ -1,0 +1,28 @@
+⚠️ EVENT CANCELLED: <%= @event.title %>
+
+Hi <%= @user.first_name %>,
+
+❌ IMPORTANT: This event has been cancelled
+
+We need to inform you that the following event has been cancelled:
+
+CANCELLED EVENT DETAILS:
+========================
+
+Title: <%= @event.title %>
+Originally scheduled: <%= @event.event_datetime.strftime("%A, %B %d, %Y at %I:%M %p") %>
+<% if @event.location.present? -%>
+Location: <%= @event.location %>
+<% end -%>
+
+We apologize for any inconvenience this may cause. We'll let you know if we reschedule this event for a later date.
+
+Thank you for your understanding.
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to event cancellation notifications.
+You can manage your email preferences in your account settings.

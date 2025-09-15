@@ -1,0 +1,34 @@
+📝 PROFILE UPDATED: <%= @student.first_name %> <%= @student.last_name %>
+
+Hi <%= @user.first_name %>,
+
+This is to let you know that your student's profile has been updated:
+
+STUDENT PROFILE:
+===============
+
+Name: <%= @student.first_name %> <%= @student.last_name %>
+Grade: <%= @student.grade_display %>
+<% if @student.pokemon_experience.present? -%>
+Pokémon Experience: <%= @student.pokemon_experience %>
+<% end -%>
+<% if @student.favorite_pokemon.present? -%>
+Favorite Pokémon: <%= @student.favorite_pokemon %>
+<% end -%>
+
+<% if @changed_fields.any? -%>
+📝 WHAT WAS UPDATED:
+<% @changed_fields.each do |field| -%>
+- <%= field.humanize %>
+<% end -%>
+
+<% end -%>
+Thank you for keeping your student's information up to date!
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to student profile notifications.
+You can manage your email preferences in your account settings.

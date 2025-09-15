@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_many :user_students, dependent: :destroy
   has_many :students, through: :user_students
   has_many :marked_attendances, class_name: "Attendance", foreign_key: "marked_by_id", dependent: :destroy
+  has_many :email_subscriptions, dependent: :destroy
 
   # ---- Normalizations -----
   # Normalize email before validation
@@ -114,6 +115,33 @@ class User < ApplicationRecord
       "User"
     else
       role.humanize
+    end
+  end
+
+  # Email subscription methods
+  def subscribed_to?(subscription_type)
+    email_subscriptions.enabled.exists?(subscription_type: subscription_type)
+  end
+
+  def subscription_for(subscription_type)
+    email_subscriptions.find_by(subscription_type: subscription_type)
+  end
+
+  def enable_subscription(subscription_type)
+    subscription = email_subscriptions.find_or_initialize_by(subscription_type: subscription_type)
+    subscription.update(enabled: true)
+  end
+
+  def disable_subscription(subscription_type)
+    subscription = email_subscriptions.find_by(subscription_type: subscription_type)
+    subscription&.update(enabled: false)
+  end
+
+  def create_default_subscriptions!
+    EmailSubscription.default_subscriptions.each do |subscription_type|
+      email_subscriptions.find_or_create_by(subscription_type: subscription_type) do |subscription|
+        subscription.enabled = true
+      end
     end
   end
 

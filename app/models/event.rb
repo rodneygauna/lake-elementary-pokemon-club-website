@@ -17,6 +17,8 @@ class Event < ApplicationRecord
 
   # ----- Callbacks -----
   before_validation :set_default_time_zone, :set_default_address
+  after_create :send_new_event_notifications
+  after_update :send_event_update_notifications
 
   # ----- Scopes -----
   # Ordering
@@ -92,6 +94,47 @@ class Event < ApplicationRecord
   # ----- Instance Methods -----
   def ongoing?(time = Time.current)
     starts_at <= time && ends_at >= time
+  end
+
+  def event_datetime
+    # Return the starts_at time for display in emails
+    starts_at
+  end
+
+  def location
+    # Build location string from venue and address
+    parts = [ venue, address1, city, state ].compact.reject(&:blank?)
+    parts.join(", ")
+  end
+
+  def special_event?
+    # Return the special boolean attribute
+    special?
+  end
+
+  # Email notification methods
+  def send_new_event_notifications
+    # Only send notifications for published events
+    return unless published?
+
+    NotificationMailer.send_new_event_notifications(self)
+  end
+
+  def send_event_update_notifications
+    # Only send notifications if the event is published and significant fields changed
+    return unless published? && saved_changes.any?
+
+    # Track which fields changed for the notification
+    significant_changes = saved_changes.keys & %w[title starts_at ends_at venue address1 city state description]
+
+    if significant_changes.any?
+      # If status changed to canceled, send cancellation notification instead
+      if saved_changes.key?("status") && status == "canceled"
+        NotificationMailer.send_event_cancelled_notifications(self)
+      else
+        NotificationMailer.send_event_updated_notifications(self, significant_changes)
+      end
+    end
   end
 
   private

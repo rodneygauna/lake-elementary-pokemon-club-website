@@ -122,4 +122,75 @@ class AttendanceTest < ActiveSupport::TestCase
       assert_not_equal original_marked_at, @attendance.marked_at
     end
   end
+
+  # Test email notification callbacks
+  test "should send attendance notification when attendance is recorded" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @student)
+    EmailSubscription.create!(user: user, subscription_type: "student_attendance_updates", enabled: true)
+
+    assert_emails 1 do
+      Attendance.create!(
+        event: @event,
+        student: @student,
+        present: true,
+        marked_by: @admin
+      )
+    end
+  end
+
+  test "should send attendance notification when attendance status changes" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @attendance.student)
+    EmailSubscription.create!(user: user, subscription_type: "student_attendance_updates", enabled: true)
+
+    assert_emails 1 do
+      @attendance.update!(present: false)
+    end
+  end
+
+  test "should not send notification when no linked parents" do
+    # Student has no linked users
+    assert_emails 0 do
+      Attendance.create!(
+        event: @event,
+        student: @student,
+        present: true,
+        marked_by: @admin
+      )
+    end
+  end
+
+  test "should send notifications to multiple linked parents" do
+    user1 = users(:regular_user)
+    user2 = users(:admin_user)
+    UserStudent.create!(user: user1, student: @student)
+    UserStudent.create!(user: user2, student: @student)
+    EmailSubscription.create!(user: user1, subscription_type: "student_attendance_updates", enabled: true)
+    EmailSubscription.create!(user: user2, subscription_type: "student_attendance_updates", enabled: true)
+
+    assert_emails 2 do
+      Attendance.create!(
+        event: @event,
+        student: @student,
+        present: true,
+        marked_by: @admin
+      )
+    end
+  end
+
+  test "should not send notifications when user not subscribed" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @student)
+    EmailSubscription.create!(user: user, subscription_type: "student_attendance_updates", enabled: false)
+
+    assert_emails 0 do
+      Attendance.create!(
+        event: @event,
+        student: @student,
+        present: true,
+        marked_by: @admin
+      )
+    end
+  end
 end

@@ -10,7 +10,8 @@ class UserStudent < ApplicationRecord
   validates :student_id, uniqueness: { scope: :user_id }
 
   # ----- Callbacks -----
-  # None for now
+  after_create :send_student_linked_notification
+  after_destroy :send_student_unlinked_notification
 
   # ----- Scopes -----
   scope :by_user,    ->(user_id) { where(user_id: user_id) }
@@ -19,6 +20,15 @@ class UserStudent < ApplicationRecord
   # ----- Instance Methods -----
   def user_to_student_link
     "UserStudent: User##{user_id} <-> Student##{student_id}"
+  end
+
+  # Email notification methods
+  def send_student_linked_notification
+    NotificationMailer.send_student_linked_notification(user, student)
+  end
+
+  def send_student_unlinked_notification
+    NotificationMailer.send_student_unlinked_notification(user, student)
   end
 
   private

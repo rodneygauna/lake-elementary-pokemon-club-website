@@ -17,6 +17,7 @@ class Attendance < ApplicationRecord
 
   # ----- Callbacks -----
   before_save :set_marked_at_if_changed
+  after_save :send_attendance_notification
 
   # ----- Scopes -----
   # Ordering
@@ -44,6 +45,12 @@ class Attendance < ApplicationRecord
 
   def marked_by_name
     marked_by&.full_name || "Unknown"
+  end
+
+  # Email notification methods
+  def send_attendance_notification
+    # Send notification to parents/guardians of this student
+    NotificationMailer.send_student_attendance_notification(student, event, self)
   end
 
   private

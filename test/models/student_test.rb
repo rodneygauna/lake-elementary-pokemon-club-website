@@ -124,4 +124,65 @@ class StudentTest < ActiveSupport::TestCase
     message = @inactive_student.inactive_message
     assert_includes message, "inactive"
   end
+
+  # Test email notification callbacks
+  test "should send profile update notifications when significant fields change" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @active_student)
+    EmailSubscription.create!(user: user, subscription_type: "student_profile_updates", enabled: true)
+
+    assert_emails 1 do
+      @active_student.update!(first_name: "Updated Name")
+    end
+  end
+
+  test "should send notifications for multiple significant field changes" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @active_student)
+    EmailSubscription.create!(user: user, subscription_type: "student_profile_updates", enabled: true)
+
+    assert_emails 1 do
+      @active_student.update!(first_name: "New First", last_name: "New Last", grade: "4")
+    end
+  end
+
+  test "should not send notifications when no significant fields change" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @active_student)
+    EmailSubscription.create!(user: user, subscription_type: "student_profile_updates", enabled: true)
+
+    assert_emails 0 do
+      @active_student.update!(status: "active") # Same value, no change
+    end
+  end
+
+  test "should not send notifications for insignificant field changes" do
+    user = users(:regular_user)
+    UserStudent.create!(user: user, student: @active_student)
+    EmailSubscription.create!(user: user, subscription_type: "student_profile_updates", enabled: true)
+
+    assert_emails 0 do
+      @active_student.update!(teacher_name: "New Teacher") # Not in significant_changes list
+    end
+  end
+
+  test "should not send notifications when no linked parents" do
+    # Student has no linked users
+    assert_emails 0 do
+      @active_student.update!(first_name: "Updated Name")
+    end
+  end
+
+  test "should send notifications to multiple linked parents" do
+    user1 = users(:regular_user)
+    user2 = users(:admin_user)
+    UserStudent.create!(user: user1, student: @active_student)
+    UserStudent.create!(user: user2, student: @active_student)
+    EmailSubscription.create!(user: user1, subscription_type: "student_profile_updates", enabled: true)
+    EmailSubscription.create!(user: user2, subscription_type: "student_profile_updates", enabled: true)
+
+    assert_emails 2 do
+      @active_student.update!(grade: "4")
+    end
+  end
 end

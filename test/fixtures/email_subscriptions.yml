@@ -1,0 +1,36 @@
+# Email subscription fixtures for testing notification preferences
+
+admin_new_events:
+  user: admin_user
+  subscription_type: "new_event"
+  enabled: true
+
+admin_event_cancellations:
+  user: admin_user
+  subscription_type: "event_cancelled"
+  enabled: true
+
+regular_new_events:
+  user: regular_user
+  subscription_type: "new_event"
+  enabled: true
+
+regular_student_updates:
+  user: regular_user
+  subscription_type: "student_profile_updated"
+  enabled: true
+
+regular_attendance_updates:
+  user: regular_user
+  subscription_type: "student_attendance_updated"
+  enabled: false
+
+super_all_notifications:
+  user: super_user
+  subscription_type: "new_event"
+  enabled: true
+
+inactive_user_disabled:
+  user: inactive_user
+  subscription_type: "new_event"
+  enabled: false

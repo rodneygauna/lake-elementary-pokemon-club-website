@@ -1,0 +1,29 @@
+👨‍👩‍👧‍👦 STUDENT ADDED: <%= @student.first_name %> <%= @student.last_name %>
+
+Hi <%= @user.first_name %>,
+
+Great news! A student has been added to your account:
+
+STUDENT DETAILS:
+===============
+
+Name: <%= @student.first_name %> <%= @student.last_name %>
+Grade: <%= @student.grade_display %>
+<% if @student.pokemon_experience.present? -%>
+Pokémon Experience: <%= @student.pokemon_experience %>
+<% end -%>
+<% if @student.favorite_pokemon.present? -%>
+Favorite Pokémon: <%= @student.favorite_pokemon %>
+<% end -%>
+
+You can now view <%= @student.first_name %>'s information, attendance history, and receive updates about their club activities.
+
+Welcome to the <%= @club_name %> family!
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to student account notifications.
+You can manage your email preferences in your account settings.

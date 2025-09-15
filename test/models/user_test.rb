@@ -203,4 +203,50 @@ class UserTest < ActiveSupport::TestCase
     assert @super_user.can_manage_users?
     assert_not @regular_user.can_manage_users?
   end
+
+  # Test email subscription functionality
+  test "should have many email_subscriptions" do
+    assert_respond_to @regular_user, :email_subscriptions
+    assert_kind_of ActiveRecord::Associations::CollectionProxy, @regular_user.email_subscriptions
+  end
+
+  test "should have email subscription helper methods" do
+    assert_respond_to @regular_user, :subscribed_to?
+    assert_respond_to @regular_user, :subscription_for
+  end
+
+  test "subscribed_to? should return correct subscription status" do
+    # Create subscription
+    EmailSubscription.create!(user: @regular_user, subscription_type: "new_event", enabled: true)
+
+    assert @regular_user.subscribed_to?("new_event")
+    assert_not @regular_user.subscribed_to?("event_cancelled")
+  end
+
+  test "subscription_for should return correct subscription" do
+    subscription = EmailSubscription.create!(user: @regular_user, subscription_type: "new_event", enabled: true)
+
+    assert_equal subscription, @regular_user.subscription_for("new_event")
+    assert_nil @regular_user.subscription_for("event_cancelled")
+  end
+
+  test "should create default email subscriptions when user is created" do
+    user = User.create!(@valid_attributes)
+
+    # Should have all 7 subscription types
+    assert_equal 7, user.email_subscriptions.count
+
+    expected_types = %w[
+      new_event
+      event_cancelled
+      event_updated
+      student_attendance_updated
+      student_linked
+      student_unlinked
+      student_profile_updated
+    ]
+
+    created_types = user.email_subscriptions.pluck(:subscription_type).sort
+    assert_equal expected_types.sort, created_types
+  end
 end
