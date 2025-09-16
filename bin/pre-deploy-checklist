@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Production Deployment Checklist for Lake Elementary Pokémon Club Website
+# Run this script to prepare for your first Kamal deployment
+
+echo "🚀 Pre-Deployment Checklist for Kamal + DigitalOcean"
+echo "=================================================="
+echo ""
+
+# Check if we're in the right directory
+if [ ! -f "config/deploy.yml" ]; then
+    echo "❌ Error: Not in Rails root directory. Please run from project root."
+    exit 1
+fi
+
+echo "📋 Please complete these steps before running deployment:"
+echo ""
+
+echo "1. DigitalOcean Setup"
+echo "   ☐ Created Ubuntu 22.04 droplet (minimum 2GB RAM)"
+echo "   ☐ Noted droplet IP address: _________________"
+echo "   ☐ SSH access working: ssh root@YOUR_IP"
+echo ""
+
+echo "2. Domain Setup (Optional but Recommended)"
+echo "   ☐ Domain purchased: _________________________"
+echo "   ☐ A record points to droplet IP"
+echo "   ☐ DNS propagation complete (test with: nslookup yourdomain.com)"
+echo ""
+
+echo "3. Container Registry Setup"
+echo "   ☐ Docker Hub account created"
+echo "   ☐ Repository created: YOUR_USERNAME/lake_elementary_pokemon_club_website"
+echo "   ☐ Access token generated and saved"
+echo ""
+
+echo "4. Configuration Files to Update"
+echo "   ☐ config/deploy.yml - Update IP and domain"
+echo "   ☐ config/environments/production.rb - Update host"
+echo "   ☐ .kamal/secrets - Add registry password"
+echo ""
+
+echo "5. Environment Variables to Set"
+echo "   ☐ export KAMAL_REGISTRY_PASSWORD='your_token'"
+echo ""
+
+echo "✅ When all items are checked, run:"
+echo "   bin/kamal setup"
+echo "   bin/kamal deploy"
+echo ""
+
+# Check current configuration
+echo "🔍 Current Configuration Check:"
+echo "================================"
+
+# Check if master key exists
+if [ -f "config/master.key" ]; then
+    echo "✅ Rails master key exists"
+else
+    echo "❌ Rails master key missing - run: bin/rails credentials:edit"
+fi
+
+# Check deploy.yml placeholder values
+if grep -q "192.168.0.1" config/deploy.yml; then
+    echo "❌ deploy.yml contains placeholder IP (192.168.0.1)"
+else
+    echo "✅ deploy.yml IP appears to be updated"
+fi
+
+if grep -q "app.example.com" config/deploy.yml; then
+    echo "❌ deploy.yml contains placeholder domain (app.example.com)"
+else
+    echo "✅ deploy.yml domain appears to be updated"
+fi
+
+if grep -q "your-user" config/deploy.yml; then
+    echo "❌ deploy.yml contains placeholder username (your-user)"
+else
+    echo "✅ deploy.yml username appears to be updated"
+fi
+
+# Check environment variable
+if [ -z "$KAMAL_REGISTRY_PASSWORD" ]; then
+    echo "❌ KAMAL_REGISTRY_PASSWORD environment variable not set"
+else
+    echo "✅ KAMAL_REGISTRY_PASSWORD environment variable is set"
+fi
+
+echo ""
+echo "📖 For complete instructions, see: docs/PRODUCTION_DEPLOYMENT_GUIDE.md"

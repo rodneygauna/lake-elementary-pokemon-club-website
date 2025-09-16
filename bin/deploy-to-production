@@ -1,0 +1,243 @@
+#!/bin/bash
+
+# Quick Deployment Script for Lake Elementary Pokémon Club Website
+# This script helps you deploy safely to production
+
+set -e  # Exit on any error
+
+echo "🚀 Lake Elementary Pokémon Club - Kamal Deployment"
+echo "=================================================="
+echo ""
+
+# Function to prompt for user input
+prompt_user() {
+    local prompt_text="$1"
+    local var_name="$2"
+    local default_value="$3"
+
+    echo -n "$prompt_text"
+    if [ -n "$default_value" ]; then
+        echo -n " [$default_value]"
+    fi
+    echo -n ": "
+    read -r user_input
+
+    if [ -z "$user_input" ] && [ -n "$default_value" ]; then
+        user_input="$default_value"
+    fi
+
+    eval "$var_name='$user_input'"
+}
+
+# Check if we're in the right directory
+if [ ! -f "config/deploy.yml" ]; then
+    echo "❌ Error: config/deploy.yml not found. Please run from Rails root directory."
+    exit 1
+fi
+
+echo "🔍 Pre-deployment checks..."
+echo ""
+
+# Check for required files
+echo "📁 Checking required files:"
+required_files=("config/deploy.yml" "config/master.key" ".kamal/secrets" "Dockerfile")
+for file in "${required_files[@]}"; do
+    if [ -f "$file" ]; then
+        echo "  ✅ $file"
+    else
+        echo "  ❌ $file - MISSING!"
+        exit 1
+    fi
+done
+echo ""
+
+# Get deployment configuration from user
+echo "🔧 Deployment Configuration:"
+echo "Please provide the following information:"
+echo ""
+
+prompt_user "DigitalOcean Droplet IP" "DROPLET_IP"
+prompt_user "Your domain name (or leave blank for IP-only)" "DOMAIN_NAME"
+prompt_user "Docker Hub username" "DOCKER_USERNAME"
+prompt_user "Docker Hub repository name" "DOCKER_REPO" "lake-elementary-pokemon-club-website"
+
+if [ -z "$DROPLET_IP" ] || [ -z "$DOCKER_USERNAME" ]; then
+    echo "❌ Error: Droplet IP and Docker username are required."
+    exit 1
+fi
+
+echo ""
+echo "📝 Configuration Summary:"
+echo "  Server IP: $DROPLET_IP"
+echo "  Domain: ${DOMAIN_NAME:-"IP-only deployment"}"
+echo "  Docker Hub: $DOCKER_USERNAME/$DOCKER_REPO"
+echo ""
+
+# Ask for confirmation
+echo -n "🤔 Does this look correct? (y/N): "
+read -r confirm
+if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo "❌ Deployment cancelled."
+    exit 1
+fi
+
+echo ""
+echo "🔧 Updating configuration files..."
+
+# Update deploy.yml
+echo "  📝 Updating config/deploy.yml..."
+
+# Create backup
+cp config/deploy.yml config/deploy.yml.backup
+
+# Update the file
+sed -i "s/192\.168\.0\.1/$DROPLET_IP/g" config/deploy.yml
+sed -i "s/your-user/$DOCKER_USERNAME/g" config/deploy.yml
+sed -i "s/lake_elementary_pokemon_club_website/$DOCKER_REPO/g" config/deploy.yml
+
+if [ -n "$DOMAIN_NAME" ]; then
+    sed -i "s/app\.example\.com/$DOMAIN_NAME/g" config/deploy.yml
+else
+    # For IP-only deployment, disable SSL
+    sed -i "s/ssl: true/ssl: false/g" config/deploy.yml
+    sed -i "s/host: app.example.com/host: $DROPLET_IP/g" config/deploy.yml
+fi
+
+echo "  ✅ deploy.yml updated"
+
+# Check environment variables
+echo ""
+echo "🔐 Checking environment variables..."
+
+if [ -z "$KAMAL_REGISTRY_PASSWORD" ]; then
+    echo "❌ KAMAL_REGISTRY_PASSWORD not set!"
+    echo "Please run: export KAMAL_REGISTRY_PASSWORD='your_docker_hub_token'"
+    exit 1
+else
+    echo "  ✅ KAMAL_REGISTRY_PASSWORD is set"
+fi
+
+# Test server connection
+echo ""
+echo "🔌 Testing server connection..."
+if ssh -o ConnectTimeout=10 -o BatchMode=yes root@"$DROPLET_IP" exit 2>/dev/null; then
+    echo "  ✅ SSH connection successful"
+else
+    echo "  ❌ Cannot connect to server via SSH"
+    echo "  Please ensure:"
+    echo "    - Server is running"
+    echo "    - SSH key is configured"
+    echo "    - IP address is correct"
+    exit 1
+fi
+
+# Ask about database seeding
+echo ""
+echo "💾 Database Configuration:"
+echo -n "🤔 This is your first deployment - seed database with admin user? (Y/n): "
+read -r seed_db
+if [[ ! "$seed_db" =~ ^[Nn]$ ]]; then
+    SEED_DATABASE=true
+else
+    SEED_DATABASE=false
+fi
+
+echo ""
+echo "🚀 Ready to deploy!"
+echo "This will:"
+echo "  1. Build Docker image locally"
+echo "  2. Push to Docker Hub"
+echo "  3. Set up server environment"
+echo "  4. Deploy application"
+if [ "$DOMAIN_NAME" ]; then
+    echo "  5. Configure SSL certificate"
+fi
+if [ "$SEED_DATABASE" = true ]; then
+    echo "  6. Set up database and create admin user"
+fi
+
+echo ""
+echo -n "🚀 Start deployment? (Y/n): "
+read -r start_deploy
+if [[ "$start_deploy" =~ ^[Nn]$ ]]; then
+    echo "❌ Deployment cancelled."
+    exit 1
+fi
+
+echo ""
+echo "🏗️ Starting deployment..."
+
+# Run Kamal setup (first time only)
+echo "📦 Setting up Kamal environment..."
+if bin/kamal setup; then
+    echo "  ✅ Kamal setup successful"
+else
+    echo "  ❌ Kamal setup failed"
+    exit 1
+fi
+
+# Deploy the application
+echo ""
+echo "🚀 Deploying application..."
+if bin/kamal deploy; then
+    echo "  ✅ Application deployed successfully"
+else
+    echo "  ❌ Deployment failed"
+    exit 1
+fi
+
+# Set up database if requested
+if [ "$SEED_DATABASE" = true ]; then
+    echo ""
+    echo "💾 Setting up database..."
+
+    echo "  📊 Creating database..."
+    bin/kamal app exec "bin/rails db:create"
+
+    echo "  🔄 Running migrations..."
+    bin/kamal app exec "bin/rails db:migrate"
+
+    echo "  🌱 Seeding database..."
+    bin/kamal app exec "bin/rails db:seed"
+
+    echo "  ✅ Database setup complete"
+fi
+
+echo ""
+echo "🎉 Deployment Complete!"
+echo "======================="
+echo ""
+
+if [ -n "$DOMAIN_NAME" ]; then
+    echo "🌐 Your application is available at: https://$DOMAIN_NAME"
+else
+    echo "🌐 Your application is available at: http://$DROPLET_IP"
+fi
+
+echo ""
+echo "🔑 Admin Login Information:"
+echo "  📧 Email: admin@pokemonclub.test"
+echo "  🔐 Password: password123"
+echo ""
+echo "🚨 IMPORTANT NEXT STEPS:"
+echo "  1. Login immediately and change the admin password"
+echo "  2. Create your real admin account with your email"
+echo "  3. Deactivate or update the default admin account"
+echo ""
+
+if [ -n "$DOMAIN_NAME" ]; then
+    echo "🔒 SSL Certificate should be automatically configured"
+    echo "   If you see certificate errors, wait a few minutes and try again"
+    echo ""
+fi
+
+echo "📚 Useful commands:"
+echo "  📝 View logs:     bin/kamal app logs"
+echo "  🔄 Redeploy:      bin/kamal deploy"
+echo "  💻 Rails console: bin/kamal app exec --interactive --reuse 'bin/rails console'"
+echo "  🐚 SSH to app:    bin/kamal app exec --interactive --reuse 'bash'"
+echo ""
+
+echo "📖 For more information, see: docs/PRODUCTION_DEPLOYMENT_GUIDE.md"
+echo ""
+echo "✨ Happy Pokémon Club managing! ✨"
