@@ -724,7 +724,7 @@ sample_documents.each do |doc_data|
   puts "   ✓ #{document.title} (#{document.document_type})"
 end
 
-puts "\n📄 Documents: #{Document.count}"
+puts "\nDocuments: #{Document.count}"
 puts "   - Link Documents: #{Document.where(document_type: 'link').count}"
 puts "   - File Documents: #{Document.where(document_type: 'file').count}"
 
@@ -739,7 +739,7 @@ all_users.each do |user|
   subscription_count += user.email_subscriptions.count
 end
 
-puts "\n📧 Email Subscriptions: #{EmailSubscription.count}"
+puts "\nEmail Subscriptions: #{EmailSubscription.count}"
 puts "   - Total Users with Subscriptions: #{User.joins(:email_subscriptions).distinct.count}"
 puts "   - Enabled Subscriptions: #{EmailSubscription.enabled.count}"
 puts "   - Disabled Subscriptions: #{EmailSubscription.disabled.count}"
