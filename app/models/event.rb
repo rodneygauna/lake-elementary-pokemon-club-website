@@ -124,6 +124,13 @@ class Event < ApplicationRecord
     # Only send notifications if there are changes
     return unless saved_changes.any?
 
+    # Check if this was a status change from draft to published
+    if saved_changes.key?("status") && saved_changes["status"][0] == "draft" && status == "published"
+      # Treat draft->published as a new event
+      NotificationJob.perform_later("new_event", id)
+      return
+    end
+
     # Check if this was a published event (either still published or was published before cancellation)
     was_published = saved_changes.key?("status") ? saved_changes["status"][0] == "published" : published?
     return unless was_published || published?
