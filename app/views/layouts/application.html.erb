@@ -76,7 +76,7 @@
                   <i class="fas fa-user-circle me-2"></i>
                   <%= current_user&.first_name || "User" %>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu dropdown-menu-end">
                   <li><%= link_to "Profile", user_path, class: "dropdown-item" %></li>
                   <% if current_user.respond_to?(:admin_level?) && current_user.admin_level? %>
                     <li><hr class="dropdown-divider"></li>
