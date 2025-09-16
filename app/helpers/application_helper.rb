@@ -19,6 +19,8 @@ module ApplicationHelper
       "New Parent Added"
     when "parent_unlinked"
       "Parent Removed"
+    when "user_profile_updated"
+      "Your Profile Changes"
     else
       type_key.humanize
     end
@@ -44,6 +46,8 @@ module ApplicationHelper
       "Get notified when another parent is linked to your student"
     when "parent_unlinked"
       "Receive alerts when another parent is removed from your student"
+    when "user_profile_updated"
+      "Get notified when your profile information is changed (including by administrators)"
     else
       "Receive notifications for #{type_key.humanize.downcase}"
     end

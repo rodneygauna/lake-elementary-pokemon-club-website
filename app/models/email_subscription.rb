@@ -9,7 +9,8 @@ class EmailSubscription < ApplicationRecord
     student_unlinked: "student_unlinked",
     student_profile_updated: "student_profile_updated",
     new_parent_linked: "new_parent_linked",
-    parent_unlinked: "parent_unlinked"
+    parent_unlinked: "parent_unlinked",
+    user_profile_updated: "user_profile_updated"
   }
 
   # Associations

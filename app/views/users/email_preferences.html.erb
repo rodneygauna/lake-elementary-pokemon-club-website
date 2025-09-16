@@ -108,7 +108,7 @@
               Account Management
             </h5>
             <div class="row">
-              <% %w[student_linked student_unlinked new_parent_linked parent_unlinked].each do |type_key| %>
+              <% %w[student_linked student_unlinked new_parent_linked parent_unlinked user_profile_updated].each do |type_key| %>
                 <% subscription = @user.email_subscriptions.find_by(subscription_type: type_key) %>
                 <% is_enabled = subscription&.enabled || false %>
 
@@ -147,7 +147,7 @@
         <ul class="mb-0">
           <li><strong>Club Events:</strong> Stay informed about new events, cancellations, and changes to club meetings and activities.</li>
           <li><strong>Student Information:</strong> Receive updates when your linked students' attendance is marked or profile information changes.</li>
-          <li><strong>Account Management:</strong> Get notified when students or parents are added to or removed from accounts you have access to.</li>
+          <li><strong>Account Management:</strong> Get notified when students or parents are added to or removed from accounts you have access to, and when your own profile is updated.</li>
           <li><strong>Email Delivery:</strong> All notifications are sent immediately when events occur to keep you up-to-date.</li>
         </ul>
       </div>

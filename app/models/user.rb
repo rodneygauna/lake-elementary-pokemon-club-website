@@ -21,7 +21,7 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   # ----- Callbacks -----
-  # None for now
+  after_update :send_profile_update_notification
 
   # ----- Scopes -----
   # Ordering
@@ -148,5 +148,41 @@ class User < ApplicationRecord
 
   private
   # ----- Private Methods -----
-  # None for now
+
+  def send_profile_update_notification
+    # Only send notification if there were actual changes and user is subscribed
+    return unless saved_changes.any?
+    return unless subscribed_to?(:user_profile_updated)
+
+    # Get the changed fields (excluding timestamps)
+    changed_fields = saved_changes.keys.reject { |field| field.in?(%w[updated_at created_at]) }
+    return if changed_fields.empty?
+
+    # Determine if this was changed by an admin
+    # In a real application, this would be tracked through the controller or session
+    # For now, we'll assume any change to role/status by someone other than the user is admin
+    changed_by_admin = false
+    admin_user = nil
+
+    # Check if Current has a session and user
+    if defined?(Current) && Current.session && Current.user
+      current_user = Current.user
+      if current_user != self && (current_user.admin_level? || current_user.super_user?)
+        changed_by_admin = true
+        admin_user = current_user
+      end
+    end
+
+    # Send the notification
+    begin
+      NotificationMailer.user_profile_updated(
+        self,
+        changed_fields,
+        changed_by_admin,
+        admin_user
+      ).deliver_later
+    rescue => e
+      Rails.logger.error "Failed to send user profile update notification for user #{id}: #{e.message}"
+    end
+  end
 end

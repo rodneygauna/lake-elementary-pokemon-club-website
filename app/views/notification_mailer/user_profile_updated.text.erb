@@ -1,0 +1,45 @@
+🔐 PROFILE UPDATED: <%= @user.first_name %> <%= @user.last_name %>
+
+Hi <%= @user.first_name %>,
+
+<% if @changed_by_admin && @admin_user %>
+🔒 IMPORTANT: Your profile was updated by an administrator (<%= @admin_user.first_name %> <%= @admin_user.last_name %>).
+<% else %>
+Your profile has been successfully updated.
+<% end %>
+
+<% if @changed_fields.any? %>
+CHANGES MADE:
+=============
+
+<% @changed_fields.each do |field| %>
+• <%= case field.to_s
+        when 'first_name' then '👤 First Name'
+        when 'last_name' then '👤 Last Name'
+        when 'email_address' then '📧 Email Address'
+        when 'phone_number' then '📱 Phone Number'
+        when 'password_digest' then '🔑 Password'
+        when 'role' then '🎭 Role'
+        when 'status' then '📊 Account Status'
+        else field.to_s.humanize
+        end %>: <% if field.to_s == 'password_digest' %>Your password has been changed<% else %>Updated<% end %>
+<% end %>
+<% end %>
+
+<% if @changed_fields.include?('password_digest') %>
+⚠️  SECURITY NOTICE: Your password has been changed. If you did not make this change, please contact an administrator immediately.
+<% end %>
+
+<% if @changed_fields.include?('email_address') %>
+📧 EMAIL CHANGE NOTICE: Your email address has been updated. Please ensure you can access this new email address for future communications.
+<% end %>
+
+If you have any questions about these changes, please don't hesitate to contact us.
+
+Thank you for being part of the <%= @club_name %>!
+
+Best regards,
+The <%= @club_name %> Team
+
+---
+This email was sent because your profile information was updated.

@@ -115,6 +115,27 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  # 3.9. User profile updated
+  def user_profile_updated(user, changed_fields = [], changed_by_admin = false, admin_user = nil)
+    @user = user
+    @changed_fields = changed_fields
+    @changed_by_admin = changed_by_admin
+    @admin_user = admin_user
+    @club_name = "Lake Elementary Pokémon Club"
+
+    # Different subject line based on who made the change
+    subject = if @changed_by_admin && @admin_user
+      "🔒 Your Profile Was Updated by an Administrator"
+    else
+      "📝 Your Profile Has Been Updated"
+    end
+
+    mail(
+      to: @user.email_address,
+      subject: subject
+    )
+  end
+
   private
 
   # Helper method to get subscribed users for a notification type

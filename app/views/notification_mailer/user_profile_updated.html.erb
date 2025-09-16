@@ -1,0 +1,247 @@
+<!-- BEGIN app/views/layouts/mailer.html.erb --><!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+      /* Email styles need to be inline or in <style> tag */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background: linear-gradient(135deg, #0084FF 0%, #0066CC 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .header .subtitle {
+        margin: 8px 0 0 0;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .greeting {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #2c3e50;
+      }
+
+      .profile-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 24px;
+        margin: 20px 0;
+        border-left: 4px solid #0084FF;
+      }
+
+      .profile-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .profile-title .icon {
+        margin-right: 8px;
+        font-size: 20px;
+      }
+
+      .changes-list {
+        margin: 16px 0;
+      }
+
+      .change-item {
+        background-color: #ffffff;
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-left: 3px solid #28a745;
+      }
+
+      .change-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .field-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .security-notice {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 20px 0;
+      }
+
+      .security-notice .icon {
+        color: #f39c12;
+        margin-right: 8px;
+      }
+
+      .admin-notice {
+        background-color: #e7f3ff;
+        border: 1px solid #b3d9ff;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 20px 0;
+      }
+
+      .admin-notice .icon {
+        color: #0084FF;
+        margin-right: 8px;
+      }
+
+      .footer-message {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+        color: #6c757d;
+        font-size: 14px;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background-color: #0084FF;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        margin: 16px 0;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      @media screen and (max-width: 600px) {
+        .email-container {
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .header, .content {
+          padding: 20px;
+        }
+
+        .profile-card {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>🔐 Profile Updated</h1>
+        <p class="subtitle"><%= @club_name %></p>
+      </div>
+
+      <div class="content">
+        <div class="greeting">
+          Hi <%= @user.first_name %>,
+        </div>
+
+        <% if @changed_by_admin && @admin_user %>
+          <div class="admin-notice">
+            <span class="icon">🔒</span>
+            <strong>Important:</strong> Your profile was updated by an administrator (<%= @admin_user.first_name %> <%= @admin_user.last_name %>).
+          </div>
+        <% else %>
+          <p>Your profile has been successfully updated.</p>
+        <% end %>
+
+        <% if @changed_fields.any? %>
+          <div class="profile-card">
+            <div class="profile-title">
+              <span class="icon">📝</span>
+              Changes Made
+            </div>
+
+            <div class="changes-list">
+              <% @changed_fields.each do |field| %>
+                <div class="change-item">
+                  <div class="field-label">
+                    <%= case field.to_s
+                        when 'first_name' then '👤 First Name'
+                        when 'last_name' then '👤 Last Name'
+                        when 'email_address' then '📧 Email Address'
+                        when 'phone_number' then '📱 Phone Number'
+                        when 'password_digest' then '🔑 Password'
+                        when 'role' then '🎭 Role'
+                        when 'status' then '📊 Account Status'
+                        else field.to_s.humanize
+                        end %>
+                  </div>
+                  <% if field.to_s == 'password_digest' %>
+                    <div style="color: #6c757d; font-style: italic;">Your password has been changed</div>
+                  <% else %>
+                    <div>Updated</div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @changed_fields.include?('password_digest') %>
+          <div class="security-notice">
+            <span class="icon">⚠️</span>
+            <strong>Security Notice:</strong> Your password has been changed. If you did not make this change, please contact an administrator immediately.
+          </div>
+        <% end %>
+
+        <% if @changed_fields.include?('email_address') %>
+          <div class="security-notice">
+            <span class="icon">📧</span>
+            <strong>Email Change Notice:</strong> Your email address has been updated. Please ensure you can access this new email address for future communications.
+          </div>
+        <% end %>
+
+        <p>If you have any questions about these changes, please don't hesitate to contact us.</p>
+
+        <div class="footer-message">
+          <p>Thank you for being part of the <%= @club_name %>!</p>
+
+          <p>Best regards,<br>
+             The <%= @club_name %> Team</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+<!-- END app/views/layouts/mailer.html.erb -->
