@@ -1,0 +1,44 @@
+🎉 Welcome to <%= @club_name %>!
+
+Hi <%= @user.first_name %>,
+
+<% if @created_by_admin && @admin_user -%>
+👨‍💼 ACCOUNT CREATED: Your account was created by <%= @admin_user.first_name %> <%= @admin_user.last_name %>.
+
+<% end -%>
+Welcome to the <%= @club_name %>! Your account has been successfully created and you now have access to our club management system. You can view events, manage your student information, and stay connected with our community.
+
+🔑 YOUR LOGIN CREDENTIALS
+==========================
+
+Email Address: <%= @user.email_address %>
+Temporary Password: <%= @temporary_password %>
+
+🔒 IMPORTANT SECURITY NOTICE
+Please change your password immediately after your first login. This temporary password should only be used once.
+
+🚀 GET STARTED
+==============
+
+1. Visit our website: <%= @login_url %>
+2. Enter your email and temporary password from this email
+3. Change your password to something secure and memorable
+4. Complete your profile with your phone number and other details
+5. Explore the system - view events, manage students, and adjust notification preferences
+
+WHAT YOU CAN DO:
+📅 View and register for club events
+👥 Manage your students' information
+📊 Track attendance and participation
+📧 Customize your notification preferences
+🤝 Connect with other club families
+
+If you have any questions or need assistance getting started, please don't hesitate to reach out to us. We're here to help!
+
+Thank you for joining the <%= @club_name %>!
+
+Best regards,
+The <%= @club_name %> Team
+
+---
+Note: This is an automated welcome email sent when your account was created.

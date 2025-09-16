@@ -582,4 +582,55 @@ end
   end    end
 
 end  end
+
+  # ----- Welcome Email Tests -----
+  test "new_user_welcome generates email with correct content" do
+    temp_password = "TempPass123"
+
+    email = NotificationMailer.new_user_welcome(@user, temp_password, false, nil)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [@user.email_address], email.to
+    assert_equal "🎉 Welcome to Lake Elementary Pokémon Club!", email.subject
+    assert_not email.body.to_s.blank?
+    assert_match @user.first_name, email.body.to_s
+    assert_match temp_password, email.body.to_s
+    assert_match "temporary password", email.body.to_s.downcase
+    assert_match "change your password", email.body.to_s.downcase
+  end
+
+  test "new_user_welcome includes admin context when created by admin" do
+    temp_password = "AdminPass456"
+
+    email = NotificationMailer.new_user_welcome(@user, temp_password, true, @admin)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [@user.email_address], email.to
+    assert_match @admin.first_name, email.body.to_s
+    assert_match "created by", email.body.to_s.downcase
+  end
+
+  test "new_user_welcome includes both HTML and text parts" do
+    temp_password = "TestPass789"
+
+    email = NotificationMailer.new_user_welcome(@user, temp_password, false, nil)
+
+    assert_equal 2, email.parts.size
+    assert_includes email.parts.map(&:content_type), "text/html; charset=UTF-8"
+    assert_includes email.parts.map(&:content_type), "text/plain; charset=UTF-8"
+
+    # Check both parts contain the password
+    html_part = email.parts.find { |part| part.content_type.include?("html") }
+    text_part = email.parts.find { |part| part.content_type.include?("plain") }
+
+    assert_match temp_password, html_part.body.to_s
+    assert_match temp_password, text_part.body.to_s
+  end
+
 end

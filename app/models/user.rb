@@ -21,6 +21,8 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   # ----- Callbacks -----
+  after_create :create_default_subscriptions!
+  after_create :send_welcome_email
   after_update :send_profile_update_notification
 
   # ----- Scopes -----
@@ -146,8 +148,49 @@ class User < ApplicationRecord
     end
   end
 
+  # ----- Welcome Email Support -----
+  # Accessor for temporary password to send in welcome email
+  attr_accessor :temporary_password_for_email
+
   private
   # ----- Private Methods -----
+
+  def send_welcome_email
+    # Only send welcome email if temporary password was provided
+    return unless temporary_password_for_email.present?
+
+    # Determine if this was created by an admin
+    created_by_admin = false
+    admin_user = nil
+
+    # Check if Current has a session and user (admin creating the account)
+    if defined?(Current) && Current.session && Current.user
+      current_user = Current.user
+      if current_user.admin_level?
+        created_by_admin = true
+        admin_user = current_user
+      end
+    end
+
+    # Send the welcome email (no subscription check needed - always send)
+    begin
+      email = NotificationMailer.new_user_welcome(
+        self,
+        temporary_password_for_email,
+        created_by_admin,
+        admin_user
+      )
+
+      # Use deliver_now in test environment, deliver_later in others
+      if Rails.env.test?
+        email.deliver_now
+      else
+        email.deliver_later
+      end
+    rescue => e
+      Rails.logger.error "Failed to send welcome email for user #{id}: #{e.message}"
+    end
+  end
 
   def send_profile_update_notification
     # Only send notification if there were actual changes and user is subscribed

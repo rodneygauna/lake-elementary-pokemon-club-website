@@ -136,6 +136,21 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  # 3.10. Welcome email for new user
+  def new_user_welcome(user, temporary_password, created_by_admin = false, admin_user = nil)
+    @user = user
+    @temporary_password = temporary_password
+    @created_by_admin = created_by_admin
+    @admin_user = admin_user
+    @club_name = "Lake Elementary Pokémon Club"
+    @login_url = new_session_url
+
+    mail(
+      to: @user.email_address,
+      subject: "🎉 Welcome to #{@club_name}!"
+    )
+  end
+
   private
 
   # Helper method to get subscribed users for a notification type

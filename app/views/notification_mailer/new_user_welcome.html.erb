@@ -1,0 +1,298 @@
+<!-- BEGIN app/views/layouts/mailer.html.erb --><!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+      /* Email styles need to be inline or in <style> tag */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background: linear-gradient(135deg, #0084FF 0%, #0066CC 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+      }
+
+      .header .subtitle {
+        margin: 8px 0 0 0;
+        font-size: 18px;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .greeting {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #2c3e50;
+      }
+
+      .welcome-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 24px;
+        margin: 20px 0;
+        border-left: 4px solid #28a745;
+      }
+
+      .credentials-card {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 24px;
+        margin: 20px 0;
+      }
+
+      .credentials-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #856404;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .credentials-title .icon {
+        margin-right: 8px;
+        font-size: 20px;
+      }
+
+      .credential-item {
+        background-color: #ffffff;
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 12px;
+        border: 1px solid #f0e68c;
+      }
+
+      .credential-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .credential-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+
+      .credential-value {
+        font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+        font-size: 16px;
+        color: #2c3e50;
+        background-color: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        word-break: break-all;
+      }
+
+      .security-notice {
+        background-color: #ffeef0;
+        border: 1px solid #f5c6cb;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 20px 0;
+      }
+
+      .security-notice .icon {
+        color: #dc3545;
+        margin-right: 8px;
+      }
+
+      .admin-notice {
+        background-color: #e7f3ff;
+        border: 1px solid #b3d9ff;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 20px 0;
+      }
+
+      .admin-notice .icon {
+        color: #0084FF;
+        margin-right: 8px;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background-color: #28a745;
+        color: white;
+        padding: 16px 32px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        margin: 20px 0;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      .cta-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+
+      .steps-list {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .steps-list ol {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .steps-list li {
+        margin-bottom: 12px;
+        color: #495057;
+      }
+
+      .footer-message {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+        color: #6c757d;
+        font-size: 14px;
+      }
+
+      @media screen and (max-width: 600px) {
+        .email-container {
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .header, .content {
+          padding: 20px;
+        }
+
+        .welcome-card, .credentials-card {
+          padding: 16px;
+        }
+
+        .cta-button {
+          display: block;
+          width: 100%;
+          box-sizing: border-box;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>🎉 Welcome!</h1>
+        <p class="subtitle"><%= @club_name %></p>
+      </div>
+
+      <div class="content">
+        <div class="greeting">
+          Hi <%= @user.first_name %>,
+        </div>
+
+        <% if @created_by_admin && @admin_user %>
+          <div class="admin-notice">
+            <span class="icon">👨‍💼</span>
+            <strong>Account Created:</strong> Your account was created by <%= @admin_user.first_name %> <%= @admin_user.last_name %>.
+          </div>
+        <% end %>
+
+        <div class="welcome-card">
+          <p><strong>Welcome to the <%= @club_name %>!</strong></p>
+          <p>Your account has been successfully created and you now have access to our club management system. You can view events, manage your student information, and stay connected with our community.</p>
+        </div>
+
+        <div class="credentials-card">
+          <div class="credentials-title">
+            <span class="icon">🔑</span>
+            Your Login Credentials
+          </div>
+
+          <div class="credential-item">
+            <div class="credential-label">Email Address</div>
+            <div class="credential-value"><%= @user.email_address %></div>
+          </div>
+
+          <div class="credential-item">
+            <div class="credential-label">Temporary Password</div>
+            <div class="credential-value"><%= @temporary_password %></div>
+          </div>
+        </div>
+
+        <div class="security-notice">
+          <span class="icon">🔒</span>
+          <strong>Important Security Notice:</strong> Please change your password immediately after your first login. This temporary password should only be used once.
+        </div>
+
+        <div class="cta-container">
+          <a href="<%= @login_url %>" class="cta-button">
+            🚀 Login to Your Account
+          </a>
+        </div>
+
+        <div class="steps-list">
+          <h4 style="margin-top: 0; color: #2c3e50;">Getting Started:</h4>
+          <ol>
+            <li><strong>Click the login button above</strong> or visit our website</li>
+            <li><strong>Enter your email and temporary password</strong> from this email</li>
+            <li><strong>Change your password</strong> to something secure and memorable</li>
+            <li><strong>Complete your profile</strong> with your phone number and other details</li>
+            <li><strong>Explore the system</strong> - view events, manage students, and adjust your notification preferences</li>
+          </ol>
+        </div>
+
+        <div style="background-color: #e7f3ff; padding: 16px; border-radius: 6px; margin: 20px 0;">
+          <h4 style="margin-top: 0; color: #0084FF;">What You Can Do:</h4>
+          <ul style="margin-bottom: 0;">
+            <li>📅 View and register for club events</li>
+            <li>👥 Manage your students' information</li>
+            <li>📊 Track attendance and participation</li>
+            <li>📧 Customize your notification preferences</li>
+            <li>🤝 Connect with other club families</li>
+          </ul>
+        </div>
+
+        <p>If you have any questions or need assistance getting started, please don't hesitate to reach out to us. We're here to help!</p>
+
+        <div class="footer-message">
+          <p>Thank you for joining the <%= @club_name %>!</p>
+
+          <p>Best regards,<br>
+             The <%= @club_name %> Team</p>
+
+          <p style="font-size: 12px; color: #999;">
+            <strong>Note:</strong> This is an automated welcome email sent when your account was created.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+<!-- END app/views/layouts/mailer.html.erb -->

@@ -34,9 +34,10 @@ class Admin::UsersController < ApplicationController
     temp_password = SecureRandom.alphanumeric(12)
     @user.password = temp_password
     @user.password_confirmation = temp_password
+    @user.temporary_password_for_email = temp_password
 
     if @user.save
-      redirect_to admin_user_path(@user), notice: "User was successfully created. Temporary password: #{temp_password}"
+      redirect_to admin_user_path(@user), notice: "User was successfully created and welcome email sent."
     else
       render :new, status: :unprocessable_entity
     end
