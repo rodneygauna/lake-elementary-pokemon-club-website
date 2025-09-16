@@ -1,2 +1,36 @@
-You can reset your password within the next 15 minutes on this password reset page:
+🔐 Password Reset - Lake Elementary Pokémon Club
+
+Hi <%= @user.first_name %>,
+
+We received a request to reset your password for your Lake Elementary Pokémon Club account. If you didn't make this request, you can safely ignore this email.
+
+🔑 PASSWORD RESET REQUEST
+=========================
+
+Account: <%= @user.email_address %>
+Name: <%= @user.full_name %>
+
+⏰ TIME SENSITIVE
+This password reset link will expire in 15 minutes for your security.
+
+🔐 RESET YOUR PASSWORD
+Click or copy this link to reset your password:
 <%= edit_password_url(@user.password_reset_token) %>
+
+NEXT STEPS:
+1. Click the link above to access the password reset form
+2. Enter your new password - make it secure and memorable
+3. Confirm your new password by typing it again
+4. Save your changes and log in with your new password
+
+🔒 SECURITY NOTICE
+If you didn't request this password reset, please contact us immediately. Your account security is important to us.
+
+If you're having trouble with the link above, copy and paste the following URL into your web browser:
+<%= edit_password_url(@user.password_reset_token) %>
+
+Best regards,
+The Lake Elementary Pokémon Club Team
+
+---
+Note: This is an automated security email sent when a password reset was requested.
