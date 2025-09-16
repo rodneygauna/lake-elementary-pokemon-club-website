@@ -53,7 +53,14 @@ export default class extends Controller {
       headerToolbar: {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth",
+        right: "",
+      },
+
+      // Custom button text
+      buttonText: {
+        prev: "Previous",
+        next: "Next",
+        today: "Today",
       },
 
       // Pokemon theme colors

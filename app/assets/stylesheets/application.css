@@ -247,3 +247,36 @@
     font-size: 0.8rem !important;
   }
 }
+
+/* FullCalendar Styling */
+/* Remove link styling from day headers and day numbers */
+.fc-col-header-cell a,
+.fc-daygrid-day-number {
+  color: #212529 !important;
+  text-decoration: none !important;
+  cursor: default !important;
+}
+
+.fc-col-header-cell a:hover,
+.fc-daygrid-day-number:hover {
+  color: #212529 !important;
+  text-decoration: none !important;
+}
+
+/* Style day headers to look like regular text */
+.fc-col-header-cell {
+  font-weight: 600;
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+/* Style day numbers to look like regular text */
+.fc-daygrid-day-number {
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+/* Ensure day cells don't have hover effects */
+.fc-daygrid-day-frame:hover {
+  background-color: transparent;
+}

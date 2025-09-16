@@ -62,7 +62,7 @@
             </div>
 
             <!-- Filters -->
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap align-items-center gap-2">
               <!-- Type Filter -->
               <div class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -77,24 +77,31 @@
               </div>
 
               <!-- Cancelled Events Toggle -->
-              <div class="form-check form-switch">
-                <%= form_with url: events_path, method: :get, local: true, class: "d-inline" do |form| %>
+              <div class="form-check form-switch d-flex align-items-center">
+                <input class="form-check-input" type="checkbox" role="switch" id="showCancelledToggle"
+                       <%= params[:show_cancelled] == 'true' ? 'checked' : '' %>
+                       onchange="this.form.submit()">
+                <label class="form-check-label" for="showCancelledToggle">
+                  <i class="fas fa-eye-slash me-1"></i>Show Cancelled Events
+                </label>
+                <%= form_with url: events_path, method: :get, local: true, class: "d-none", id: "filterForm" do |form| %>
                   <%= form.hidden_field :view, value: @view_mode %>
                   <%= form.hidden_field :type, value: params[:type] %>
-                  <%= form.check_box :show_cancelled,
-                      {
-                        checked: params[:show_cancelled] == "true",
-                        class: "form-check-input",
-                        onchange: "this.form.submit();"
-                      },
-                      "true", "false" %>
-                  <%= form.label :show_cancelled, "Show cancelled events", class: "form-check-label" %>
+                  <%= form.hidden_field :show_cancelled, id: "showCancelledField", value: params[:show_cancelled] == 'true' ? 'false' : 'true' %>
                 <% end %>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+<script>
+  document.getElementById('showCancelledToggle').addEventListener('change', function() {
+    const hiddenField = document.getElementById('showCancelledField');
+    hiddenField.value = this.checked ? 'true' : 'false';
+    document.getElementById('filterForm').submit();
+  });
+</script>
 
       <!-- Events Display -->
       <% if @events.any? %>
