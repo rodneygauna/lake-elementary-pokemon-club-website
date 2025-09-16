@@ -1,4 +1,4 @@
-require "test_helper"require "test_helper"require "test_helper"
+require "test_helper"require "test_helper"require "test_helper"require "test_helper"
 
 
 
@@ -6,87 +6,175 @@ class NotificationMailerTest < ActionMailer::TestCase
 
   def setup
 
-    @user = users(:regular_user)class NotificationMailerTest < ActionMailer::TestCaseclass NotificationMailerTest < ActionMailer::TestCase
+    @user = users(:regular_user)class NotificationMailerTest < ActionMailer::TestCase
 
     @admin = users(:admin_user)
 
-    @event = events(:one)  def setup  def setup
+    @event = events(:one)  def setup
 
     @student = students(:one)
 
-    @attendance = attendances(:present_attendance)    @user = users(:regular_user)    @user = users(:regular_user)
+        @user = users(:regular_user)class NotificationMailerTest < ActionMailer::TestCaseclass NotificationMailerTest < ActionMailer::TestCase
 
+    # Clear existing subscriptions to avoid interference
 
-
-    # Clear any existing subscriptions to avoid validation errors    @admin = users(:admin_user)    @admin = users(:admin_user)
-
-    EmailSubscription.destroy_all
-
-  end    @event = events(:one)    @event = events(:one)
-
-
-
-  # Test individual mailer methods    @student = students(:one)    @student = students(:one)
-
-  test "new_event generates email with correct content" do
-
-    email = NotificationMailer.new_event(@user, @event)    @attendance = attendances(:present_attendance)    @attendance = attendances(:present_attendance)
-
-
-
-    assert_emails 1 do
-
-      email.deliver_now
-
-    end    # Clear any existing subscriptions to avoid validation errors    # Clear any existing subscriptions to avoid validation errors
-
-
-
-    assert_equal [@user.email_address], email.to    EmailSubscription.destroy_all    EmailSubscription.destroy_all
-
-    assert_equal "🌟 New Event: #{@event.title}", email.subject
-
-    # Check that the email has content (body is not empty)  end  end
-
-    assert_not email.body.to_s.blank?, "Email body should not be blank"
-
-    assert_match @event.title, email.body.to_s
+    EmailSubscription.destroy_all    @admin = users(:admin_user)
 
   end
 
-  # Test individual mailer methods  # Test individual mailer methods
+    @event = events(:one)  def setup  def setup
 
-  test "event_cancelled generates email with correct content" do
+  test "new_parent_linked generates email with correct content" do
 
-    @event.update!(status: "canceled")  test "new_event generates email with correct content" do  test "new_event generates email with correct content" do
+    # Set up two parents    @student = students(:one)
 
-    email = NotificationMailer.event_cancelled(@user, @event)
+    parent1 = @user
 
-    email = NotificationMailer.new_event(@user, @event)    email = NotificationMailer.new_event(@user, @event)
+    parent2 = @admin    @attendance = attendances(:present_attendance)    @user = users(:regular_user)    @user = users(:regular_user)
 
-    assert_emails 1 do
+
+
+    email = NotificationMailer.new_parent_linked(parent1, @student, parent2)
+
+
+
+    assert_emails 1 do    # Clear any existing subscriptions to avoid validation errors    @admin = users(:admin_user)    @admin = users(:admin_user)
 
       email.deliver_now
 
-    end
+    end    EmailSubscription.destroy_all
 
-    assert_emails 1 do    assert_emails 1 do
 
-    assert_equal [@user.email_address], email.to
 
-    assert_equal "⚠️ Event Cancelled: #{@event.title}", email.subject      email.deliver_now      email.deliver_now
+    assert_equal [parent1.email_address], email.to  end    @event = events(:one)    @event = events(:one)
+
+    assert_equal "👨‍👩‍👧‍👦 New Parent Added to #{@student.first_name}'s Account", email.subject
 
     assert_not email.body.to_s.blank?
 
-    assert_match @event.title, email.body.to_s    end    end
+    assert_match @student.first_name, email.body.to_s
+
+    assert_match parent2.first_name, email.body.to_s  # Test individual mailer methods    @student = students(:one)    @student = students(:one)
+
+    assert_match parent2.email_address, email.body.to_s
+
+  end  test "new_event generates email with correct content" do
+
+
+
+  test "send_new_parent_linked_notifications sends to existing parents only" do    email = NotificationMailer.new_event(@user, @event)    @attendance = attendances(:present_attendance)    @attendance = attendances(:present_attendance)
+
+    # Create two parents and link them to the student
+
+    parent1 = @user
+
+    parent2 = @admin
+
+        assert_emails 1 do
+
+    # Link first parent to student
+
+    UserStudent.create!(user: parent1, student: @student)      email.deliver_now
+
+    # Create subscription for parent1
+
+    EmailSubscription.create!(user: parent1, subscription_type: "new_parent_linked", enabled: true)    end    # Clear any existing subscriptions to avoid validation errors    # Clear any existing subscriptions to avoid validation errors
+
+
+
+    # Now when parent2 is linked, parent1 should be notified
+
+    assert_emails 1 do
+
+      NotificationMailer.send_new_parent_linked_notifications(@student, parent2)    assert_equal [@user.email_address], email.to    EmailSubscription.destroy_all    EmailSubscription.destroy_all
+
+    end
+
+  end    assert_equal "🌟 New Event: #{@event.title}", email.subject
+
+
+
+  test "send_new_parent_linked_notifications does not send to newly linked parent" do    # Check that the email has content (body is not empty)  end  end
+
+    parent1 = @user
+
+    parent2 = @admin    assert_not email.body.to_s.blank?, "Email body should not be blank"
+
+
+
+    # Both parents linked to student    assert_match @event.title, email.body.to_s
+
+    UserStudent.create!(user: parent1, student: @student)
+
+    UserStudent.create!(user: parent2, student: @student)  end
+
+
+
+    # Both have subscriptions  # Test individual mailer methods  # Test individual mailer methods
+
+    EmailSubscription.create!(user: parent1, subscription_type: "new_parent_linked", enabled: true)
+
+    EmailSubscription.create!(user: parent2, subscription_type: "new_parent_linked", enabled: true)  test "event_cancelled generates email with correct content" do
+
+
+
+    # When parent2 is the newly linked parent, only parent1 should be notified    @event.update!(status: "canceled")  test "new_event generates email with correct content" do  test "new_event generates email with correct content" do
+
+    assert_emails 1 do
+
+      NotificationMailer.send_new_parent_linked_notifications(@student, parent2)    email = NotificationMailer.event_cancelled(@user, @event)
+
+    end
+
+  end    email = NotificationMailer.new_event(@user, @event)    email = NotificationMailer.new_event(@user, @event)
+
+
+
+  test "send_new_parent_linked_notifications respects subscription preferences" do    assert_emails 1 do
+
+    parent1 = @user
+
+    parent2 = @admin      email.deliver_now
+
+
+
+    # Link first parent to student    end
+
+    UserStudent.create!(user: parent1, student: @student)
+
+    # Create subscription for parent1 but disabled    assert_emails 1 do    assert_emails 1 do
+
+    EmailSubscription.create!(user: parent1, subscription_type: "new_parent_linked", enabled: false)
+
+        assert_equal [@user.email_address], email.to
+
+    # Should not send email when subscription is disabled
+
+    assert_emails 0 do    assert_equal "⚠️ Event Cancelled: #{@event.title}", email.subject      email.deliver_now      email.deliver_now
+
+      NotificationMailer.send_new_parent_linked_notifications(@student, parent2)
+
+    end    assert_not email.body.to_s.blank?
 
   end
 
+    assert_match @event.title, email.body.to_s    end    end
+
+  test "emails include both HTML and text parts" do
+
+    email = NotificationMailer.new_parent_linked(@user, @student, @admin)  end
 
 
-  test "student_linked generates email with correct content" do
 
-    email = NotificationMailer.student_linked(@user, @student)    assert_equal [@user.email_address], email.to    assert_equal [@user.email_address], email.to
+    assert_equal 2, email.parts.size
+
+    assert_includes email.parts.map(&:content_type), "text/html; charset=UTF-8"
+
+    assert_includes email.parts.map(&:content_type), "text/plain; charset=UTF-8"  test "student_linked generates email with correct content" do
+
+  end
+
+end    email = NotificationMailer.student_linked(@user, @student)    assert_equal [@user.email_address], email.to    assert_equal [@user.email_address], email.to
 
 
 

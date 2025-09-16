@@ -36,6 +36,11 @@ class NotificationJob < ApplicationJob
       student_id, changed_fields = args
       student = Student.find(student_id)
       NotificationMailer.send_student_profile_updated_notifications(student, changed_fields || [])
+    when "new_parent_linked"
+      student_id, new_parent_id = args
+      student = Student.find(student_id)
+      new_parent = User.find(new_parent_id)
+      NotificationMailer.send_new_parent_linked_notifications(student, new_parent)
     else
       Rails.logger.error "Unknown notification action: #{action}"
     end

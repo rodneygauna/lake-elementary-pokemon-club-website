@@ -1,0 +1,33 @@
+👨‍👩‍👧‍👦 NEW PARENT ADDED: <%= @student.first_name %> <%= @student.last_name %>
+
+Hi <%= @existing_parent.first_name %>,
+
+We wanted to inform you that a new parent/guardian has been added to your student's account:
+
+STUDENT:
+========
+
+Name: <%= @student.first_name %> <%= @student.last_name %>
+Grade: <%= @student.grade_display %>
+<% if @student.favorite_pokemon.present? -%>
+Favorite Pokémon: <%= @student.favorite_pokemon %>
+<% end -%>
+
+NEW PARENT/GUARDIAN:
+===================
+
+Name: <%= @new_parent.first_name %> <%= @new_parent.last_name %>
+Email: <%= @new_parent.email_address %>
+Role: <%= @new_parent.role.humanize %>
+
+This parent/guardian will now receive club notifications and can access <%= @student.first_name %>'s club information.
+
+If you have any questions about this change, please contact the club administrators.
+
+Best regards,
+The <%= @club_name %> Team
+
+--
+Lake Elementary Pokémon Club
+This email was sent because you're subscribed to parent linking notifications.
+You can manage your email preferences in your account settings.

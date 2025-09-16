@@ -89,6 +89,19 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  # 3.8. New parent linked to student
+  def new_parent_linked(existing_parent, student, new_parent)
+    @existing_parent = existing_parent
+    @student = student
+    @new_parent = new_parent
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @existing_parent.email_address,
+      subject: "👨‍👩‍👧‍👦 New Parent Added to #{@student.first_name}'s Account"
+    )
+  end
+
   private
 
   # Helper method to get subscribed users for a notification type
@@ -171,6 +184,22 @@ class NotificationMailer < ApplicationMailer
         student_profile_updated(user, student, changed_fields).deliver_now
       rescue => e
         Rails.logger.error "Failed to send student profile update notification to user #{user.id}: #{e.message}"
+      end
+    end
+  end
+
+  def self.send_new_parent_linked_notifications(student, new_parent)
+    # Find existing parents (excluding the newly linked parent)
+    existing_parents = student.users.joins(:email_subscriptions)
+                              .where(email_subscriptions: { subscription_type: :new_parent_linked, enabled: true })
+                              .where(status: "active")
+                              .where.not(id: new_parent.id)
+
+    existing_parents.find_each do |existing_parent|
+      begin
+        new_parent_linked(existing_parent, student, new_parent).deliver_now
+      rescue => e
+        Rails.logger.error "Failed to send new parent linked notification to user #{existing_parent.id}: #{e.message}"
       end
     end
   end

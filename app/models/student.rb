@@ -106,7 +106,7 @@ class Student < ApplicationRecord
     significant_changes = saved_changes.keys & %w[first_name last_name grade favorite_pokemon pokemon_experience]
 
     if significant_changes.any?
-      NotificationMailer.send_student_profile_updated_notifications(self, significant_changes)
+      NotificationJob.perform_later("student_profile_updated", id, significant_changes)
     end
   end
 

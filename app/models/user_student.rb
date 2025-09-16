@@ -24,7 +24,18 @@ class UserStudent < ApplicationRecord
 
   # Email notification methods
   def send_student_linked_notification
+    # Notify the newly linked user (background job is fine for this)
     NotificationJob.perform_later("student_linked", user_id, student_id)
+
+    # Notify existing parents about the new parent being linked (synchronous for reliability)
+    # This ensures all existing parents get notified immediately
+    begin
+      NotificationMailer.send_new_parent_linked_notifications(student, user)
+    rescue => e
+      Rails.logger.error "Failed to send new parent linked notifications: #{e.message}"
+      # Fallback to background job if synchronous delivery fails
+      NotificationJob.perform_later("new_parent_linked", student_id, user_id)
+    end
   end
 
   def send_student_unlinked_notification

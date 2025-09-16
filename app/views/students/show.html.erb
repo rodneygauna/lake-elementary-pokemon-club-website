@@ -389,7 +389,7 @@
                   <%= form.hidden_field :student_id, value: @student.id %>
                   <div class="flex-grow-1">
                     <%= form.select :user_id,
-                        User.users.active.order(:last_name, :first_name).pluck(:email_address, :id),
+                        User.parent_eligible.active.order(:last_name, :first_name).pluck(:email_address, :id),
                         { prompt: "Choose a parent to link..." },
                         { class: 'form-select' } %>
                   </div>

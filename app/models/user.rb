@@ -35,6 +35,7 @@ class User < ApplicationRecord
   scope :super_users, -> { where(role: "super_user") }
   scope :users,       -> { where(role: "user") }
   scope :admin_level, -> { where(role: [ "admin", "super_user" ]) }
+  scope :parent_eligible, -> { where(role: [ "user", "super_user" ]) }
 
   # Status-based
   scope :active,    -> { where(status: "active") }
