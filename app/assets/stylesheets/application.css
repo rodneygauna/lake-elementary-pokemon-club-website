@@ -280,3 +280,13 @@
 .fc-daygrid-day-frame:hover {
   background-color: transparent;
 }
+
+/* Table header icon and text alignment */
+.table th {
+  white-space: nowrap;
+}
+
+.table th i {
+  display: inline;
+  vertical-align: baseline;
+}
