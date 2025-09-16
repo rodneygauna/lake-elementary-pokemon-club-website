@@ -2,7 +2,7 @@
 service: lake_elementary_pokemon_club_website
 
 # Name of the container image.
-image: rodneygauna/lake_elementary_pokemon_club_website
+image: rodneygauna/pokemon-club-website
 
 # Deploy to these servers.
 servers:
