@@ -10,7 +10,7 @@ CANCELLED EVENT DETAILS:
 ========================
 
 Title: <%= @event.title %>
-Originally scheduled: <%= @event.event_datetime.strftime("%A, %B %d, %Y at %I:%M %p") %>
+Originally scheduled: <%= @event.event_datetime_in_timezone %>
 <% if @event.location.present? -%>
 Location: <%= @event.location %>
 <% end -%>

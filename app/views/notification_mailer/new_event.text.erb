@@ -8,7 +8,7 @@ EVENT DETAILS:
 ==============
 
 Title: <%= @event.title %>
-Date & Time: <%= @event.event_datetime.strftime("%A, %B %d, %Y at %I:%M %p") %>
+Date & Time: <%= @event.event_datetime_in_timezone %>
 <% if @event.location.present? -%>
 Location: <%= @event.location %>
 <% end -%>

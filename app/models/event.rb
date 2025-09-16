@@ -101,6 +101,30 @@ class Event < ApplicationRecord
     starts_at
   end
 
+  def event_datetime_in_timezone
+    # Return the starts_at time in the event's timezone as formatted string
+    return starts_at.strftime("%A, %B %e, %Y at %l:%M %p %Z") unless time_zone.present?
+
+    zone = ActiveSupport::TimeZone[time_zone] || Time.zone
+    starts_at.in_time_zone(zone).strftime("%A, %B %e, %Y at %l:%M %p %Z")
+  end
+
+  def event_date_in_timezone
+    # Return just the date portion in the event's timezone
+    return starts_at.strftime("%A, %B %e, %Y") unless time_zone.present?
+
+    zone = ActiveSupport::TimeZone[time_zone] || Time.zone
+    starts_at.in_time_zone(zone).strftime("%A, %B %e, %Y")
+  end
+
+  def ends_at_in_timezone
+    # Return the ends_at time in the event's timezone as formatted string
+    return ends_at.strftime("%l:%M %p %Z") unless time_zone.present?
+
+    zone = ActiveSupport::TimeZone[time_zone] || Time.zone
+    ends_at.in_time_zone(zone).strftime("%l:%M %p %Z")
+  end
+
   def location
     # Build location string from venue and address
     parts = [ venue, address1, city, state ].compact.reject(&:blank?)

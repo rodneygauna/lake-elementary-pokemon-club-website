@@ -47,6 +47,22 @@ class Attendance < ApplicationRecord
     marked_by&.full_name || "Unknown"
   end
 
+  def marked_at_in_event_timezone
+    # Return the marked_at time in the event's timezone as formatted string
+    return marked_at.strftime("%A, %B %e, %Y at %l:%M %p %Z") unless event&.time_zone.present?
+
+    zone = ActiveSupport::TimeZone[event.time_zone] || Time.zone
+    marked_at.in_time_zone(zone).strftime("%A, %B %e, %Y at %l:%M %p %Z")
+  end
+
+  def marked_at_time_in_event_timezone
+    # Return just the time portion for attendance recording
+    return marked_at.strftime("%l:%M %p on %B %e, %Y %Z") unless event&.time_zone.present?
+
+    zone = ActiveSupport::TimeZone[event.time_zone] || Time.zone
+    marked_at.in_time_zone(zone).strftime("%l:%M %p on %B %e, %Y %Z")
+  end
+
   # Email notification methods
   def send_attendance_notification
     # Send notification to parents/guardians of this student

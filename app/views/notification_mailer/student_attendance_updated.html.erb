@@ -94,7 +94,7 @@
         <div class="student-name"><%= @student.first_name %> <%= @student.last_name %></div>
 
         <p><span class="detail-label">📅 Event:</span> <%= @event.title %></p>
-        <p><span class="detail-label">🗓️ Date:</span> <%= @event.event_datetime.strftime("%A, %B %d, %Y") %></p>
+        <p><span class="detail-label">🗓️ Date:</span> <%= @event.event_date_in_timezone %></p>
 
         <p><span class="detail-label">📊 Attendance Status:</span></p>
         <div class="attendance-status <%= @attendance.present? ? 'present' : 'absent' %>">
@@ -106,7 +106,7 @@
         </div>
 
         <p><span class="detail-label">🕐 Recorded at:</span>
-           <%= @attendance.marked_at.strftime("%I:%M %p on %B %d, %Y") %></p>
+           <%= @attendance.marked_at_time_in_event_timezone %></p>
       </div>
 
       <p>Thank you for being part of the <%= @club_name %>!</p>

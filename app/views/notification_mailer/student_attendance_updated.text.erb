@@ -9,11 +9,11 @@ ATTENDANCE DETAILS:
 
 Student: <%= @student.first_name %> <%= @student.last_name %>
 Event: <%= @event.title %>
-Date: <%= @event.event_datetime.strftime("%A, %B %d, %Y") %>
+Date: <%= @event.event_date_in_timezone %>
 
 Attendance Status: <% if @attendance.present? %>✅ Present<% else %>❌ Absent<% end %>
 
-Recorded at: <%= @attendance.marked_at.strftime("%I:%M %p on %B %d, %Y") %>
+Recorded at: <%= @attendance.marked_at_time_in_event_timezone %>
 
 Thank you for being part of the <%= @club_name %>!
 

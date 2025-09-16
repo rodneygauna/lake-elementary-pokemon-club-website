@@ -90,7 +90,7 @@
 
         <div class="event-details">
           <p><span class="detail-label">📅 Date & Time:</span>
-             <%= @event.event_datetime.strftime("%A, %B %d, %Y at %I:%M %p") %></p>
+             <%= @event.event_datetime_in_timezone %></p>
 
           <% if @event.location.present? %>
             <p><span class="detail-label">📍 Location:</span> <%= @event.location %></p>
