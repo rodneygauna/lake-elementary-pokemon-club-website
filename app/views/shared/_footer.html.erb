@@ -1,0 +1,76 @@
+<footer class="pokemon-footer mt-auto bg-dark text-light">
+  <div class="container-fluid">
+    <div class="row py-4">
+      <!-- Club Branding -->
+      <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+        <div class="d-flex align-items-center mb-3">
+          <%= image_tag "pokemon-club-logo_448x448.png", alt: "Pokemon Club Logo", class: "me-2", style: "width: 32px; height: 32px;" %>
+          <h5 class="mb-0 text-warning fw-bold">Lake Elementary Pokémon Club</h5>
+        </div>
+        <p class="text-light opacity-75 mb-0 small">Building friendships through the world of Pokémon at Lake Elementary School.</p>
+      </div>
+
+      <!-- Quick Navigation -->
+      <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+        <h6 class="text-warning mb-3">Quick Links</h6>
+        <div class="row">
+          <div class="col-6">
+            <ul class="list-unstyled mb-0">
+              <li class="mb-1">
+                <%= link_to events_path, class: "text-light text-decoration-none small" do %>
+                  <i class="fas fa-calendar-alt me-1"></i>Events
+                <% end %>
+              </li>
+              <li class="mb-1">
+                <%= link_to students_path, class: "text-light text-decoration-none small" do %>
+                  <i class="fas fa-users me-1"></i>Students
+                <% end %>
+              </li>
+              <li class="mb-1">
+                <%= link_to public_donors_path, class: "text-light text-decoration-none small" do %>
+                  <i class="fas fa-heart me-1"></i>Donors
+                <% end %>
+              </li>
+            </ul>
+          </div>
+          <div class="col-6">
+            <ul class="list-unstyled mb-0">
+              <li class="mb-1">
+                <%= link_to public_resources_path, class: "text-light text-decoration-none small" do %>
+                  <i class="fas fa-file-alt me-1"></i>Resources
+                <% end %>
+              </li>
+              <li class="mb-1">
+                <%= link_to bylaws_path, class: "text-light text-decoration-none small" do %>
+                  <i class="fas fa-gavel me-1"></i>Bylaws
+                <% end %>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright & Pokémon Attribution -->
+      <div class="col-lg-4 col-12">
+        <h6 class="text-warning mb-3">Legal Information</h6>
+        <p class="text-light opacity-75 mb-2 small">
+          © <%= Date.current.year %> Lake Elementary Pokémon Club
+        </p>
+        <p class="text-light opacity-75 mb-0 small">
+          <i class="fas fa-info-circle me-1"></i>
+          Pokémon and all related characters are trademarks of
+          <strong>The Pokémon Company</strong>. This fan club operates under fair use guidelines.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="row border-top border-secondary pt-3">
+      <div class="col-12 text-center">
+        <p class="text-light opacity-75 mb-0 small">
+          Made with <i class="fas fa-heart text-danger mx-1"></i> for our Pokémon community
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>

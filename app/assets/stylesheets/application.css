@@ -202,3 +202,48 @@
     font-size: 1.1rem;
   }
 }
+
+/* Footer Styling */
+.pokemon-footer {
+  background: linear-gradient(135deg, #212529 0%, #343a40 100%) !important;
+  border-top: 3px solid var(--pokemon-electric-blue);
+}
+
+.pokemon-footer h5,
+.pokemon-footer h6 {
+  color: var(--pokemon-pikachu-yellow) !important;
+}
+
+.pokemon-footer a:hover {
+  color: var(--pokemon-pikachu-yellow) !important;
+  transform: translateX(2px);
+  transition: all 0.2s ease;
+}
+
+.pokemon-footer .fas {
+  color: var(--pokemon-electric-blue);
+}
+
+.pokemon-footer .text-warning .fas {
+  color: var(--pokemon-pikachu-yellow);
+}
+
+/* Sticky footer support */
+.min-vh-100 {
+  min-height: 100vh !important;
+}
+
+/* Footer responsive adjustments */
+@media (max-width: 768px) {
+  .pokemon-footer .col-lg-4 {
+    text-align: center;
+  }
+
+  .pokemon-footer h6 {
+    font-size: 1rem;
+  }
+
+  .pokemon-footer .small {
+    font-size: 0.8rem !important;
+  }
+}

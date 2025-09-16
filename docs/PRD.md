@@ -105,7 +105,7 @@ A **Ruby on Rails 8 web application** featuring:
 - **REQ-1.4:** Super User role has admin interface access but restricted delete permissions for volunteer safety
 - **REQ-1.5:** Normal users have read-only access to public content
 - **REQ-1.5:** Password reset functionality via email
-- **REQ-1.6:** User profile management with email subscription preferences
+- **REQ-1.6:** User profile management for account information
 - **REQ-1.7:** Enhanced security model with admin-only user creation and temporary password assignment
 - **REQ-1.8:** Three-tier role system with granular permissions (user < super_user < admin)
 
@@ -147,24 +147,20 @@ A **Ruby on Rails 8 web application** featuring:
 - **REQ-6.1:** CRUD interface for document management (scaffolded)
 - **REQ-6.2:** File upload functionality using Active Storage
 - **REQ-6.3:** Document categorization (forms, meeting notes, resources)
-- **REQ-6.4:** Search functionality for document discovery
-- **REQ-6.5:** Access control for sensitive documents
-- **REQ-6.6:** Download tracking and statistics
+- **REQ-6.4:** Access control for sensitive documents
+- **REQ-6.5:** Download tracking and basic analytics
 
 ### 5.7 Email Notification System
 
-- **REQ-7.1:** User subscription management for email notifications
-- **REQ-7.2:** General notifications (new events, cancellations, donations, news)
-- **REQ-7.3:** Granular subscriptions for individual events or content
-- **REQ-7.4:** Unsubscribe functionality for all email types
-- **REQ-7.5:** Email templates for consistent branding
-- **REQ-7.6:** Automated notifications for content changes
+- **REQ-7.1:** General notifications (new events, cancellations, donations, news)
+- **REQ-7.2:** Email templates for consistent branding
+- **REQ-7.3:** Automated notifications for content changes
 
 ### 5.8 Navigation & User Experience
 
 - **REQ-8.1:** Responsive design using Bootstrap 5 and Rails view helpers
 - **REQ-8.2:** Consistent navigation with user authentication status
-- **REQ-8.3:** Dashboard for authenticated users
+- **REQ-8.3:** User profile and content access for authenticated users
 - **REQ-8.4:** Admin interface for content management
 - **REQ-8.5:** Fast loading times with Rails optimization techniques
 
@@ -237,12 +233,10 @@ A **Ruby on Rails 8 web application** featuring:
 - **Donor:** Name, donor_type (individual/business), contact info, privacy settings, photo attachment
 - **Donation:** Normalized donation tracking with value_type (monetary/material/service), amounts, descriptions
 - **Document:** Title, description, category, file attachment via Active Storage
-- **EmailSubscription:** User preferences for notification types and individual content
 
 #### Relationships
 
 - User has_many students through user_students (many-to-many)
-- User has_many email_subscriptions
 - Event belongs_to user (creator)
 - Event has_many attendances (one-to-many)
 - Student has_many attendances (one-to-many)
@@ -272,8 +266,7 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   │   ├── users_controller.rb   # Admin user management
 │   │   │   ├── donors_controller.rb  # Donor management (admin)
 │   │   │   └── donations_controller.rb # Donation management (nested)
-│   │   ├── documents_controller.rb   # Document management (future)
-│   │   └── dashboard_controller.rb   # User dashboard (future)
+│   │   └── documents_controller.rb   # Document management
 │   ├── models/
 │   │   ├── application_record.rb
 │   │   ├── user.rb
@@ -283,8 +276,7 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   ├── attendance.rb             # Event-student attendance tracking
 │   │   ├── donor.rb                  # Individual/business donors
 │   │   ├── donation.rb               # Normalized donation tracking
-│   │   ├── document.rb               # File repository (future)
-│   │   └── email_subscription.rb     # Email preferences (future)
+│   │   └── document.rb               # File repository
 │   ├── views/
 │   │   ├── layouts/
 │   │   │   └── application.html.erb
@@ -297,8 +289,7 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   │   ├── donors/               # Admin donor management
 │   │   │   └── donations/            # Admin donation management
 │   │   ├── shared/                   # Reusable components
-│   │   ├── documents/                # Document views (future)
-│   │   └── dashboard/                # User dashboard (future)
+│   │   └── documents/                # Document views
 │   ├── mailers/
 │   │   ├── application_mailer.rb
 │   │   └── notification_mailer.rb
@@ -350,7 +341,6 @@ A **Ruby on Rails 8 web application** featuring:
 - **Mailer Classes:** Notification mailer for event updates, cancellations using Action Mailer
 - **Background Jobs:** Asynchronous email sending using Active Job with Rails built-in queue adapter
 - **Templates:** ERB email templates with text and HTML versions
-- **Subscription Management:** User preference models for granular control
 - **Delivery:** Rails built-in SMTP delivery method configured in environment settings
 - **Configuration:** SMTP settings in `config/environments/` files for development and production
 
@@ -425,9 +415,8 @@ A **Ruby on Rails 8 web application** featuring:
 ### 9.4 User Communication
 
 - **Email Templates:** Professional templates for notifications, reminders, updates
-- **Subscription Types:** Event notifications, donor updates, general announcements
+- **Notification Types:** Event notifications, donor updates, general announcements
 - **Personalization:** Addressed to user's name, relevant student information
-- **Unsubscribe Options:** Granular control over notification types
 
 ---
 
