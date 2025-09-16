@@ -36,6 +36,9 @@
 # Ignore Kamal Registry Password file
 /config/kamal-registry-password.key
 
+# Ignore SendGrid API Key file
+/config/sendgrid.key
+
 /app/assets/builds/*
 !/app/assets/builds/.keep
 

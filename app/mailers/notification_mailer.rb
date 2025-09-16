@@ -1,5 +1,5 @@
 class NotificationMailer < ApplicationMailer
-  default from: "Lake Elementary Pokémon Club <#{Rails.application.credentials.smtp&.user_name}>"
+  # Inherits default from: "Lake Elementary Pokémon Club <rodneygauna@gmail.com>" from ApplicationMailer
 
   # 3.1. New Event
   def new_event(user, event)

@@ -61,18 +61,11 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "lakepokemonclub.com" }
 
-  # Configure Gmail SMTP for production
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
-    port: 587,
-    domain: "gmail.com",
-    user_name: Rails.application.credentials.smtp&.user_name,
-    password: Rails.application.credentials.smtp&.password,
-    authentication: "plain",
-    enable_starttls_auto: true,
-    open_timeout: 10,
-    read_timeout: 10
+  # Configure SendGrid HTTP API for production (bypasses SMTP blocks)
+  config.action_mailer.delivery_method = :sendgrid_actionmailer
+  config.action_mailer.sendgrid_actionmailer_settings = {
+    api_key: Rails.application.credentials.sendgrid&.api_key,
+    raise_delivery_errors: true
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# SendGrid Setup Guide for Pokemon Club Website
+
+echo "🚀 SendGrid Setup for Production Email"
+echo "======================================"
+echo ""
+
+echo "📋 Steps to complete:"
+echo ""
+
+echo "1. ✅ Added SendGrid gem to Gemfile"
+echo "2. ✅ Updated production.rb configuration"
+echo "3. ✅ Updated mailer from addresses"
+echo ""
+
+echo "📝 What you need to do:"
+echo ""
+
+echo "1. Get SendGrid API Key:"
+echo "   - Go to https://sendgrid.com/"
+echo "   - Sign up for free account"
+echo "   - Go to Settings → API Keys"
+echo "   - Create API Key with 'Mail Send' permissions"
+echo "   - Copy the key (starts with SG.)"
+echo ""
+
+echo "2. Add API Key to Rails credentials:"
+echo "   - Run: EDITOR=nano bin/rails credentials:edit"
+echo "   - Add this section:"
+echo "     sendgrid:"
+echo "       api_key: SG.your_actual_api_key_here"
+echo "   - Save and exit (Ctrl+X, Y, Enter in nano)"
+echo ""
+
+echo "3. Deploy the changes:"
+echo "   - Run: bin/kamal deploy"
+echo ""
+
+echo "4. Test email functionality:"
+echo "   - Try creating a new user"
+echo "   - Check if emails are delivered"
+echo ""
+
+echo "📊 SendGrid Free Tier includes:"
+echo "   - 100 emails/day forever"
+echo "   - Perfect for your club needs"
+echo ""
+
+echo "🔧 Benefits of HTTP API over SMTP:"
+echo "   - ✅ Not blocked by DigitalOcean"
+echo "   - ✅ Faster delivery"
+echo "   - ✅ Better tracking and analytics"
+echo "   - ✅ More reliable"
+echo ""
+
+echo "💡 Need help? Check SendGrid docs:"
+echo "   https://docs.sendgrid.com/"
+echo ""
+
+echo "🎉 Once set up, your Pokemon club emails will work perfectly!"
