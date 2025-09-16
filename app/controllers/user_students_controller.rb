@@ -1,7 +1,7 @@
 class UserStudentsController < ApplicationController
   before_action :require_authentication
   before_action :require_admin_level, only: [ :create ]
-  before_action :require_admin, only: [ :destroy ]
+  before_action :require_admin_level, only: [ :destroy ]  # Changed from require_admin to require_admin_level
 
   def create
     @student = Student.find(params[:student_id])

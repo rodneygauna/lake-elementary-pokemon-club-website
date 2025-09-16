@@ -1,0 +1,23 @@
+PARENT ACCOUNT UPDATE - <%= @club_name %>
+
+Hello <%= @user.first_name %>,
+
+We wanted to notify you about a change to your student's account access.
+
+Student: <%= @student.full_name %>
+Removed Parent: <%= @unlinked_parent.full_name %>
+
+Another parent/guardian has been REMOVED from <%= @student.first_name %>'s account. This parent will no longer receive updates about <%= @student.first_name %>'s club activities.
+
+WHAT THIS MEANS:
+- Your access to <%= @student.first_name %>'s information remains unchanged
+- You will continue to receive all club notifications for <%= @student.first_name %>
+- The removed parent will no longer get club-related emails
+- This change was made by a club administrator
+
+If you have any questions about this change, please contact the club administrators.
+
+Thank you for being part of our Pokémon club community!
+
+Best regards,
+<%= @club_name %>

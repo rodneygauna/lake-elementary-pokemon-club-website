@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+      body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; }
+      .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+      .header { background: linear-gradient(135deg, #0084FF 0%, #0066CC 100%); padding: 30px; text-align: center; }
+      .header h1 { color: white; margin: 0; font-size: 28px; font-weight: 600; }
+      .header .icon { font-size: 48px; margin-bottom: 15px; display: block; }
+      .content { padding: 30px; }
+      .content h2 { color: #2c3e50; margin-top: 0; font-size: 24px; font-weight: 600; }
+      .content p { color: #34495e; line-height: 1.6; margin-bottom: 15px; font-size: 16px; }
+      .highlight-box { background: linear-gradient(135deg, #FFF3CD 0%, #FCF3CF 100%); border-left: 4px solid #FFD700; padding: 20px; margin: 25px 0; border-radius: 8px; }
+      .highlight-box .student-name { font-weight: 600; color: #B8860B; font-size: 18px; }
+      .highlight-box .unlinked-parent { font-weight: 600; color: #D68910; font-size: 16px; }
+      .info-section { background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+      .info-section h3 { color: #495057; margin-top: 0; font-size: 18px; font-weight: 600; }
+      .info-section ul { margin: 10px 0; padding-left: 20px; }
+      .info-section li { color: #6c757d; margin-bottom: 8px; line-height: 1.5; }
+      .footer { background-color: #f8f9fa; padding: 25px; text-align: center; border-top: 1px solid #e9ecef; }
+      .footer p { color: #6c757d; margin: 0; font-size: 14px; }
+      .footer .club-name { font-weight: 600; color: #0084FF; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <span class="icon">👋</span>
+        <h1>Parent Account Update</h1>
+      </div>
+
+      <div class="content">
+        <h2>Hello <%= @user.first_name %>,</h2>
+
+        <p>We wanted to notify you about a change to your student's account access.</p>
+
+        <div class="highlight-box">
+          <div class="student-name">Student: <%= @student.full_name %></div>
+          <div class="unlinked-parent">Removed Parent: <%= @unlinked_parent.full_name %></div>
+        </div>
+
+        <p>Another parent/guardian has been <strong>removed</strong> from <%= @student.first_name %>'s account. This parent will no longer receive updates about <%= @student.first_name %>'s club activities.</p>
+
+        <div class="info-section">
+          <h3>What This Means:</h3>
+          <ul>
+            <li>Your access to <%= @student.first_name %>'s information remains unchanged</li>
+            <li>You will continue to receive all club notifications for <%= @student.first_name %></li>
+            <li>The removed parent will no longer get club-related emails</li>
+            <li>This change was made by a club administrator</li>
+          </ul>
+        </div>
+
+        <p>If you have any questions about this change, please contact the club administrators.</p>
+
+        <p>Thank you for being part of our Pokémon club community!</p>
+      </div>
+
+      <div class="footer">
+        <p>Best regards,<br>
+        <span class="club-name"><%= @club_name %></span></p>
+      </div>
+    </div>
+  </body>
+</html>

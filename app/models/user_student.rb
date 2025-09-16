@@ -11,7 +11,7 @@ class UserStudent < ApplicationRecord
 
   # ----- Callbacks -----
   after_create :send_student_linked_notification
-  after_destroy :send_student_unlinked_notification
+  before_destroy :send_student_unlinked_notification
 
   # ----- Scopes -----
   scope :by_user,    ->(user_id) { where(user_id: user_id) }
@@ -39,7 +39,24 @@ class UserStudent < ApplicationRecord
   end
 
   def send_student_unlinked_notification
-    NotificationJob.perform_later("student_unlinked", user_id, student_id)
+    # Notify the unlinked user (synchronous for reliability)
+    begin
+      NotificationMailer.send_student_unlinked_notification(user, student)
+    rescue => e
+      Rails.logger.error "Failed to send student unlinked notification: #{e.message}"
+      # Fallback to background job if synchronous delivery fails
+      NotificationJob.perform_later("student_unlinked", user_id, student_id)
+    end
+
+    # Notify remaining parents about this parent being unlinked (synchronous for reliability)
+    # This ensures all remaining parents get notified immediately
+    begin
+      NotificationMailer.send_parent_unlinked_notifications(student, user)
+    rescue => e
+      Rails.logger.error "Failed to send parent unlinked notifications: #{e.message}"
+      # Fallback to background job if synchronous delivery fails
+      NotificationJob.perform_later("parent_unlinked", student_id, user_id)
+    end
   end
 
   private

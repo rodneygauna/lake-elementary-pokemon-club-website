@@ -76,6 +76,19 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  # 3.6.1. Another parent was unlinked from student
+  def parent_unlinked(remaining_parent, student, unlinked_parent)
+    @user = remaining_parent
+    @student = student
+    @unlinked_parent = unlinked_parent
+    @club_name = "Lake Elementary Pokémon Club"
+
+    mail(
+      to: @user.email_address,
+      subject: "👋 Parent Removed from #{@student.first_name}'s Account"
+    )
+  end
+
   # 3.7. Student's profile was updated
   def student_profile_updated(user, student, changed_fields = [])
     @user = user
@@ -200,6 +213,22 @@ class NotificationMailer < ApplicationMailer
         new_parent_linked(existing_parent, student, new_parent).deliver_now
       rescue => e
         Rails.logger.error "Failed to send new parent linked notification to user #{existing_parent.id}: #{e.message}"
+      end
+    end
+  end
+
+  def self.send_parent_unlinked_notifications(student, unlinked_parent)
+    # Find remaining parents (excluding the unlinked parent)
+    remaining_parents = student.users.joins(:email_subscriptions)
+                               .where(email_subscriptions: { subscription_type: :parent_unlinked, enabled: true })
+                               .where(status: "active")
+                               .where.not(id: unlinked_parent.id)
+
+    remaining_parents.find_each do |remaining_parent|
+      begin
+        parent_unlinked(remaining_parent, student, unlinked_parent).deliver_now
+      rescue => e
+        Rails.logger.error "Failed to send parent unlinked notification to user #{remaining_parent.id}: #{e.message}"
       end
     end
   end

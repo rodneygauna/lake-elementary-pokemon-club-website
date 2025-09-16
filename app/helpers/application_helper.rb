@@ -15,6 +15,10 @@ module ApplicationHelper
       "Student Removed from Account"
     when "student_profile_updated"
       "Student Profile Changes"
+    when "new_parent_linked"
+      "New Parent Added"
+    when "parent_unlinked"
+      "Parent Removed"
     else
       type_key.humanize
     end
@@ -36,6 +40,10 @@ module ApplicationHelper
       "Receive alerts when a student is removed from your account"
     when "student_profile_updated"
       "Stay updated when your student's profile information changes"
+    when "new_parent_linked"
+      "Get notified when another parent is linked to your student"
+    when "parent_unlinked"
+      "Receive alerts when another parent is removed from your student"
     else
       "Receive notifications for #{type_key.humanize.downcase}"
     end
