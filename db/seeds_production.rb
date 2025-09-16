@@ -8,12 +8,12 @@ puts "🌱 Seeding production database..."
 puts "Creating admin user..."
 
 # Get admin credentials from environment or use secure defaults
-admin_email = ENV.fetch("ADMIN_EMAIL", "admin@pokemonclub.test")
+admin_email = ENV.fetch("ADMIN_EMAIL", "rodneygauna@gmail.com")
 admin_password = ENV.fetch("ADMIN_PASSWORD", "ChangeMe123!")
 
 admin_user = User.find_or_create_by!(email_address: admin_email) do |user|
-  user.first_name = "Club"
-  user.last_name = "Administrator"
+  user.first_name = "Rodney"
+  user.last_name = "Gauna"
   user.password = admin_password
   user.password_confirmation = admin_password
   user.role = "admin"
@@ -25,9 +25,6 @@ puts "📧 Email: #{admin_user.email_address}"
 puts "🔑 Password: #{admin_password}"
 puts ""
 puts "🚨 IMPORTANT: Please change this password immediately after first login!"
-puts "   1. Login at: https://yourdomain.com/login"
-puts "   2. Go to your profile and update password"
-puts "   3. Consider creating additional admin users"
 puts ""
 
 # Only create sample data in non-production environments

@@ -29,16 +29,19 @@ This guide will walk you through deploying your Rails 8 application to DigitalOc
 ### Step 2: Initial Server Setup
 
 SSH into your new droplet:
+
 ```bash
 ssh root@YOUR_DROPLET_IP
 ```
 
 **Update the system:**
+
 ```bash
 apt update && apt upgrade -y
 ```
 
 **Install Docker:**
+
 ```bash
 # Install Docker's GPG key
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -59,6 +62,7 @@ docker --version
 ```
 
 **Configure Docker for non-root user (optional but recommended):**
+
 ```bash
 # Create a non-root user for deployment
 adduser deploy
@@ -89,12 +93,14 @@ ufw status
 ### Step 1: Point Domain to Server
 
 In your domain registrar's DNS settings:
+
 - Create an A record pointing to your droplet's IP address
 - Example: `pokemonclub.yourdomain.com` → `YOUR_DROPLET_IP`
 
 ### Step 2: Wait for DNS Propagation
 
 Check if DNS is working:
+
 ```bash
 nslookup pokemonclub.yourdomain.com
 ```
@@ -103,7 +109,7 @@ nslookup pokemonclub.yourdomain.com
 
 ### Option A: Docker Hub (Recommended for beginners)
 
-1. **Create Docker Hub account** at https://hub.docker.com
+1. **Create Docker Hub account** at <https://hub.docker.com>
 2. **Create a repository**: `your-username/lake-elementary-pokemon-club-website`
 3. **Generate Access Token**:
    - Go to Account Settings → Security → Access Tokens
@@ -197,6 +203,7 @@ RAILS_MASTER_KEY=$(cat config/master.key)
 ```
 
 **Set environment variables in your shell:**
+
 ```bash
 export KAMAL_REGISTRY_PASSWORD="your_docker_hub_access_token"
 ```
@@ -266,12 +273,13 @@ bin/kamal app exec "bin/rails db:seed"
 ### Step 1: Verify Deployment
 
 1. **Check application status:**
+
 ```bash
 bin/kamal app logs
 ```
 
 2. **Visit your domain:**
-   - https://pokemonclub.yourdomain.com
+   - <https://pokemonclub.yourdomain.com>
    - Should see your application with SSL certificate
 
 ### Step 2: Login as Admin
@@ -294,11 +302,13 @@ If you want email notifications to work:
 
 1. **Set up Gmail App Password** (or other SMTP service)
 2. **Update Rails credentials:**
+
 ```bash
 bin/rails credentials:edit
 ```
 
 Add:
+
 ```yaml
 smtp:
   user_name: your-gmail@gmail.com
@@ -306,6 +316,7 @@ smtp:
 ```
 
 3. **Redeploy:**
+
 ```bash
 bin/kamal deploy
 ```
@@ -365,6 +376,7 @@ bin/kamal traefik logs
 ### Health Checks
 
 Your application includes a health check endpoint at `/up`. You can monitor:
+
 - Application status
 - Database connectivity
 - Storage availability
@@ -449,10 +461,11 @@ After successful deployment:
 ## Support
 
 If you encounter issues:
+
 1. Check the logs: `bin/kamal app logs`
 2. Verify server status: `bin/kamal app details`
 3. Review this guide's troubleshooting section
-4. Check Kamal documentation: https://kamal-deploy.org/
+4. Check Kamal documentation: <https://kamal-deploy.org/>
 
 ---
 

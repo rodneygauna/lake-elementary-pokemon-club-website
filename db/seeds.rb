@@ -8,18 +8,41 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# Create admin user
-puts "Creating admin user..."
-admin_user = User.find_or_create_by!(email_address: "admin@pokemonclub.test") do |user|
-  user.first_name = "Club"
-  user.last_name = "Administrator"
-  user.password = "password123"
-  user.password_confirmation = "password123"
+# Create admin user with environment-aware credentials
+puts "🌱 Creating admin user..."
+
+# Get admin credentials from environment or use defaults based on environment
+if Rails.env.production?
+  admin_email = ENV.fetch("ADMIN_EMAIL", "rodneygauna@gmail.com")
+  admin_password = ENV.fetch("ADMIN_PASSWORD", "ChangeMe123!")
+  admin_first_name = "Rodney"
+  admin_last_name = "Gauna"
+else
+  admin_email = "admin@pokemonclub.test"
+  admin_password = "password123"
+  admin_first_name = "Club"
+  admin_last_name = "Administrator"
+end
+
+admin_user = User.find_or_create_by!(email_address: admin_email) do |user|
+  user.first_name = admin_first_name
+  user.last_name = admin_last_name
+  user.password = admin_password
+  user.password_confirmation = admin_password
   user.role = "admin"
   user.status = "active"
 end
 
-puts "Admin user created with email: #{admin_user.email_address}"
+puts "✅ Admin user created successfully!"
+puts "📧 Email: #{admin_user.email_address}"
+if Rails.env.production?
+  puts "🚨 IMPORTANT: Please change this password immediately after first login!"
+  puts "🏭 Production environment - skipping sample data"
+  puts "🎉 Database seeding complete!"
+  return
+end
+
+puts "🧪 Development environment detected - loading sample data..."
 
 # Create regular users (parents/guardians)
 puts "Creating parent/guardian users..."
