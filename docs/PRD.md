@@ -3,16 +3,16 @@
 ## Lake Elementary School Pokemon Club Website
 
 **Project Name:** Lake Elementary Pokemon Club Website
-**Version:** 2.1
-**Date:** September 12, 2025
+**Version:** 2.2
+**Date:** September 18, 2025
 **Author:** Rodney Gauna
-**Status:** Development Phase - Secure User Management & Donor System Implemented
+**Status:** Development Phase - Financial Management System Added
 
 ---
 
 ## 1. Executive Summary
 
-The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support and providing easy access to important club resources. The application features a secure user authentication system with admin-managed accounts, comprehensive content management capabilities, complete donor and donation management system, email notifications, and robust data management through Active Record and Active Storage. Enhanced security measures ensure that only authorized administrators can create user accounts, providing better control and safety for the school environment.
+The Lake Elementary School Pokemon Club website will serve as a centralized digital hub for club communication, donor recognition, financial management, and resource management. Built as a Ruby on Rails 8 web application, the site will address critical communication gaps between club leadership and parents while showcasing community support, providing transparent financial reporting, and offering easy access to important club resources. The application features a secure user authentication system with admin-managed accounts, comprehensive content management capabilities, complete donor and donation management system, robust financial tracking with expense allocation, email notifications, and robust data management through Active Record and Active Storage. Enhanced security measures ensure that only authorized administrators can create user accounts, providing better control and safety for the school environment.
 
 ---
 
@@ -38,6 +38,13 @@ The Pokemon Club at Lake Elementary School currently faces three primary challen
 - **Impact:** Difficulty accessing meeting notes, permission forms, Pokemon resources, and reference materials
 - **Users Affected:** Parents, club members, and club leadership
 
+### 2.4 Financial Management & Transparency
+
+- **Problem:** No system to track club expenses, fund allocation, or financial transparency
+- **Impact:** Difficulty reporting how donations and registration fees are utilized, lack of financial accountability
+- **Example:** Parents pay $15 registration fees and businesses donate $100, but there's no way to show how $60 spent on crayons was allocated from these fund sources
+- **Users Affected:** Club administrators managing finances, parents wanting transparency on fund usage
+
 ---
 
 ## 3. Solution Overview
@@ -61,6 +68,7 @@ A **Ruby on Rails 8 web application** featuring:
 - **Data Integrity:** Active Record validations and database constraints
 - **File Management:** Active Storage for seamless document handling
 - **Email Integration:** Action Mailer for automated notifications
+- **Financial Management:** Complete fund tracking and expense allocation system
 - **Scalability:** Full-stack framework supporting future feature expansion
 - **Maintainability:** Convention over configuration reduces complexity
 
@@ -156,13 +164,28 @@ A **Ruby on Rails 8 web application** featuring:
 - **REQ-7.2:** Email templates for consistent branding
 - **REQ-7.3:** Automated notifications for content changes
 
-### 5.8 Navigation & User Experience
+### 5.8 Financial Management System
 
-- **REQ-8.1:** Responsive design using Bootstrap 5 and Rails view helpers
-- **REQ-8.2:** Consistent navigation with user authentication status
-- **REQ-8.3:** User profile and content access for authenticated users
-- **REQ-8.4:** Admin interface for content management
-- **REQ-8.5:** Fast loading times with Rails optimization techniques
+- **REQ-8.1:** CRUD interface for fund source management (scaffolded)
+- **REQ-8.2:** Support for multiple fund source types (registration fees, PTA funding, business donations, individual donations)
+- **REQ-8.3:** CRUD interface for expense tracking with receipt attachment via Active Storage
+- **REQ-8.4:** Free-text expense categorization with vendor notation capability
+- **REQ-8.5:** Fund allocation system allowing manual allocation of multiple fund sources to expenses
+- **REQ-8.6:** Split expense functionality across multiple fund sources with tracking
+- **REQ-8.7:** Privacy controls for fund sources and expenses (public/private visibility)
+- **REQ-8.8:** Financial dashboard with fund balances and allocation summaries
+- **REQ-8.9:** Reporting system with monthly, quarterly, and annual filtering
+- **REQ-8.10:** Public transparency dashboard respecting privacy settings
+- **REQ-8.11:** Admin-only access to financial management (super users and regular users excluded)
+- **REQ-8.12:** Integration with existing donor system for donation fund sources
+
+### 5.9 Navigation & User Experience
+
+- **REQ-9.1:** Responsive design using Bootstrap 5 and Rails view helpers
+- **REQ-9.2:** Consistent navigation with user authentication status
+- **REQ-9.3:** User profile and content access for authenticated users
+- **REQ-9.4:** Admin interface for content management
+- **REQ-9.5:** Fast loading times with Rails optimization techniques
 
 ---
 
@@ -170,40 +193,40 @@ A **Ruby on Rails 8 web application** featuring:
 
 ### 6.1 Security
 
-- **REQ-9.1:** Secure user authentication with encrypted passwords
-- **REQ-9.2:** Protection against common web vulnerabilities (CSRF, XSS, SQL injection)
-- **REQ-9.3:** Role-based authorization enforcement
-- **REQ-9.4:** Secure file upload validation and storage
-- **REQ-9.5:** HTTPS enforcement in production
+- **REQ-10.1:** Secure user authentication with encrypted passwords
+- **REQ-10.2:** Protection against common web vulnerabilities (CSRF, XSS, SQL injection)
+- **REQ-10.3:** Role-based authorization enforcement
+- **REQ-10.4:** Secure file upload validation and storage
+- **REQ-10.5:** HTTPS enforcement in production
 
 ### 6.2 Accessibility
 
-- **REQ-10.1:** WCAG 2.2 AA compliance
-- **REQ-10.2:** Keyboard navigation support
-- **REQ-10.3:** Screen reader compatibility
-- **REQ-10.4:** Sufficient color contrast ratios
-- **REQ-10.5:** Alternative text for all images and documents
+- **REQ-11.1:** WCAG 2.2 AA compliance
+- **REQ-11.2:** Keyboard navigation support
+- **REQ-11.3:** Screen reader compatibility
+- **REQ-11.4:** Sufficient color contrast ratios
+- **REQ-11.5:** Alternative text for all images and documents
 
 ### 6.3 Performance
 
-- **REQ-11.1:** Page load time under 3 seconds
-- **REQ-11.2:** Database query optimization
-- **REQ-11.3:** Efficient file serving via Active Storage
-- **REQ-11.4:** Caching implementation for static content
+- **REQ-12.1:** Page load time under 3 seconds
+- **REQ-12.2:** Database query optimization
+- **REQ-12.3:** Efficient file serving via Active Storage
+- **REQ-12.4:** Caching implementation for static content
 
 ### 6.4 Compatibility
 
-- **REQ-12.1:** Support modern browsers (Chrome, Firefox, Safari, Edge)
-- **REQ-12.2:** Mobile responsiveness across devices
-- **REQ-12.3:** Progressive enhancement for feature support
+- **REQ-13.1:** Support modern browsers (Chrome, Firefox, Safari, Edge)
+- **REQ-13.2:** Mobile responsiveness across devices
+- **REQ-13.3:** Progressive enhancement for feature support
 
 ### 6.5 Maintenance & Deployment
 
-- **REQ-13.1:** Simple deployment via Git-based hosting (Heroku/similar)
-- **REQ-13.2:** Database migrations for schema management
-- **REQ-13.3:** Environment-based configuration management
-- **REQ-13.4:** Automated testing capabilities
-- **REQ-13.5:** Regular security updates and dependency management
+- **REQ-14.1:** Simple deployment via Git-based hosting (Heroku/similar)
+- **REQ-14.2:** Database migrations for schema management
+- **REQ-14.3:** Environment-based configuration management
+- **REQ-14.4:** Automated testing capabilities
+- **REQ-14.5:** Regular security updates and dependency management
 
 ---
 
@@ -233,6 +256,9 @@ A **Ruby on Rails 8 web application** featuring:
 - **Donor:** Name, donor_type (individual/business), contact info, privacy settings, photo attachment
 - **Donation:** Normalized donation tracking with value_type (monetary/material/service), amounts, descriptions
 - **Document:** Title, description, category, file attachment via Active Storage
+- **FundSource:** Fund tracking with source_type (registration|pta_funding|business_donation|individual_donation), amount, description, privacy settings
+- **Expense:** Club expense tracking with category, vendor, amount, description, receipt attachment, privacy settings
+- **FundAllocation:** Many-to-many allocation tracking linking fund sources to expenses with allocated amounts
 
 #### Relationships
 
@@ -246,6 +272,12 @@ A **Ruby on Rails 8 web application** featuring:
 - Donor has_one_attached photo (Active Storage)
 - Document belongs_to user (creator)
 - Document has_one_attached file
+- FundSource has_many fund_allocations (one-to-many)
+- FundSource belongs_to donor (optional, for donation-based fund sources)
+- Expense has_many fund_allocations (one-to-many)
+- Expense belongs_to user (creator)
+- Expense has_one_attached receipt (Active Storage)
+- FundAllocation belongs_to fund_source and expense (many-to-many join)
 
 ### 7.3 Rails Application Structure
 
@@ -265,8 +297,12 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   ├── admin/
 │   │   │   ├── users_controller.rb   # Admin user management
 │   │   │   ├── donors_controller.rb  # Donor management (admin)
-│   │   │   └── donations_controller.rb # Donation management (nested)
-│   │   └── documents_controller.rb   # Document management
+│   │   │   ├── donations_controller.rb # Donation management (nested)
+│   │   │   ├── fund_sources_controller.rb # Fund source management (admin)
+│   │   │   ├── expenses_controller.rb # Expense management (admin)
+│   │   │   └── fund_allocations_controller.rb # Fund allocation management (admin)
+│   │   ├── documents_controller.rb   # Document management
+│   │   └── financial_transparency_controller.rb # Public financial transparency
 │   ├── models/
 │   │   ├── application_record.rb
 │   │   ├── user.rb
@@ -276,6 +312,9 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   ├── attendance.rb             # Event-student attendance tracking
 │   │   ├── donor.rb                  # Individual/business donors
 │   │   ├── donation.rb               # Normalized donation tracking
+│   │   ├── fund_source.rb            # Fund source tracking with privacy controls
+│   │   ├── expense.rb                # Club expense tracking with receipt attachment
+│   │   ├── fund_allocation.rb        # Fund source to expense allocation tracking
 │   │   └── document.rb               # File repository
 │   ├── views/
 │   │   ├── layouts/
@@ -287,9 +326,13 @@ A **Ruby on Rails 8 web application** featuring:
 │   │   ├── admin/
 │   │   │   ├── users/                # Admin user management
 │   │   │   ├── donors/               # Admin donor management
-│   │   │   └── donations/            # Admin donation management
+│   │   │   ├── donations/            # Admin donation management
+│   │   │   ├── fund_sources/         # Admin fund source management
+│   │   │   ├── expenses/             # Admin expense management
+│   │   │   └── fund_allocations/     # Admin fund allocation management
 │   │   ├── shared/                   # Reusable components
-│   │   └── documents/                # Document views
+│   │   ├── documents/                # Document views
+│   │   └── financial_transparency/   # Public financial transparency views
 │   ├── mailers/
 │   │   ├── application_mailer.rb
 │   │   └── notification_mailer.rb
@@ -376,7 +419,8 @@ A **Ruby on Rails 8 web application** featuring:
 2. **Schedule:** Meeting calendar and event details
 3. **Donors:** Recognition wall with photos/logos
 4. **Resources:** Document repository with categories
-5. **About:** Club information and contact details
+5. **Financial Transparency:** Public financial dashboard with fund balances and expense summaries
+6. **About:** Club information and contact details
 
 ---
 
@@ -398,21 +442,31 @@ A **Ruby on Rails 8 web application** featuring:
 - **Security:** Role changes and account deletions restricted to administrators only
 - **Administrative Controls:** Comprehensive user management with safety features (admins cannot delete themselves)
 
-### 9.2 Donor Management
+### 9.3 Donor Management
 
 - **Individual Donors:** Name, donation amount/type, optional photo upload
 - **Business Donors:** Company name, logo upload, contribution details, website link
 - **Privacy Controls:** Donor visibility preferences in admin interface
 - **Recognition:** Automated display on public donor wall with carousel for business logos
 
-### 9.3 Document Organization
+### 9.4 Financial Management Workflow
+
+- **Fund Source Tracking:** Administrators create fund source records for registration fees, PTA funding, and donations
+- **Expense Recording:** Real-time expense entry through admin interface with receipt upload capability
+- **Allocation Process:** Manual allocation of fund sources to expenses with split capability across multiple sources
+- **Privacy Management:** Admin-controlled visibility settings for sensitive financial information
+- **Transparency Dashboard:** Public financial summary respecting privacy settings for donor confidence
+- **Integration:** Automatic fund source creation for monetary donations through existing donor system
+- **Reporting:** Monthly, quarterly, and annual financial reports with filtering and export capabilities
+
+### 9.5 Document Organization
 
 - **Categories:** Forms, Meeting Notes, Pokemon Resources, General Information
 - **Metadata:** Auto-generated (title, upload date, file type) and manual (description, category)
 - **Access Control:** Public documents vs. authenticated user documents
 - **File Management:** Active Storage with local file storage
 
-### 9.4 User Communication
+### 9.6 User Communication
 
 - **Email Templates:** Professional templates for notifications, reminders, updates
 - **Notification Types:** Event notifications, donor updates, general announcements
@@ -443,7 +497,13 @@ A **Ruby on Rails 8 web application** featuring:
 - **Target:** Reduce content update time by 60% compared to manual processes
 - **Measure:** Time tracking for content creation and updates through admin interface
 
-### 10.5 Technical Performance
+### 10.5 Financial Transparency & Accountability
+
+- **Target:** 90% of parents express confidence in club financial management through quarterly surveys
+- **Measure:** Parent feedback surveys, financial transparency page engagement metrics
+- **Administrative Metrics:** Complete expense allocation within 30 days of purchase, 100% receipt documentation
+
+### 10.6 Technical Performance
 
 - **Target:** 99% uptime, <3 second load times, secure user data management
 - **Measure:** Application monitoring, database performance metrics, security audit results
@@ -472,7 +532,14 @@ A **Ruby on Rails 8 web application** featuring:
 - **Risk:** Email notifications not being delivered due to SMTP configuration issues
 - **Mitigation:** Test email delivery in development environment, configure proper SMTP settings, implement email delivery monitoring
 
-### 11.5 Hosting and Deployment Risks
+### 11.5 Financial Management Risks
+
+- **Risk:** Misallocation of funds or inaccurate financial reporting leading to donor mistrust
+- **Mitigation:** Implement allocation validation rules, regular financial audits, clear approval workflows
+- **Risk:** Unauthorized access to sensitive financial information
+- **Mitigation:** Admin-only access controls, audit trails for all financial transactions, secure receipt storage
+
+### 11.6 Hosting and Deployment Risks
 
 - **Risk:** Application downtime during deployments or hosting platform issues
 - **Mitigation:** Use zero-downtime deployment strategies, choose reliable hosting provider, implement monitoring alerts
@@ -487,6 +554,7 @@ A **Ruby on Rails 8 web application** featuring:
 - **Advanced Communication:** SMS notifications, push notifications, in-app messaging
 - **Enhanced User Experience:** User dashboards, personalized content recommendations
 - **Reporting & Analytics:** Attendance tracking, engagement reports, donation analytics
+- **Financial Analytics:** Advanced financial reporting, budget forecasting, donor impact analysis
 - **Mobile App:** Native mobile application using Rails API backend
 - **Integration:** School district systems integration, calendar application sync
 
