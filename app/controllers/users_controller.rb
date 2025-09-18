@@ -33,19 +33,34 @@ class UsersController < ApplicationController
   end
 
   def email_preferences
-    @email_subscriptions = @user.email_subscriptions.includes(:user)
+    @email_subscriptions = @user.email_subscriptions.reload
     @available_subscription_types = EmailSubscription.subscription_types_for_user
   end
 
   def update_email_preferences
+    # Get all available subscription types for the user
+    all_subscription_types = %w[
+      new_event event_cancelled event_updated
+      student_attendance_updated student_profile_updated
+      student_linked student_unlinked new_parent_linked parent_unlinked user_profile_updated
+    ]
+
     if params[:email_subscriptions].present?
-      params[:email_subscriptions].each do |subscription_type, enabled|
+      # Update all subscription types - present ones get their value, missing ones get disabled
+      all_subscription_types.each do |subscription_type|
         subscription = @user.email_subscriptions.find_or_initialize_by(subscription_type: subscription_type)
-        subscription.update(enabled: enabled == "1")
+        # If the subscription type is in the params, use its value, otherwise set to false (unchecked)
+        enabled = params[:email_subscriptions][subscription_type] == "1"
+        subscription.update(enabled: enabled)
       end
       redirect_to email_preferences_user_path, notice: "Email preferences updated successfully."
     else
-      redirect_to email_preferences_user_path, alert: "No preferences were updated."
+      # If no email_subscriptions params are present, disable all subscriptions
+      all_subscription_types.each do |subscription_type|
+        subscription = @user.email_subscriptions.find_or_initialize_by(subscription_type: subscription_type)
+        subscription.update(enabled: false)
+      end
+      redirect_to email_preferences_user_path, notice: "All email notifications have been disabled."
     end
   end
 
