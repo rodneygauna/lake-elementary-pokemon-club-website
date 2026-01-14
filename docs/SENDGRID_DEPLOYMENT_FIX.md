@@ -1,6 +1,7 @@
 # SendGrid API Key Setup for Kamal Deployment
 
 ## Problem
+
 The Kamal deployment failed because the production environment is trying to read SendGrid credentials that weren't configured properly.
 
 ## Solution Applied
@@ -35,6 +36,7 @@ echo "SG.your_actual_api_key_here" > config/sendgrid-api-key.key
 ```
 
 **Example:**
+
 ```bash
 echo "SG.abc123xyz789..." > config/sendgrid-api-key.key
 ```
@@ -56,8 +58,8 @@ RAILS_ENV=production bin/rails runner "puts ENV['SENDGRID_API_KEY'] ? 'SendGrid 
 
 ## Security Notes
 
-✅ The file `config/sendgrid-api-key.key` is already added to `.gitignore`  
-✅ The API key will only be passed to your production server via Kamal secrets  
+✅ The file `config/sendgrid-api-key.key` is already added to `.gitignore`
+✅ The API key will only be passed to your production server via Kamal secrets
 ✅ Never commit API keys to version control
 
 ## Alternative: Use SendGrid from Environment Variable
@@ -74,15 +76,18 @@ Then remove the line that reads from the file in `.kamal/secrets`.
 ## Troubleshooting
 
 **Error: "ActiveSupport::MessageEncryptor::InvalidMessage"**
+
 - This means the RAILS_MASTER_KEY doesn't match the encrypted credentials
 - We've moved away from using credentials for SendGrid, so this should be resolved
 
 **Error: "SENDGRID_API_KEY not set"**
+
 - Make sure `config/sendgrid-api-key.key` contains your actual API key
 - Verify the key starts with `SG.`
 - Check that `.kamal/secrets` is properly configured
 
 **Emails not sending**
+
 - Verify your SendGrid API key has "Mail Send" permissions
 - Check SendGrid dashboard for blocked sends
 - Review Kamal logs: `kamal app logs`
