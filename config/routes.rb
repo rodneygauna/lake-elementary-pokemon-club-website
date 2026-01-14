@@ -32,6 +32,9 @@ Rails.application.routes.draw do
       resources :donations
     end
     resources :documents
+    # Reports
+    get "reports", to: "reports#index", as: :reports
+    get "reports/attendance", to: "reports#attendance_report", as: :attendance_report
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

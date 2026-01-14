@@ -1,0 +1,90 @@
+<% content_for :title, "Reports" %>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Reports</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to root_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Home
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-chart-line me-2"></i>
+        <h1 class="h4 mb-0">Reports</h1>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      Generate and view various reports for the Pokémon Club.
+    </p>
+  </div>
+</div>
+
+<!-- Available Reports -->
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="text-dark border-bottom pb-2 mb-4">
+      <i class="fas fa-list me-2"></i>Available Reports
+    </h5>
+
+    <div class="row g-3">
+      <!-- Attendance Report -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <%= link_to admin_attendance_report_path, class: "text-decoration-none" do %>
+          <div class="card shadow-sm h-100 border-0" style="background-color: var(--pokemon-light-blue); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div class="card-body text-center">
+              <i class="fas fa-clipboard-check fa-3x text-primary mb-3"></i>
+              <h5 class="text-dark mb-2">Attendance Report</h5>
+              <p class="text-muted mb-0">
+                View student attendance for events within a date range.
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Placeholder for Future Reports -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0" style="background-color: #f8f9fa; opacity: 0.6;">
+          <div class="card-body text-center">
+            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">Future Report</h5>
+            <p class="text-muted mb-0">
+              Coming soon...
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder for Future Reports -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 border-0" style="background-color: #f8f9fa; opacity: 0.6;">
+          <div class="card-body text-center">
+            <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted mb-2">Future Report</h5>
+            <p class="text-muted mb-0">
+              Coming soon...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

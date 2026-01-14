@@ -527,6 +527,37 @@ end
 
 puts "Created #{events.count} events"
 
+# Create attendance records for events
+puts "Creating attendance records..."
+
+# Get active students for attendance
+active_students = Student.active.to_a
+published_events = Event.published.to_a
+
+if admin_user && active_students.any? && published_events.any?
+  # Create attendance for the first 5 published events
+  published_events.first(5).each_with_index do |event, event_index|
+    # Vary the number of attendees per event (between 60-90% of active students)
+    num_attendees = (active_students.count * (0.6 + (event_index * 0.06))).to_i
+    attending_students = active_students.sample(num_attendees)
+
+    attending_students.each do |student|
+      Attendance.find_or_create_by!(event: event, student: student) do |attendance|
+        attendance.marked_by = admin_user
+        attendance.present = true
+        attendance.marked_at = event.starts_at - 1.hour
+      end
+    end
+
+    puts "  - Created #{num_attendees} attendance records for '#{event.title}'"
+  end
+
+  total_attendances = Attendance.count
+  puts "Created #{total_attendances} total attendance records"
+else
+  puts "Skipping attendance records (missing admin, students, or events)"
+end
+
 # Create donors and donations
 puts "Creating donors and donations..."
 
@@ -678,8 +709,16 @@ puts " Admin User: admin@pokemonclub.test (password: password123)"
 puts " Super Users: #{User.where(role: 'super_user').count} (all with password: password123)"
 puts " Parent Users: #{User.where(role: 'user').count} (all with password: password123)"
 puts " Students: #{Student.count}"
+puts "   - Active Students: #{Student.active.count}"
+puts "   - Inactive Students: #{Student.inactive.count}"
 puts " User-Student Links: #{UserStudent.count}"
 puts " Events: #{Event.count}"
+puts "   - Published Events: #{Event.published.count}"
+puts "   - Draft Events: #{Event.draft.count}"
+puts "   - Canceled Events: #{Event.canceled.count}"
+puts " Attendance Records: #{Attendance.count}"
+puts "   - Students Marked Present: #{Attendance.present.count}"
+puts "   - Average Attendance per Event: #{Event.published.count > 0 ? (Attendance.count.to_f / Event.published.count).round(1) : 0}"
 puts " Donors: #{Donor.count}"
 puts "   - Individual Donors: #{Donor.where(donor_type: 'individual').count}"
 puts "   - Business Donors: #{Donor.where(donor_type: 'business').count}"

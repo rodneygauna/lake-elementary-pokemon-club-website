@@ -75,10 +75,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_042755) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "value_type"
+    t.string "value_type", default: "monetary", null: false
     t.index ["donation_date"], name: "index_donations_on_donation_date"
     t.index ["donor_id", "donation_date"], name: "index_donations_on_donor_id_and_donation_date"
     t.index ["donor_id"], name: "index_donations_on_donor_id"
+    t.index ["value_type"], name: "index_donations_on_value_type"
   end
 
   create_table "donors", force: :cascade do |t|

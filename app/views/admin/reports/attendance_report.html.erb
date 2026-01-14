@@ -1,0 +1,210 @@
+<% content_for :title, "Attendance Report" %>
+
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to "Home", root_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item">
+      <%= link_to "Reports", admin_reports_path, class: "text-decoration-none" %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Attendance Report</li>
+  </ol>
+</nav>
+
+<!-- Action Buttons (Before Header) -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <%= link_to admin_reports_path, class: "btn btn-outline-secondary me-2" do %>
+      <i class="fas fa-arrow-left me-1"></i>Back to Reports
+    <% end %>
+  </div>
+</div>
+
+<!-- Header Card -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-clipboard-check me-2"></i>
+        <h1 class="h4 mb-0">Attendance Report</h1>
+      </div>
+      <% if @events.present? %>
+        <div class="d-flex align-items-center">
+          <span class="badge bg-light text-dark me-2">
+            <i class="fas fa-calendar-alt me-1"></i>
+            <%= pluralize(@total_events, 'Event') %>
+          </span>
+          <span class="badge bg-light text-dark">
+            <i class="fas fa-users me-1"></i>
+            <%= pluralize(@total_attendances, 'Attendance') %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-0">
+      <i class="fas fa-info-circle me-1"></i>
+      View student attendance for events within a specified date range.
+    </p>
+  </div>
+</div>
+
+<!-- Date Selection Form -->
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <h6 class="text-dark border-bottom pb-2 mb-3">
+      <i class="fas fa-calendar-alt me-2"></i>Select Date Range
+    </h6>
+    <%= form_with url: admin_attendance_report_path, method: :get, local: true do |form| %>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= form.label :from_date, "From Date", class: "form-label text-muted" %>
+          <%= form.date_field :from_date, value: params[:from_date] || 30.days.ago.to_date, class: "form-control" %>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :to_date, "To Date", class: "form-label text-muted" %>
+          <%= form.date_field :to_date, value: params[:to_date] || Date.today, class: "form-control" %>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label text-muted d-block">&nbsp;</label>
+          <%= form.submit "Generate Report", class: "btn btn-primary w-100" do %>
+            <i class="fas fa-chart-line me-2"></i>Generate Report
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Report Results -->
+<% if params[:from_date].present? && params[:to_date].present? %>
+  <% if @events.present? %>
+    <!-- Summary Statistics -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h6 class="text-dark border-bottom pb-2 mb-3">
+          <i class="fas fa-chart-bar me-2"></i>Summary Statistics
+        </h6>
+        <div class="row text-center">
+          <div class="col-md-3 col-6 mb-3">
+            <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+              <i class="fas fa-calendar-alt fa-2x text-dark mb-2"></i>
+              <div class="fw-bold text-dark fs-4"><%= @total_events %></div>
+              <small class="text-muted">Total Events</small>
+            </div>
+          </div>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="p-3 rounded" style="background-color: var(--pokemon-light-yellow);">
+              <i class="fas fa-check-circle fa-2x text-dark mb-2"></i>
+              <div class="fw-bold text-dark fs-4"><%= @total_attendances %></div>
+              <small class="text-muted">Total Attendances</small>
+            </div>
+          </div>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="p-3 rounded" style="background-color: #f8f9fa;">
+              <i class="fas fa-calculator fa-2x text-dark mb-2"></i>
+              <div class="fw-bold text-dark fs-4">
+                <%= @total_events > 0 ? number_with_precision(@total_attendances.to_f / @total_events, precision: 1) : '0' %>
+              </div>
+              <small class="text-muted">Avg per Event</small>
+            </div>
+          </div>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="p-3 rounded" style="background-color: var(--pokemon-light-blue);">
+              <i class="fas fa-calendar-day fa-2x text-dark mb-2"></i>
+              <div class="fw-bold text-dark fs-4"><%= (@to_date - @from_date).to_i + 1 %></div>
+              <small class="text-muted">Days in Range</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Attendance Details -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="text-dark border-bottom pb-2 mb-3">
+          <i class="fas fa-list me-2"></i>Event Attendance Details
+        </h6>
+
+        <% @events.each_with_index do |event, index| %>
+          <div class="card mb-3 <%= 'border-0' if index.even? %>" style="background-color: <%= index.even? ? 'var(--pokemon-light-blue)' : '#ffffff' %>;">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 class="text-dark mb-1">
+                    <%= link_to event.title, event_path(event), class: "text-decoration-none" %>
+                  </h5>
+                  <div class="text-muted small">
+                    <i class="fas fa-calendar me-1"></i>
+                    <%= event.event_datetime_in_timezone %>
+                  </div>
+                  <div class="text-muted small">
+                    <i class="fas fa-map-marker-alt me-1"></i>
+                    <%= event.location %>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <span class="badge bg-success">
+                    <i class="fas fa-users me-1"></i>
+                    <%= pluralize(event.attendances.present.count, 'student') %>
+                  </span>
+                </div>
+              </div>
+
+              <% if event.attendances.present.any? %>
+                <div class="border-top pt-3">
+                  <h6 class="text-dark mb-2">
+                    <i class="fas fa-user-check me-1"></i>Students in Attendance:
+                  </h6>
+                  <div class="row g-2">
+                    <% event.attendances.present.ordered.each do |attendance| %>
+                      <div class="col-12 col-md-6 col-lg-4">
+                        <div class="d-flex align-items-center p-2 rounded" style="background-color: rgba(255, 255, 255, 0.5);">
+                          <i class="fas fa-check-circle text-success me-2"></i>
+                          <span class="text-dark">
+                            <%= link_to attendance.student.full_name, student_path(attendance.student), class: "text-decoration-none" %>
+                          </span>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% else %>
+                <div class="text-center text-muted py-3 border-top">
+                  <i class="fas fa-exclamation-circle me-1"></i>
+                  No attendance recorded for this event
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <!-- No Events Found -->
+    <div class="card shadow-sm">
+      <div class="card-body text-center py-5">
+        <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+        <h5 class="text-dark mb-2">No Events Found</h5>
+        <p class="text-muted mb-0">
+          No published events found within the selected date range (<%= @from_date.strftime("%B %d, %Y") %> to <%= @to_date.strftime("%B %d, %Y") %>).
+        </p>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <!-- Initial State - No Report Generated -->
+  <div class="card shadow-sm">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+      <h5 class="text-dark mb-2">Generate Your Report</h5>
+      <p class="text-muted mb-0">
+        Select a date range above and click "Generate Report" to view attendance data.
+      </p>
+    </div>
+  </div>
+<% end %>
