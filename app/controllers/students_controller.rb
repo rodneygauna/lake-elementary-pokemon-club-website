@@ -1,7 +1,7 @@
 class StudentsController < ApplicationController
   before_action :require_authentication, except: [ :index, :show ]
   before_action :set_student, only: %i[ show edit update destroy ]
-  before_action :require_admin_level, only: [ :new, :create ]
+  before_action :require_admin_level, only: [ :new, :create, :bulk_deactivate ]
   before_action :require_admin, only: [ :destroy ]
   before_action :require_admin_or_linked_parent, only: [ :edit, :update ]
 
@@ -78,6 +78,24 @@ class StudentsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to students_path, notice: "Student was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
+    end
+  end
+
+  # POST /students/bulk_deactivate
+  def bulk_deactivate
+    active_students = Student.active
+    deactivated_count = 0
+
+    active_students.each do |student|
+      if student.update(status: :inactive)
+        deactivated_count += 1
+      end
+    end
+
+    if deactivated_count > 0
+      redirect_to students_path(show_inactive: true), notice: "Successfully deactivated #{deactivated_count} student(s)."
+    else
+      redirect_to students_path, notice: "No active students to deactivate."
     end
   end
 

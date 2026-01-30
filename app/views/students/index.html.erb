@@ -17,8 +17,23 @@
       <i class="fas fa-arrow-left me-1"></i>Back to Home
     <% end %>
   </div>
-  <div>
+  <div class="d-flex gap-2">
     <% if admin_level? %>
+      <% active_count = Student.active.count %>
+      <% if active_count > 0 %>
+        <%= form_with url: bulk_deactivate_students_path, method: :post, local: true, id: "bulk-deactivate-form", class: "d-inline" do |form| %>
+          <button type="button"
+                  class="btn btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirmationModal"
+                  data-confirm-title="Deactivate All Active Students"
+                  data-confirm-message="Are you sure you want to mark all <%= active_count %> active student(s) as inactive? This is typically done at the end of a school year."
+                  data-confirm-action="Deactivate All"
+                  data-form-id="bulk-deactivate-form">
+            <i class="fas fa-user-slash me-1"></i>Deactivate All Active
+          </button>
+        <% end %>
+      <% end %>
       <%= link_to new_student_path, class: "btn btn-success" do %>
         <i class="fas fa-plus me-2"></i>Add New Student
       <% end %>

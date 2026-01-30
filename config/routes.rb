@@ -8,6 +8,9 @@ Rails.application.routes.draw do
     post "attendances/toggle/:student_id", to: "attendances#toggle", as: :toggle_attendance
   end
   resources :students do
+    collection do
+      post :bulk_deactivate
+    end
     resources :user_students, only: [ :create ]
   end
   resources :user_students, only: [ :destroy ]
