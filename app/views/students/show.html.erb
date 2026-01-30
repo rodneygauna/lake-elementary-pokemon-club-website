@@ -308,6 +308,91 @@
             <% end %>
           </div>
         </div>
+
+        <!-- Season Membership -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-warning text-dark">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-calendar-alt me-2"></i>
+                <h5 class="mb-0">Season Membership</h5>
+              </div>
+              <div>
+                <span class="badge bg-dark">
+                  <i class="fas fa-trophy me-1"></i><%= pluralize(@student.seasons.count, 'Season') %>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <% if @student.seasons.any? %>
+              <div class="row g-3">
+                <% @student.student_seasons.includes(:season).ordered.each do |student_season| %>
+                  <% season = student_season.season %>
+                  <div class="col-12 col-md-6">
+                    <div class="card h-100">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                          <h6 class="text-dark mb-0">
+                            <i class="fas fa-calendar-alt me-1 text-warning"></i>
+                            <%= season.name %>
+                          </h6>
+                          <% if season.current? %>
+                            <span class="badge bg-success">Current</span>
+                          <% elsif season.inactive? %>
+                            <span class="badge bg-secondary">Inactive</span>
+                          <% end %>
+                        </div>
+                        <div class="text-muted small mb-2">
+                          <i class="fas fa-calendar-day me-1"></i>
+                          <%= season.start_date.strftime('%b %Y') %> - <%= season.end_date.strftime('%b %Y') %>
+                        </div>
+                        <% if admin_level? %>
+                          <%= form_with url: student_admin_student_season_path(@student, student_season), method: :delete, local: true, class: "d-inline" do |form| %>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmationModal"
+                                    data-confirm-title="Remove from Season"
+                                    data-confirm-message="Are you sure you want to remove <%= @student.first_name %> from <%= season.name %>?"
+                                    data-confirm-action="Remove">
+                              <i class="fas fa-times me-1"></i>Remove
+                            </button>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-4">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <p class="text-muted mb-0">Not enrolled in any seasons yet.</p>
+              </div>
+            <% end %>
+
+            <% if admin_level? %>
+              <hr class="my-4">
+              <h6 class="text-success border-bottom pb-2 mb-3">
+                <i class="fas fa-plus me-1"></i>Add to Season
+              </h6>
+              <div class="row">
+                <div class="col-md-8">
+                  <%= form_with url: student_admin_student_seasons_path(@student), method: :post, local: true, class: "d-flex gap-2" do |form| %>
+                    <div class="flex-grow-1">
+                      <%= form.select :season_id,
+                          Season.active.ordered.map { |s| [s.display_name, s.id] },
+                          { prompt: "Choose a season..." },
+                          { class: 'form-select' } %>
+                    </div>
+                    <%= form.submit "Add to Season", class: 'btn btn-success' %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
       <% else %>
         <!-- Limited Information Card -->
         <div class="card shadow-sm mb-4">

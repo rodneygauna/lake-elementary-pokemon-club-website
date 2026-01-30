@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_16_042755) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_30_151759) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -126,6 +126,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_042755) do
     t.index ["zipcode"], name: "index_events_on_zipcode"
   end
 
+  create_table "seasons", force: :cascade do |t|
+    t.string "name", null: false
+    t.date "start_date", null: false
+    t.date "end_date", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_seasons_on_name", unique: true
+    t.index ["start_date", "end_date"], name: "index_seasons_on_start_date_and_end_date"
+    t.index ["status"], name: "index_seasons_on_status"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -133,6 +145,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_042755) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "student_seasons", force: :cascade do |t|
+    t.integer "student_id", null: false
+    t.integer "season_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["season_id"], name: "index_student_seasons_on_season_id"
+    t.index ["student_id", "season_id"], name: "index_student_seasons_on_student_id_and_season_id", unique: true
+    t.index ["student_id"], name: "index_student_seasons_on_student_id"
   end
 
   create_table "students", force: :cascade do |t|
@@ -191,6 +213,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_042755) do
   add_foreign_key "donors", "users"
   add_foreign_key "email_subscriptions", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "student_seasons", "seasons"
+  add_foreign_key "student_seasons", "students"
   add_foreign_key "user_students", "students"
   add_foreign_key "user_students", "users"
 end

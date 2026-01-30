@@ -11,6 +11,8 @@ class Student < ApplicationRecord
   has_many :users, through: :user_students
   has_many :attendances, dependent: :destroy
   has_many :attended_events, -> { where(attendances: { present: true }) }, through: :attendances, source: :event
+  has_many :student_seasons, dependent: :destroy
+  has_many :seasons, through: :student_seasons
 
   # ---- Normalizations -----
   # Normalize names before validation
@@ -80,15 +82,18 @@ class Student < ApplicationRecord
 
   def grade_display
     # Convert grade enum to readable format
-    case grade
-    when "K" then "Kindergarten"
-    when "1" then "1st Grade"
-    when "2" then "2nd Grade"
-    when "3" then "3rd Grade"
-    when "4" then "4th Grade"
-    when "5" then "5th Grade"
-    when "6" then "6th Grade"
-    else grade.to_s
+    # Handle both old enum keys (like "third_grade") and new enum values (like "3")
+    grade_value = read_attribute(:grade)
+
+    case grade_value
+    when "K", "kindergarten_grade" then "Kindergarten"
+    when "1", "first_grade" then "1st Grade"
+    when "2", "second_grade" then "2nd Grade"
+    when "3", "third_grade" then "3rd Grade"
+    when "4", "fourth_grade" then "4th Grade"
+    when "5", "fifth_grade" then "5th Grade"
+    when "6", "sixth_grade" then "6th Grade"
+    else grade_value.to_s.titleize
     end
   end
 

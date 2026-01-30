@@ -808,3 +808,64 @@ puts "   - Disabled Subscriptions: #{EmailSubscription.disabled.count}"
 
 puts "\nAll users can log in with their email and password 'password123'"
 puts "==========================="
+
+# Create seasons
+puts "\nCreating seasons..."
+
+seasons_data = [
+  {
+    name: "Fall 2025",
+    start_date: Date.new(2025, 9, 1),
+    end_date: Date.new(2025, 12, 20),
+    status: "active"
+  },
+  {
+    name: "Winter 2026",
+    start_date: Date.new(2026, 1, 8),
+    end_date: Date.new(2026, 3, 20),
+    status: "active"
+  },
+  {
+    name: "Spring 2026",
+    start_date: Date.new(2026, 4, 1),
+    end_date: Date.new(2026, 6, 15),
+    status: "active"
+  }
+]
+
+seasons = seasons_data.map do |season_data|
+  Season.find_or_create_by!(name: season_data[:name]) do |season|
+    season.start_date = season_data[:start_date]
+    season.end_date = season_data[:end_date]
+    season.status = season_data[:status]
+  end
+end
+
+puts "Created #{seasons.count} seasons"
+
+# Link students to seasons
+puts "\nLinking students to seasons..."
+students = Student.all
+fall_2025 = Season.find_by(name: "Fall 2025")
+winter_2026 = Season.find_by(name: "Winter 2026")
+
+if fall_2025 && winter_2026 && students.any?
+  # Add all students to Fall 2025
+  students.each do |student|
+    StudentSeason.find_or_create_by!(student: student, season: fall_2025)
+  end
+
+  # Add some students to Winter 2026 (first 5 students)
+  students.first(5).each do |student|
+    StudentSeason.find_or_create_by!(student: student, season: winter_2026)
+  end
+
+  puts "   - #{fall_2025.students.count} students enrolled in Fall 2025"
+  puts "   - #{winter_2026.students.count} students enrolled in Winter 2026"
+end
+
+puts "\nSeasons: #{Season.count}"
+puts "   - Active Seasons: #{Season.active.count}"
+puts "   - Inactive Seasons: #{Season.inactive.count}"
+puts "   - Total Student Enrollments: #{StudentSeason.count}"
+puts "==========================="

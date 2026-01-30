@@ -32,9 +32,21 @@ Rails.application.routes.draw do
       resources :donations
     end
     resources :documents
+    resources :seasons do
+      member do
+        post :bulk_enroll
+      end
+    end
     # Reports
     get "reports", to: "reports#index", as: :reports
     get "reports/attendance", to: "reports#attendance_report", as: :attendance_report
+  end
+
+  # Student season management (admin only)
+  resources :students, only: [] do
+    namespace :admin do
+      resources :student_seasons, only: [ :create, :destroy ]
+    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

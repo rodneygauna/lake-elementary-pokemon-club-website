@@ -1,0 +1,114 @@
+<%= form_with model: [:admin, season], local: true do |form| %>
+  <% if season.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <h5 class="alert-heading mb-0">Please correct the following errors:</h5>
+      </div>
+      <hr>
+      <ul class="mb-0">
+        <% season.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Season Information Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-calendar-alt me-2"></i>Season Information
+      </h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :name, class: "form-label required" do %>
+        <i class="fas fa-tag me-1"></i>Season Name
+      <% end %>
+      <%= form.text_field :name,
+          class: "form-control #{'is-invalid' if season.errors[:name].any?}",
+          placeholder: "e.g., Fall 2025, Winter 2026",
+          required: true %>
+      <% if season.errors[:name].any? %>
+        <div class="invalid-feedback">
+          <%= season.errors[:name].first %>
+        </div>
+      <% end %>
+      <small class="form-text text-muted">
+        <i class="fas fa-info-circle me-1"></i>Enter a descriptive name for this club season (e.g., "Fall 2025", "Winter 2026")
+      </small>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :status, class: "form-label required" do %>
+        <i class="fas fa-toggle-on me-1"></i>Status
+      <% end %>
+      <%= form.select :status,
+                      options_for_select([['Active', 'active'], ['Inactive', 'inactive']], season.status),
+                      {},
+                      { class: "form-select #{'is-invalid' if season.errors[:status].any?}",
+                        required: true } %>
+      <% if season.errors[:status].any? %>
+        <div class="invalid-feedback">
+          <%= season.errors[:status].first %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Date Range Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h5 class="text-dark border-bottom pb-2 mb-3">
+        <i class="fas fa-calendar-week me-2"></i>Date Range
+      </h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :start_date, class: "form-label required" do %>
+        <i class="fas fa-calendar-day me-1"></i>Start Date
+      <% end %>
+      <%= form.date_field :start_date,
+          class: "form-control #{'is-invalid' if season.errors[:start_date].any?}",
+          required: true %>
+      <% if season.errors[:start_date].any? %>
+        <div class="invalid-feedback">
+          <%= season.errors[:start_date].first %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :end_date, class: "form-label required" do %>
+        <i class="fas fa-calendar-check me-1"></i>End Date
+      <% end %>
+      <%= form.date_field :end_date,
+          class: "form-control #{'is-invalid' if season.errors[:end_date].any?}",
+          required: true %>
+      <% if season.errors[:end_date].any? %>
+        <div class="invalid-feedback">
+          <%= season.errors[:end_date].first %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between">
+        <%= link_to admin_seasons_path, class: "btn btn-outline-secondary" do %>
+          <i class="fas fa-times me-1"></i>Cancel
+        <% end %>
+        <%= form.submit class: "btn btn-primary" do %>
+          <i class="fas fa-save me-1"></i>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
