@@ -19,6 +19,11 @@
     <%= link_to admin_reports_path, class: "btn btn-outline-secondary me-2" do %>
       <i class="fas fa-arrow-left me-1"></i>Back to Reports
     <% end %>
+    <% if @events.present? %>
+      <%= link_to admin_attendance_report_path(from_date: params[:from_date], to_date: params[:to_date], format: :csv), class: "btn btn-success" do %>
+        <i class="fas fa-file-csv me-1"></i>Export CSV
+      <% end %>
+    <% end %>
   </div>
 </div>
 
