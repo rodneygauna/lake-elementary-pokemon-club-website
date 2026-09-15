@@ -1,7 +1,7 @@
 # Lake Elementary School Pokémon Club Bylaws
 
-**Effective Date:** September 7, 2025
-**Version:** 1.1
+**Effective Date:** September 14, 2026
+**Version:** 1.2
 **Approved by:** Club Leadership
 
 ---
@@ -66,10 +66,12 @@ As a member of the Pokémon Club, I agree to:
 - Be honest when keeping score or resolving battles
 - Accept wins and losses with good sportsmanship
 
-### Card Trading and Personal Items
+### Cards, Trading, and Personal Items
 
-- Trading Pokémon cards is not allowed during club meetings to prevent disagreements
-- Students may bring cards, games, or toys to play with, but the club is not responsible for lost or damaged items
+- Cards must remain in backpacks during the regular school day and may only come out once Pokémon Club begins. Cards not put away during the school day may be held in the office until picked up by a parent or guardian.
+- Trading is allowed during club meetings and is completely optional — no member should ever feel pressured to make a trade
+- Students are responsible for deciding which cards they are willing to trade and for agreeing to any trade. Lake Elementary, the PTA, the Pokémon Club, and club volunteers are not responsible for trades made between members, including situations where a student later regrets a trade or where the cards exchanged have different monetary or sentimental values.
+- Students should only bring cards they are comfortable playing with, sharing, or potentially trading. Valuable, rare, sentimental, or otherwise irreplaceable cards are best kept at home.
 - Sharing is encouraged, but not required
 
 ### Focus on Inclusion
@@ -93,7 +95,7 @@ As a parent/guardian supporting the Pokémon Club, I agree to:
 ### Support Club Goals
 
 - Encourage my child to participate with respect, kindness, and inclusivity
-- Remind my child of the rules around trading, sharing, and taking care of belongings
+- Talk with my student ahead of time about whether I am comfortable with them trading their cards, and remind them of the rules around trading, sharing, and taking care of belongings
 
 ### Respect Club Structure
 
@@ -128,4 +130,4 @@ For questions about these bylaws or club policies, please contact:
 
 ---
 
-*These bylaws may be updated as needed to ensure the continued success and safety of the Pokémon Club. All members will be notified of any changes.*
+_These bylaws may be updated as needed to ensure the continued success and safety of the Pokémon Club. All members will be notified of any changes._
